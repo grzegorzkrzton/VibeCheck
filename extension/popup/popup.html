@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Design Handoff</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Design Handoff</h1>
+      <p class="lede">Internal review for vibe-coded prototypes</p>
+    </header>
+
+    <section id="status" class="card">Checking sign-in…</section>
+
+    <section class="actions">
+      <button id="toggle" type="button">Open tools on this page</button>
+      <button id="google" type="button" class="primary">Sign in with Google</button>
+      <button id="local" type="button" class="ghost">Continue locally (no SSO)</button>
+      <button id="logout" type="button" class="ghost hidden">Sign out</button>
+    </section>
+
+    <section>
+      <h2>Inbox <span id="unread" class="badge hidden">0</span></h2>
+      <ul id="inbox" class="inbox"><li class="empty">No notifications yet.</li></ul>
+    </section>
+
+    <p class="hint" id="config-hint"></p>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+:root {
+  color-scheme: light dark;
+  --bg: #111218;
+  --card: #1c1e27;
+  --text: #f4f4f6;
+  --muted: #a0a3b1;
+  --accent: #7c5cff;
+  --border: #2c2f3a;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+body {
+  margin: 0;
+  width: 360px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+main {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+h1 {
+  font-size: 16px;
+  margin: 0;
+}
+
+h2 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+
+.lede {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.card, .inbox {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.actions {
+  display: grid;
+  gap: 8px;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  cursor: pointer;
+  background: #2a2d38;
+  color: var(--text);
+}
+
+button.primary {
+  background: var(--accent);
+}
+
+button.ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+}
+
+.hidden { display: none; }
+
+.inbox {
+  list-style: none;
+  margin: 0;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.inbox li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.inbox li:last-child { border-bottom: 0; }
+
+.inbox button.link {
+  background: none;
+  padding: 0;
+  color: var(--accent);
+  text-align: left;
+}
+
+.empty, .hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.badge {
+  display: inline-flex;
+  min-width: 1.4em;
+  justify-content: center;
+  background: var(--accent);
+  border-radius: 999px;
+  font-size: 11px;
+  padding: 1px 6px;
+  color: white;
+}

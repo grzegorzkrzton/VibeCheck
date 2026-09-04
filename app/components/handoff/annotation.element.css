@@ -1,0 +1,32 @@
+:host {
+  all: initial;
+  position: fixed;
+  z-index: 2147483644;
+  max-width: 240px;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+}
+
+.callout {
+  background: #16171f;
+  color: #f4f4f6;
+  border-left: 4px solid var(--kind, #7c5cff);
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 35%);
+  font-size: 12px;
+}
+
+.callout[data-kind="implement"] { --kind: #7c5cff; }
+.callout[data-kind="warning"] { --kind: #f59e0b; }
+.callout[data-kind="info"] { --kind: #38bdf8; }
+.callout[data-orphaned="true"] { opacity: 0.7; }
+
+.kind { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--kind); }
+.meta { color: #a0a3b1; font-size: 11px; margin-top: 4px; }
+button {
+  margin-top: 6px;
+  border: 0;
+  background: transparent;
+  color: #a0a3b1;
+  cursor: pointer;
+}

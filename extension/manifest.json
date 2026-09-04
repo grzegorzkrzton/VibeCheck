@@ -1,0 +1,46 @@
+{
+  "name": "Design Handoff",
+  "version": "0.1.0",
+  "description": "Internal design feedback and handoff for vibe-coded prototypes",
+  "manifest_version": 3,
+  "icons": { "128": "icons/visbug.png" },
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "scripting",
+    "storage",
+    "identity",
+    "identity.email"
+  ],
+  "host_permissions": [
+    "https://*.supabase.co/*",
+    "https://accounts.google.com/*"
+  ],
+  "background": {
+    "service_worker": "visbug.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Design Handoff",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "128": "icons/visbug.png"
+    }
+  },
+  "web_accessible_resources": [{
+    "resources": [
+      "tuts/*.gif",
+      "toolbar/*"
+    ],
+    "matches": ["<all_urls>"]
+  }],
+  "commands": {
+    "toggle-handoff": {
+      "suggested_key": {
+        "default": "Alt+Shift+D",
+        "mac": "Alt+Shift+D"
+      },
+      "description": "Toggle Design Handoff tools on this page"
+    }
+  }
+}
