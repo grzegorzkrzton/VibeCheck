@@ -1,13 +1,13 @@
 {
-  "name": "VisBug",
-  "version": "0.4.9",
-  "description": "",
-  "author": "Adam Argyle",
+  "name": "vibecheck",
+  "version": "0.1.0",
+  "description": "Drop feedback pins on vibe-coded prototypes — internal design handoff tool (VisBug derivative)",
+  "author": "VibeCheck contributors",
   "license": "Apache-2.0",
   "main": "app/components/vis-bug/vis-bug.element.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GoogleChromeLabs/ProjectVisBug.git"
+    "url": "https://github.com/grzegorzkrzton/design-feedback-tool.git"
   },
   "scripts": {
     "start": "npm run concurrent",
@@ -28,7 +28,7 @@
     "extension:js": "npm run bundle:prod",
     "extension:css": "postcss app/extension.css -o extension/toolbar/bundle.css",
     "extension:copy": "cp app/bundle.min.js extension/toolbar/ && cp -R app/tuts/ extension/tuts",
-    "extension:zip": "rm -rf ./extension/build/* && mkdir ./visbug_v$npm_package_version && cp -R ./extension/* ./visbug_v$npm_package_version/ && zip -r ./extension/build/visbug.zip ./visbug_v$npm_package_version/ && rm -rf ./visbug_v$npm_package_version",
+    "extension:zip": "npm run extension:build && mkdir -p extension/build && rm -f extension/build/vibecheck.zip && cd extension && zip -r build/vibecheck.zip . -x \"build/*\"",
     "extension:firefox": "npm run dev:extension && cd extension && web-ext run",
     "extension:firefox-build": "npm run extension:build && cd extension && web-ext build",
     "deploy": "gcloud app deploy --project=visbug-1337",

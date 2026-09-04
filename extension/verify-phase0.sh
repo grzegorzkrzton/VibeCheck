@@ -18,4 +18,4 @@ if [ "$missing" -eq 1 ]; then
   exit 1
 fi
 
-echo "OK — load this folder in Chrome: $(pwd)"
+echo "OK — load this VibeCheck extension folder in Chrome: $(pwd)"

@@ -11,7 +11,7 @@ export const gimmeToggle = toggleIn => {
 
 platform.contextMenus.create({
   id:     'launcher',
-  title:  'Show/Hide',
+  title:  'Show/Hide VibeCheck',
   contexts: ['all'],
 })
 

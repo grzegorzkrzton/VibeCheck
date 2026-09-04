@@ -1,9 +1,9 @@
 {
-  "name": "DevBug",
-  "version": "0.4.9",
-  "description": "Open source browser design tools",
+  "name": "VibeCheck",
+  "version": "0.1.0",
+  "description": "Drop feedback pins on vibe-coded prototypes — internal design handoff tool",
   "manifest_version": 3,
-  "icons": { "128": "icons/visbug-dev.png" },
+  "icons": { "128": "icons/vibecheck.png" },
   "permissions": [
     "activeTab",
     "contextMenus",
@@ -15,9 +15,9 @@
     "type": "module"
   },
   "action": {
-    "default_title": "Click or press Alt+Shift+D to launch VisBug",
+    "default_title": "VibeCheck — Alt+Shift+D to toggle tools",
     "default_icon": {
-      "128": "icons/visbug.png"
+      "128": "icons/vibecheck.png"
     }
   },
   "web_accessible_resources": [{
@@ -34,7 +34,8 @@
         "mac": "Alt+Shift+D",
         "chromeos": "Alt+Shift+D",
         "linux": "Alt+Shift+D"
-      }
+      },
+      "description": "Toggle VibeCheck on this page"
     }
   }
 }

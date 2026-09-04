@@ -67,7 +67,7 @@ const toggleIn = async ({id: tab_id}) => {
     }
   }
   catch (error) {
-    console.error('[Design Handoff / VisBug]', error)
+    console.error('[VibeCheck]', error)
     throw error
   }
 
