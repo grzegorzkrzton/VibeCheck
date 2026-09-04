@@ -7,7 +7,7 @@
   "main": "app/components/vis-bug/vis-bug.element.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/GoogleChromeLabs/ProjectVisBug.git"
+    "url": "https://github.com/grzegorzkrzton/design-feedback-tool.git"
   },
   "scripts": {
     "start": "npm run concurrent",

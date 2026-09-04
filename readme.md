@@ -4,7 +4,10 @@ Internal Chrome extension for product designers, PMs, engineers, and content des
 
 This is a **derivative of [VisBug](https://github.com/GoogleChromeLabs/ProjectVisBug)** (Apache-2.0). It is **not** the public VisBug Chrome Web Store listing and is **not** an official Google product. See `LICENSE` and `NOTICE`.
 
-Git remote `upstream` points at ProjectVisBug. Your private GitHub repo should be `origin`.
+Git remotes:
+
+- `origin` — your private GitHub repo: https://github.com/grzegorzkrzton/design-feedback-tool
+- `upstream` — public ProjectVisBug (optional later pulls)
 
 ---
 
