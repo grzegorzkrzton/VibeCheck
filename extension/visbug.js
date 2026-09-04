@@ -11,10 +11,12 @@ var platform = typeof browser === 'undefined'
   ? chrome
   : browser
 
-const toggleIn = ({id:tab_id}) => {
+const toggleIn = async ({id: tab_id}) => {
+  if (!tab_id) return
+
   // toggle out: it's currently loaded and injected
   if (state.loaded[tab_id] && state.injected[tab_id]) {
-    platform.scripting.executeScript({
+    await platform.scripting.executeScript({
       target: {tabId: tab_id},
       files: ['toolbar/eject.js'],
     })
@@ -23,7 +25,7 @@ const toggleIn = ({id:tab_id}) => {
 
   // toggle in: it's loaded and needs injected
   else if (state.loaded[tab_id] && !state.injected[tab_id]) {
-    platform.scripting.executeScript({
+    await platform.scripting.executeScript({
       target: {tabId: tab_id},
       files: ['toolbar/restore.js'],
     })
@@ -34,11 +36,11 @@ const toggleIn = ({id:tab_id}) => {
 
   // fresh start in tab
   else {
-    platform.scripting.insertCSS({
+    await platform.scripting.insertCSS({
       target: {tabId: tab_id},
       files: ['toolbar/bundle.css' ],
     })
-    platform.scripting.executeScript({
+    await platform.scripting.executeScript({
       target: {tabId: tab_id},
       files: ['toolbar/inject.js'],
     })

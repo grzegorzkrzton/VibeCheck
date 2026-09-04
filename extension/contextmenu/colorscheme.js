@@ -17,9 +17,12 @@ var platform = typeof browser === 'undefined'
 
 const sendColorScheme = () => {
   platform.tabs.query({active: true, currentWindow: true}, ([tab]) => {
-    tab && platform.tabs.sendMessage(tab.id, {
+    if (!tab?.id) return
+    platform.tabs.sendMessage(tab.id, {
       action: 'COLOR_SCHEME',
-      params: {mode:colorschemestate.mode},
+      params: {mode: colorschemestate.mode},
+    }).catch(() => {
+      // No listener yet — VisBug is not injected on this tab.
     })
   })
 }
