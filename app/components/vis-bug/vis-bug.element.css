@@ -42,6 +42,11 @@
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     background-color: var(--theme-bd-2);
+    max-height: calc(100vh - 3em);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
 
     &:active {
       cursor: grabbing !important;
@@ -222,6 +227,10 @@
   fill: white;
   stroke: var(--theme-icon_color);
   stroke-width: 2px;
+}
+
+:host li[data-tool="prompt"] > svg {
+  fill: var(--neon-pink);
 }
 
 :host li[data-tool="search"] {
