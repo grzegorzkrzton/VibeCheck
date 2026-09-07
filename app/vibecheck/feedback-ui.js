@@ -37,6 +37,7 @@ const state = {
   open: null,
   draft: null,
   filter: 'all',
+  search: '',
   hideResolved: true,
   mode: 'browse',
   previewId: null,
@@ -107,6 +108,33 @@ function commentNumber(comment) {
   return index >= 0 ? index + 1 : '•'
 }
 
+function threadNumber(record) {
+  const roots = [
+    ...state.comments.filter(item => !item.parentId),
+    ...state.suggestions,
+  ].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
+  const index = roots.findIndex(item => item.id === record.id)
+  return index >= 0 ? index + 1 : '•'
+}
+
+function relativeTime(value) {
+  const timestamp = new Date(value).getTime()
+  if (!Number.isFinite(timestamp)) return 'recently'
+  const seconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000))
+  if (seconds < 60) return 'just now'
+  const units = [
+    ['year', 31536000],
+    ['month', 2592000],
+    ['week', 604800],
+    ['day', 86400],
+    ['hour', 3600],
+    ['minute', 60],
+  ]
+  const [unit, duration] = units.find(([, size]) => seconds >= size) || units[units.length - 1]
+  const count = Math.floor(seconds / duration)
+  return `${count} ${unit}${count === 1 ? '' : 's'} ago`
+}
+
 function visibleItems() {
   const comments = state.comments.filter(item => !item.parentId)
   const suggestions = state.suggestions
@@ -115,6 +143,7 @@ function visibleItems() {
     ...suggestions.map(item => ({ kind: 'suggestion', item })),
   ]
 
+  const search = state.search.trim().toLocaleLowerCase()
   return all.filter(({ kind, item }) => {
     if (state.hideResolved && (item.resolved || item.status === 'approved' || item.status === 'rejected'))
       return false
@@ -122,6 +151,18 @@ function visibleItems() {
     if (state.filter === 'annotations') return kind === 'comment' && item.type === 'annotation'
     if (state.filter === 'content') return kind === 'suggestion'
     return true
+  }).filter(({ kind, item }) => {
+    if (!search) return true
+    const replies = kind === 'comment' ? repliesFor(item.id) : []
+    return [
+      item.authorName,
+      item.body,
+      item.suggestedText,
+      item.originalText,
+      item.rationale,
+      describeAnchor(item.anchor),
+      ...replies.flatMap(reply => [reply.authorName, reply.body]),
+    ].some(value => String(value || '').toLocaleLowerCase().includes(search))
   })
 }
 
@@ -296,19 +337,29 @@ function renderCard(open) {
 function renderPanel() {
   const items = visibleItems()
   const itemsHtml = items.length
-    ? items.map(({ kind, item }) => renderNotesPanelItem({
-      id: item.id,
-      kind,
-      open: state.open?.id === item.id,
-      title: `${escapeHtml(kind === 'suggestion' ? 'Wording' : typeLabel(item))}${item._orphaned ? renderBadge('Orphaned') : ''}`,
-      preview: escapeHtml((kind === 'suggestion' ? item.suggestedText : item.body) || describeAnchor(item.anchor)),
-    })).join('')
-    : `<div class="vc-item"><span>No items yet. Press C and click an element to leave a note.</span></div>`
+    ? items.map(({ kind, item }) => {
+      const replies = kind === 'comment' ? repliesFor(item.id) : []
+      return renderNotesPanelItem({
+        id: item.id,
+        kind,
+        open: state.open?.id === item.id,
+        number: threadNumber(item),
+        context: describeAnchor(item.anchor),
+        author: item.authorName || 'You',
+        timestamp: relativeTime(item.createdAt || item.updatedAt),
+        message: (kind === 'suggestion' ? item.suggestedText : item.body) || 'No message',
+        participants: replies.map(reply => reply.authorName || 'You'),
+        replyCount: replies.length,
+        badges: item._orphaned ? renderBadge('Orphaned') : '',
+      })
+    }).join('')
+    : `<div class="vc-panel-empty">${state.search ? 'No matching notes.' : 'No items yet. Press C and click an element to leave a note.'}</div>`
 
   return renderNotesPanel({
     collapsed: state.panelLayout.collapsed,
     hideResolved: state.hideResolved,
     filter: state.filter,
+    search: state.search,
     itemsHtml,
   })
 }
@@ -530,6 +581,13 @@ async function onLayerClick(event) {
     return
   }
 
+  if (action === 'cycle-filter') {
+    const filters = ['all', 'notes', 'annotations', 'content']
+    state.filter = filters[(filters.indexOf(state.filter) + 1) % filters.length]
+    renderFeedback()
+    return
+  }
+
   if (action === 'toggle-resolved') {
     state.hideResolved = !state.hideResolved
     renderFeedback()
@@ -676,6 +734,15 @@ async function onLayerClick(event) {
 
 function onLayerInput(event) {
   const field = event.target.dataset.field
+  if (field === 'panel-search') {
+    state.search = event.target.value
+    const cursor = event.target.selectionStart
+    renderFeedback()
+    const search = document.querySelector('#vibecheck-layer [data-field="panel-search"]')
+    search?.focus()
+    search?.setSelectionRange?.(cursor, cursor)
+    return
+  }
   if (!field || !state.draft) return
   state.draft[field] = event.target.value
 }

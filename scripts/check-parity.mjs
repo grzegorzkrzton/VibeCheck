@@ -74,9 +74,23 @@ check('Badge, pin, and panel item emit stable data-vc-component names', () => {
   assert.match(pin, /data-state="Open"/)
   assert.match(pin, /data-type="annotation"/)
   assert.match(pin, /data-kind="warning"/)
-  const item = renderNotesPanelItem({ id: 'c1', kind: 'comment', open: true, title: 'Note', preview: 'Hello' })
+  const item = renderNotesPanelItem({
+    id: 'c1',
+    kind: 'comment',
+    open: true,
+    number: 12,
+    context: 'Hero title',
+    author: 'Ada',
+    timestamp: '6 days ago',
+    message: 'Please ask @Maya',
+    participants: ['Maya'],
+    replyCount: 1,
+  })
   assert.match(item, /data-vc-component="Notes Panel Item"/)
   assert.match(item, /data-state="Open"/)
+  assert.match(item, /#12/)
+  assert.match(item, /class="vc-mention">@Maya/)
+  assert.match(item, /1 reply/)
 })
 
 check('Figma pin and card variant translation', () => {
@@ -128,6 +142,9 @@ check('Notes panel uses Notes title and Wording filter', () => {
   assert.match(html, /data-state="Expanded"/)
   assert.match(html, />Notes</)
   assert.match(html, /Show resolved/)
+  assert.match(html, /placeholder="Search"/)
+  assert.match(html, /data-field="panel-search"/)
+  assert.match(html, /data-action="cycle-filter"/)
   assert.match(html, /Wording/)
   assert.match(html, /data-filter="content"/)
   assert.equal(html.includes('data-action="close"'), false)

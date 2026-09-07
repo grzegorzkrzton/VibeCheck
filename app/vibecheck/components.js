@@ -400,9 +400,20 @@ export function renderNotesPanelItem({
   id,
   kind,
   open = false,
-  title = '',
-  preview = '',
+  number = '',
+  context = '',
+  author = 'You',
+  timestamp = '',
+  message = '',
+  participants = [],
+  replyCount = 0,
+  badges = '',
 } = {}) {
+  const names = [...new Set([author, ...participants].filter(Boolean))].slice(0, 4)
+  const highlightedMessage = escapeHtml(message).replace(
+    /(^|[\s(])(@[a-z0-9._-]+)/gi,
+    '$1<span class="vc-mention">$2</span>',
+  )
   return `
     <button type="button" class="vc-item" ${attrs({
       'data-vc-component': 'Notes Panel Item',
@@ -412,8 +423,18 @@ export function renderNotesPanelItem({
       'data-kind': kind,
       'data-open': Boolean(open),
     })}>
-      <b>${title}</b>
-      <span>${preview}</span>
+      <span class="vc-item-avatars" aria-label="${escapeHtml(names.join(', '))}">
+        ${names.map(name => `<span class="vc-avatar" title="${escapeHtml(name)}">${escapeHtml(name.trim().charAt(0).toUpperCase() || '?')}</span>`).join('')}
+      </span>
+      <span class="vc-item-context">
+        <span class="vc-item-number">#${escapeHtml(number)}</span>
+        <span class="vc-thread-icon" aria-hidden="true">↪</span>
+        <span class="vc-context-link">${escapeHtml(context)}</span>
+        ${badges}
+      </span>
+      <span class="vc-item-author"><strong>${escapeHtml(author)}</strong><span>${escapeHtml(timestamp)}</span></span>
+      <span class="vc-item-message">${highlightedMessage}</span>
+      ${replyCount ? `<span class="vc-reply-count">${escapeHtml(replyCount)} ${replyCount === 1 ? 'reply' : 'replies'}</span>` : ''}
     </button>
   `
 }
@@ -422,6 +443,7 @@ export function renderNotesPanel({
   collapsed = false,
   hideResolved = true,
   filter = 'all',
+  search = '',
   itemsHtml = '',
 } = {}) {
   const filters = [
@@ -439,11 +461,6 @@ export function renderNotesPanel({
       <div class="vc-panel-head" data-drag-handle="panel" title="Drag to move">
         <span>Notes</span>
         <div class="vc-panel-controls">
-          ${collapsed ? '' : renderButton({
-            style: 'Secondary',
-            label: hideResolved ? 'Show resolved' : 'Hide resolved',
-            action: 'toggle-resolved',
-          })}
           ${renderButton({
             style: 'Secondary',
             extraClass: 'vc-collapse',
@@ -455,6 +472,29 @@ export function renderNotesPanel({
       </div>
       ${collapsed ? '' : `
         <div class="vc-panel-body">
+          <div class="vc-panel-tools">
+            <label class="vc-panel-search">
+              <span aria-hidden="true">
+                <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="7" cy="7" r="4.25"></circle><path d="m10.25 10.25 3 3"></path></svg>
+              </span>
+              <input type="search" data-field="panel-search" value="${escapeHtml(search)}" placeholder="Search" aria-label="Search notes">
+            </label>
+            ${renderButton({
+              style: 'Secondary',
+              extraClass: 'vc-panel-tool',
+              action: 'cycle-filter',
+              label: '≡',
+              ariaLabel: `Change filter, currently ${filters.find(([value]) => value === filter)?.[1] || 'All'}`,
+            })}
+            ${renderButton({
+              style: 'Secondary',
+              extraClass: 'vc-panel-tool vc-panel-more',
+              action: 'toggle-resolved',
+              label: '•••',
+              ariaLabel: hideResolved ? 'Show resolved notes' : 'Hide resolved notes',
+              ariaPressed: hideResolved ? 'false' : 'true',
+            })}
+          </div>
           <div class="vc-filters">
             ${filters.map(([value, label]) => renderChip({
               kind: 'Filter',
