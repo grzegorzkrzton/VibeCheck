@@ -71,6 +71,7 @@ export function getTrackedChanges() {
 
     if (diffs.length) {
       changes.push({
+        anchor: record.anchor,
         label: describeAnchor(record.anchor),
         diffs,
       })

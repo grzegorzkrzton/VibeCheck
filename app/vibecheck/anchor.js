@@ -1,3 +1,14 @@
+const COMPONENT_ATTRS = [
+  'data-component',
+  'data-testid',
+  'data-cy',
+  'data-test',
+  'data-qa',
+  'data-slot',
+]
+
+const SECTION_TAGS = new Set(['HEADER', 'NAV', 'MAIN', 'FOOTER', 'SECTION', 'ARTICLE', 'ASIDE'])
+
 export function cssPath(el) {
   if (!(el instanceof Element)) return ''
   const parts = []
@@ -34,15 +45,79 @@ export function cssPath(el) {
   return parts.join(' > ')
 }
 
+function readComponentHint(el) {
+  if (!el || el.nodeType !== 1) return null
+
+  for (const attr of COMPONENT_ATTRS) {
+    const value = el.getAttribute(attr)
+    if (value)
+      return { name: value, source: attr }
+  }
+
+  for (const cls of el.classList) {
+    if (/^[A-Z][a-zA-Z0-9]*$/.test(cls))
+      return { name: cls, source: 'class' }
+  }
+
+  return null
+}
+
+export function getComponentHint(el) {
+  if (!el || el.nodeType !== 1) return null
+
+  let node = el
+  for (let depth = 0; node && depth < 5; depth++, node = node.parentElement) {
+    const hint = readComponentHint(node)
+    if (hint)
+      return depth === 0 ? hint : { ...hint, source: `${hint.source} (ancestor)` }
+  }
+
+  return null
+}
+
+export function getSectionContext(el) {
+  if (!el || el.nodeType !== 1) return null
+
+  let node = el
+  while (node && node !== document.body && node !== document.documentElement) {
+    if (node.id && !/^\d/.test(node.id)) {
+      const tag = node.tagName.toLowerCase()
+      return {
+        label: `${tag}#${node.id}`,
+        tag,
+        id: node.id,
+      }
+    }
+
+    if (SECTION_TAGS.has(node.tagName)) {
+      const tag = node.tagName.toLowerCase()
+      const cls = [...node.classList].find(name => name && !name.startsWith('visbug'))
+      return {
+        label: cls ? `${tag}.${cls}` : tag,
+        tag,
+        id: null,
+      }
+    }
+
+    node = node.parentElement
+  }
+
+  return { label: 'Page', tag: 'body', id: null }
+}
+
 export function createAnchor(el) {
   if (!el || el.nodeType !== 1) return null
   const text = (el.innerText || el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 140)
   return {
     tag: el.tagName.toLowerCase(),
     id: el.id || null,
-    classes: [...el.classList].filter(Boolean).slice(0, 8),
+    classes: [...el.classList].filter(name => name && !name.startsWith('visbug')).slice(0, 12),
     cssPath: cssPath(el),
     text,
+    role: el.getAttribute('role') || null,
+    ariaLabel: el.getAttribute('aria-label') || null,
+    componentHint: getComponentHint(el),
+    section: getSectionContext(el),
   }
 }
 

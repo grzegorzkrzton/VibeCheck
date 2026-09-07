@@ -20,7 +20,7 @@ import {
   VisBugDarkStyles
 } from '../styles.store'
 
-import { VisBugModel }            from './model'
+import { VisBugModel, VisBugPromptTool }  from './model'
 import * as Icons                 from './vis-bug.icons'
 import { provideSelectorEngine }  from '../../features/search'
 import { PluginRegistry }         from '../../plugins/_registry'
@@ -36,6 +36,7 @@ export default class VisBug extends HTMLElement {
     super()
 
     this.toolbar_model  = VisBugModel
+    this.prompt_tool    = VisBugPromptTool
     this.$shadow        = this.attachShadow({mode: 'closed'})
     this.applyScheme    = schemeRule(
       this.$shadow,
@@ -68,7 +69,7 @@ export default class VisBug extends HTMLElement {
     this.selectorEngine.disconnect()
     hotkeys.unbind(
       Object.keys(this.toolbar_model).reduce((events, key) =>
-        events += ',' + key, ''))
+        events += ',' + key, '') + ',q')
     hotkeys.unbind(`${metaKey}+/`)
   }
 
@@ -116,6 +117,21 @@ export default class VisBug extends HTMLElement {
       cursor: 'grab',
     })
 
+    this.setupToolbarTips(this.$shadow)
+
+    const promptBtn = $('[data-tool="prompt"]', this.$shadow)[0]
+    if (promptBtn) {
+      draggable({
+        el: this,
+        surface: promptBtn,
+        cursor: 'pointer',
+        clickEvent: e => {
+          this.prompt()
+          e.stopPropagation()
+        },
+      })
+    }
+
     Object.entries(this.toolbar_model).forEach(([key, value]) =>
       hotkeys(key, e => {
         e.preventDefault()
@@ -124,6 +140,11 @@ export default class VisBug extends HTMLElement {
         )
       })
     )
+
+    hotkeys('q', e => {
+      e.preventDefault()
+      this.prompt()
+    })
 
     hotkeys(`${metaKey}+/,${metaKey}+.`, e =>
       this.$shadow.host.style.display =
@@ -165,6 +186,37 @@ export default class VisBug extends HTMLElement {
     this[el.dataset.tool]()
   }
 
+  setupToolbarTips(root) {
+    $('li[data-tool]', root).forEach(li => {
+      const aside = $('aside', li)[0]
+      if (!aside) return
+
+      const position = () => {
+        const rect = li.getBoundingClientRect()
+        aside.dataset.fixedTip = 'true'
+        aside.style.left = `${Math.round(rect.right + 12)}px`
+        if (li.classList.contains('prompt-action')) {
+          aside.style.top = 'auto'
+          aside.style.bottom = `${Math.round(window.innerHeight - rect.bottom)}px`
+        }
+        else {
+          aside.style.top = `${Math.round(rect.top)}px`
+          aside.style.bottom = ''
+        }
+      }
+
+      const reset = () => {
+        delete aside.dataset.fixedTip
+        aside.style.left = ''
+        aside.style.top = ''
+        aside.style.bottom = ''
+      }
+
+      li.addEventListener('mouseenter', position)
+      li.addEventListener('mouseleave', reset)
+    })
+  }
+
   render() {
     return `
       <visbug-hotkeys></visbug-hotkeys>
@@ -189,6 +241,10 @@ export default class VisBug extends HTMLElement {
         <li class="color" id="border" aria-label="Border or Stroke" aria-description="Change the border color or stroke of svg">
           <input type="color">
           ${Icons.color_border}
+        </li>
+        <li class="color prompt-action" aria-label="${this.prompt_tool.label} Tool" aria-description="${this.prompt_tool.description}" aria-hotkey="q" data-tool="${this.prompt_tool.tool}" title="Copy AI prompt (Q)">
+          ${this.prompt_tool.icon}
+          ${this.demoTip({ key: 'q', ...this.prompt_tool })}
         </li>
       </ol>
     `

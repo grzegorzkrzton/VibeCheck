@@ -109,6 +109,11 @@
     top: 0;
     z-index: -2;
     pointer-events: none;
+
+    &[data-fixed-tip] {
+      position: fixed;
+      z-index: 2147483646;
+    }
     background: var(--theme-bg);
     color: var(--theme-text_color);
     box-shadow: 0 0.1em 4.5em hsla(0,0%,0%,15%);
@@ -229,8 +234,29 @@
   stroke-width: 2px;
 }
 
-:host li[data-tool="prompt"] > svg {
-  fill: var(--neon-pink);
+:host [colors] > li.prompt-action {
+  --contextual_color: transparent;
+  --icon_color: var(--neon-pink);
+  cursor: pointer;
+  margin-bottom: 0.25em;
+
+  & > aside {
+    top: auto;
+    bottom: 0;
+  }
+
+  &:hover {
+    box-shadow: 0 0 0 2px var(--neon-pink), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+  }
+
+  &:active {
+    box-shadow: 0 0 0 2px var(--neon-pink), 0 0.15em 0.35em hsla(0,0%,0%,20%);
+  }
+
+  & > svg {
+    fill: var(--neon-pink);
+    width: 46%;
+  }
 }
 
 :host li[data-tool="search"] {

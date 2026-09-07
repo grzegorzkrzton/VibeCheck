@@ -26,23 +26,6 @@ export const VisBugModel = {
                     </div>
                   </div>`,
   },
-  q: {
-    tool:         'prompt',
-    icon:         Icons.prompt,
-    label:        '<span><u>Q</u>uery AI</span>',
-    description:  'Copy a consistent AI prompt of your live edits',
-    hasTutorial:  false,
-    instruction:  `<div table>
-                    <div>
-                      <b>Edit first:</b>
-                      <span>padding, type, color, text</span>
-                    </div>
-                    <div>
-                      <b>Export:</b>
-                      <span>click this tool or press Q</span>
-                    </div>
-                  </div>`,
-  },
   i: {
     tool:        'inspector',
     icon:        Icons.inspector,
@@ -335,4 +318,22 @@ export const VisBugModel = {
     description: 'Select elements programatically by searching for them or use built in plugins with special commands',
     instruction: '',
   },
+}
+
+export const VisBugPromptTool = {
+  tool:         'prompt',
+  icon:         Icons.prompt,
+  label:        '<span><u>Q</u> AI Prompt</span>',
+  description:  'Copy an AI-ready prompt of your live edits for Cursor, ChatGPT, or your coding agent',
+  hasTutorial:  false,
+  instruction:  `<div table>
+                  <div>
+                    <b>Edit first:</b>
+                    <span>padding, type, color, text</span>
+                  </div>
+                  <div>
+                    <b>Export:</b>
+                    <span>click this button or press Q</span>
+                  </div>
+                </div>`,
 }
