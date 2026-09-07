@@ -71,23 +71,25 @@ export const VisBugModel = {
                     </div>
                   </div>`,
   },
-  x: {
-    tool:        'accessibility',
-    icon:        Icons.accessibility,
-    label:       'Accessibility',
-    description: 'Inspect attributes & contrast compliance',
-    instruction: `<div table>
+  w: {
+    tool:         'content',
+    icon:         Icons.content,
+    label:        '<span><u>W</u>ording</span>',
+    description:  'Suggest replacement copy, preview it on the page, then approve or reject locally',
+    hasTutorial:  false,
+    dividerAfter: true,
+    instruction:  `<div table>
                     <div>
-                      <b>Pin it:</b>
-                      <span>click</span>
+                      <b>Select:</b>
+                      <span>click a text element</span>
                     </div>
                     <div>
-                      <b>Pin many:</b>
-                      <span>shift+click</span>
+                      <b>Preview:</b>
+                      <span>see the new copy on page</span>
                     </div>
                     <div>
-                      <b>Clear:</b>
-                      <span>esc</span>
+                      <b>Decide:</b>
+                      <span>approve or reject</span>
                     </div>
                   </div>`,
   },
@@ -228,6 +230,28 @@ export const VisBugModel = {
                       <span>shift + /</span>
                     </div>
                   </div>`,
+    dividerAfter: true,
+  },
+  x: {
+    tool:        'accessibility',
+    icon:        Icons.accessibility,
+    label:       'Accessibility',
+    description: 'Inspect attributes & contrast compliance',
+    dividerAfter: true,
+    instruction: `<div table>
+                    <div>
+                      <b>Pin it:</b>
+                      <span>click</span>
+                    </div>
+                    <div>
+                      <b>Pin many:</b>
+                      <span>shift+click</span>
+                    </div>
+                    <div>
+                      <b>Clear:</b>
+                      <span>esc</span>
+                    </div>
+                  </div>`,
   },
   h: {
     tool:        'hueshift',
@@ -325,27 +349,6 @@ export const VisBugModel = {
     label:       '<span><u>E</u>dit Text</span>',
     description: 'Just <b>Double click</b> any text on the page',
     instruction: '',
-  },
-  w: {
-    tool:         'content',
-    icon:         Icons.content,
-    label:        '<span><u>W</u>ording</span>',
-    description:  'Suggest replacement copy, preview it on the page, then approve or reject locally',
-    hasTutorial:  false,
-    instruction:  `<div table>
-                    <div>
-                      <b>Select:</b>
-                      <span>click a text element</span>
-                    </div>
-                    <div>
-                      <b>Preview:</b>
-                      <span>see the new copy on page</span>
-                    </div>
-                    <div>
-                      <b>Decide:</b>
-                      <span>approve or reject</span>
-                    </div>
-                  </div>`,
   },
   s: {
     tool:        'search',

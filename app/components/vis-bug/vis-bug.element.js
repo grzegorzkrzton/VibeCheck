@@ -359,6 +359,7 @@ export default class VisBug extends HTMLElement {
             ${tool.icon}
             ${this.demoTip({key, ...tool})}
           </li>
+          ${tool.dividerAfter ? `<li class="vc-divider" aria-hidden="true"></li>` : ''}
         `,'')}
       </ol>
       <ol colors>

@@ -71,6 +71,21 @@
   &:first-child { margin-top: 0.25em; }
   &:last-child { margin-bottom: 0.25em; }
 
+  &.vc-divider {
+    height: 1px;
+    width: 1.35em;
+    margin: 0.4em auto;
+    padding: 0;
+    border-radius: 1px;
+    background: hsl(0 0% 0% / 14%);
+    pointer-events: none;
+    box-shadow: none;
+
+    @media (prefers-color-scheme: dark) {
+      background: hsl(0 0% 100% / 20%);
+    }
+  }
+
   &[data-tool]:not(.prompt-action) {
     :not([data-active=true])&:hover {
       cursor: pointer;
