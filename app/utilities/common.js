@@ -78,19 +78,30 @@ export const htmlStringToDom = (htmlString = "") =>
   (new DOMParser().parseFromString(htmlString, 'text/html'))
     .body.firstChild
 
-export const isOffBounds = node =>
-  node.closest && (
-       node.closest('vis-bug')
-    || node.closest('hotkey-map')
-    || node.closest('visbug-metatip')
-    || node.closest('visbug-ally')
-    || node.closest('visbug-label')
-    || node.closest('visbug-handles')
-    || node.closest('visbug-corners')
-    || node.closest('visbug-grip')
-    || node.closest('visbug-gridlines')
-    || node.closest('#vibecheck-toast')
-  )
+export const isOffBounds = node => {
+  if (!node) return true
+  let current = node
+  while (current) {
+    if (current.closest) {
+      if (
+        current.closest('vis-bug')
+        || current.closest('hotkey-map')
+        || current.closest('visbug-metatip')
+        || current.closest('visbug-ally')
+        || current.closest('visbug-label')
+        || current.closest('visbug-handles')
+        || current.closest('visbug-corners')
+        || current.closest('visbug-grip')
+        || current.closest('visbug-gridlines')
+        || current.closest('#vibecheck-toast')
+        || current.closest('#vibecheck-layer')
+        || current.closest('#vibecheck-toolbar-tip')
+      ) return true
+    }
+    current = current.getRootNode?.()?.host
+  }
+  return false
+}
 
 export const isSelectorValid = (qs => (
   selector => {

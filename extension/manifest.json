@@ -8,7 +8,11 @@
     "activeTab",
     "contextMenus",
     "scripting",
-    "storage"
+    "storage",
+    "identity"
+  ],
+  "host_permissions": [
+    "https://*.supabase.co/*"
   ],
   "background": {
     "service_worker": "visbug.js",
@@ -23,7 +27,9 @@
   "web_accessible_resources": [{
     "resources": [
       "tuts/*.gif",
-      "toolbar/*"
+      "toolbar/*",
+      "popup/*",
+      "supabase.config.json"
     ],
     "matches": ["<all_urls>"]
   }],

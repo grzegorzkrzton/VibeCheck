@@ -29,7 +29,7 @@ cd extension
 2. Select the **`extension/`** folder (path must end with `/design-feedback-tool/extension`)
 3. Open any normal webpage (not `chrome://` pages)
 4. Click the **VibeCheck** icon or press **Alt+Shift+D**
-5. Use VisBug tools: guides (**G**), padding (**P**), edit text (**E**), etc.
+5. Tools: guides (**G**), inspect (**I**), comments (**C**), padding (**P**), edit text (**E**), content (**W**), AI prompt (**Q**)
 
 ### After changing code in `app/`
 
@@ -40,6 +40,15 @@ npm run extension:build
 
 Then **Reload** the extension in `chrome://extensions`.
 
+### After `git pull` on a test machine
+
+```sh
+git pull origin main
+cd extension && ./verify-phase0.sh
+```
+
+Reload the extension. Comments, annotations, and content suggestions are stored in **this browser's localStorage** for the prototype URL. They do **not** sync to another computer until Phase 6 (Supabase).
+
 ---
 
 ## Phase roadmap
@@ -49,7 +58,13 @@ Then **Reload** the extension in `chrome://extensions`.
 | 0 | Done | VisBug baseline — load, toggle, live-edit |
 | 1 | Done | VibeCheck rebrand + icon |
 | 2 | Done | Copy AI prompt from live edits (**Q**) |
-| 3 | Next | SSO, comments, annotations, copy approval |
+| 3 | Done | Figma-like comments (**C**), localStorage |
+| 4 | Done | Note vs Annotation in the same composer |
+| 5 | Done | Content suggestions (**W**), local approve/reject |
+| 6 | Ready | Google SSO + Supabase — add keys in Account & inbox |
+| 7 | Ready | Mentions + inbox; email after SSO |
+
+Full detail: [`PLAN.md`](PLAN.md).
 
 Earlier all-in-one work is preserved on branch `backup/full-implementation`.
 
@@ -60,3 +75,4 @@ Earlier all-in-one work is preserved on branch `backup/full-implementation`.
 - **Private repo** — ask for GitHub access if clone fails
 - **One extension folder** — always load unpacked from `extension/`, not the repo root
 - **Reload after pull** — `git pull` then reload in `chrome://extensions`
+- **Local comments** — same Chrome profile + same prototype URL only, until SSO

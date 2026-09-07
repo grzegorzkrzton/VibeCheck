@@ -10,9 +10,10 @@ import {
   Selectable, Moveable, Padding, Margin, EditText, Font,
   Flex, Search, ColorPicker, BoxShadow, HueShift, MetaTip,
   Guides, Screenshot, Position, Accessibility, draggable,
-  PromptExport,
+  PromptExport, Comments, ContentSuggest,
 } from '../../features/'
 import { startChangeTracker } from '../../vibecheck/tracker'
+import { startFeedbackLayer } from '../../vibecheck/feedback-ui'
 
 import {
   VisBugStyles,
@@ -58,6 +59,7 @@ export default class VisBug extends HTMLElement {
 
     provideSelectorEngine(this.selectorEngine)
     this.stopChangeTracker = startChangeTracker(this.selectorEngine)
+    this.stopFeedbackLayer = startFeedbackLayer()
 
     this.toolSelected($('[data-tool="guides"]', this.$shadow)[0])
   }
@@ -65,6 +67,7 @@ export default class VisBug extends HTMLElement {
   disconnectedCallback() {
     this.deactivate_feature()
     this.stopChangeTracker?.()
+    this.stopFeedbackLayer?.()
     this.teardownToolbarTips()
     this.cleanup()
     this.selectorEngine.disconnect()
@@ -465,6 +468,14 @@ export default class VisBug extends HTMLElement {
 
   prompt() {
     this.deactivate_feature = PromptExport()
+  }
+
+  comments() {
+    this.deactivate_feature = Comments(this.selectorEngine)
+  }
+
+  content() {
+    this.deactivate_feature = ContentSuggest(this.selectorEngine)
   }
 
   execCommand(command) {

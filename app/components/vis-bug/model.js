@@ -50,6 +50,27 @@ export const VisBugModel = {
                     </div>
                   </div>`,
   },
+  c: {
+    tool:         'comments',
+    icon:         Icons.comments,
+    label:        '<span><u>C</u>omment</span>',
+    description:  'Pin a Figma-like note or a developer annotation on a selected element',
+    hasTutorial:  false,
+    instruction:  `<div table>
+                    <div>
+                      <b>Pin:</b>
+                      <span>click an element</span>
+                    </div>
+                    <div>
+                      <b>Type:</b>
+                      <span>Note or Annotation in the box</span>
+                    </div>
+                    <div>
+                      <b>List:</b>
+                      <span>right-side panel</span>
+                    </div>
+                  </div>`,
+  },
   x: {
     tool:        'accessibility',
     icon:        Icons.accessibility,
@@ -305,12 +326,27 @@ export const VisBugModel = {
     description: 'Just <b>Double click</b> any text on the page',
     instruction: '',
   },
-  // c: {
-  //   tool:        'screenshot',
-  //   icon:        Icons.camera,
-  //   label:       'Screenshot',
-  //   description: 'Screenshot selected elements or the entire page'
-  // },
+  w: {
+    tool:         'content',
+    icon:         Icons.content,
+    label:        '<span><u>W</u>ording</span>',
+    description:  'Suggest replacement copy, preview it on the page, then approve or reject locally',
+    hasTutorial:  false,
+    instruction:  `<div table>
+                    <div>
+                      <b>Select:</b>
+                      <span>click a text element</span>
+                    </div>
+                    <div>
+                      <b>Preview:</b>
+                      <span>see the new copy on page</span>
+                    </div>
+                    <div>
+                      <b>Decide:</b>
+                      <span>approve or reject</span>
+                    </div>
+                  </div>`,
+  },
   s: {
     tool:        'search',
     icon:        Icons.search,

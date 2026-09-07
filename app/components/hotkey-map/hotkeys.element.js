@@ -14,6 +14,8 @@ import { PositionHotkeys }      from './position.element'
 import { FontHotkeys }          from './font.element'
 import { TextHotkeys }          from './text.element'
 import { SearchHotkeys }        from './search.element'
+import { CommentsHotkeys }      from './comments.element'
+import { ContentHotkeys }       from './content.element'
 
 export class Hotkeys extends HTMLElement {
 
@@ -34,6 +36,8 @@ export class Hotkeys extends HTMLElement {
       font:           document.createElement('hotkeys-font'),
       text:           document.createElement('hotkeys-text'),
       search:         document.createElement('hotkeys-search'),
+      comments:       document.createElement('hotkeys-comments'),
+      content:        document.createElement('hotkeys-content'),
     }
 
     Object.values(this.tool_map).forEach(tool =>
@@ -60,7 +64,7 @@ export class Hotkeys extends HTMLElement {
   showTool() {
     this.cur_tool = this.tool_map[
       $('vis-bug')[0].activeTool]
-    this.cur_tool.show()
+    this.cur_tool?.show?.()
   }
 }
 

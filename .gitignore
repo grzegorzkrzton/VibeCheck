@@ -4,6 +4,7 @@ node_modules/
 .env
 .env.*
 !.env.example
+extension/supabase.config.json
 app/bundle.js
 app/bundle.min.js
 app/bundle.css

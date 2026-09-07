@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>VibeCheck account</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <h1>VibeCheck</h1>
+    <p class="lede" id="status">Local mode — comments stay in this browser until you connect Supabase.</p>
+
+    <section>
+      <h2>Display name</h2>
+      <label>
+        Used on local pins
+        <input id="author" type="text" placeholder="You">
+      </label>
+      <button id="save-author" type="button">Save name</button>
+    </section>
+
+    <section>
+      <h2>Inbox</h2>
+      <ul id="inbox"></ul>
+    </section>
+
+    <section>
+      <h2>Supabase (Phase 6)</h2>
+      <label>
+        Project URL
+        <input id="url" type="url" placeholder="https://xxxx.supabase.co">
+      </label>
+      <label>
+        Anon key
+        <input id="anon" type="password" placeholder="eyJ...">
+      </label>
+      <label>
+        Allowed email domain
+        <input id="domain" type="text" placeholder="yourcompany.com">
+      </label>
+      <div class="row">
+        <button id="save-config" type="button">Save config</button>
+        <button id="signin" type="button">Sign in with Google</button>
+        <button id="signout" type="button" hidden>Sign out</button>
+      </div>
+    </section>
+  </main>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>

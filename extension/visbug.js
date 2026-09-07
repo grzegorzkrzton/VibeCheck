@@ -1,6 +1,7 @@
 import {gimmeToggle} from "./contextmenu/launcher.js"
 import {getColorMode} from "./contextmenu/colormode.js"
 import {getColorScheme} from "./contextmenu/colorscheme.js"
+import "./backend/messages.js"
 
 const state = {
   loaded:   {},

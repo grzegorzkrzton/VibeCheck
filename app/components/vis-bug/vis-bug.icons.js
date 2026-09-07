@@ -133,6 +133,18 @@ export const accessibility = `
   </svg>
 `
 
+export const comments = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/>
+  </svg>
+`
+
+export const content = `
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+  </svg>
+`
+
 export const prompt = `
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5V8h4.5L13 3.5zM8 12h8v1.5H8V12zm0 3h5v1.5H8V15z"/>

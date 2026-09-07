@@ -15,4 +15,6 @@ export { Screenshot } from './screenshot'
 export { Position, draggable } from './position'
 export { Accessibility } from './accessibility'
 export { PromptExport } from './prompt-export'
+export { Comments } from './comments'
+export { ContentSuggest } from './content'
 

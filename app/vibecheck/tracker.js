@@ -14,9 +14,11 @@ const originals = new Map()
 function isVibeCheckNode(node) {
   if (!node || node.nodeType !== 1) return false
   return node.id === 'vibecheck-toast'
+    || node.id === 'vibecheck-layer'
+    || node.id === 'vibecheck-toolbar-tip'
     || node.nodeName.startsWith('VISBUG-')
     || node.nodeName === 'VIS-BUG'
-    || node.closest?.('vis-bug, #vibecheck-toast')
+    || node.closest?.('vis-bug, #vibecheck-toast, #vibecheck-layer, #vibecheck-toolbar-tip')
 }
 
 export function snapshotElement(el) {
