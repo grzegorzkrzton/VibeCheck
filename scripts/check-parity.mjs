@@ -237,6 +237,7 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-actions button[\s\S]*border: 1px solid var\(--vc-border-default\)/)
   assert.match(css, /textarea::placeholder[\s\S]*color: var\(--vc-text-secondary\)/)
   assert.match(css, /\.vc-panel \{\n  opacity: 1;\n  filter: none;\n  mix-blend-mode: normal;/)
+  assert.match(css, /\.vc-card-head \{[\s\S]*min-height: 32px;\n  font: 700 13px var\(--vc-font-family\)/)
 })
 
 console.log('parity checks passed')

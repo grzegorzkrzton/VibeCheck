@@ -73,13 +73,16 @@ ${layerTokenCss}
 
 #vibecheck-layer .vc-card * { box-sizing: border-box; }
 
+#vibecheck-layer .vc-card-head strong { font-weight: 700; }
+
 #vibecheck-layer .vc-card-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--vc-spacing-8);
   padding: var(--vc-spacing-10) var(--vc-spacing-12) 0;
-  min-height: 38px;
+  min-height: 32px;
+  font: 700 13px var(--vc-font-family);
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -127,11 +130,11 @@ ${layerTokenCss}
 }
 
 #vibecheck-layer .vc-close {
-  width: var(--vc-size-pin);
-  height: var(--vc-size-pin);
+  width: 22px;
+  height: 22px;
   border: 0;
   background: transparent;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   color: var(--vc-text-secondary);
 }
