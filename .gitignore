@@ -1,5 +1,6 @@
 .DS_Store
 .vscode
+.cursor/
 node_modules/
 .env
 .env.*
@@ -9,4 +10,9 @@ app/bundle.js
 app/bundle.min.js
 app/bundle.css
 extension/build
+
+# Scratch screenshots and harnesses from local UI verification
+.*.png
+.scratch/
+
 VisBug/VisBug.xcodeproj/project.xcworkspace/xcuserdata/argyle.xcuserdatad/UserInterfaceState.xcuserstate
