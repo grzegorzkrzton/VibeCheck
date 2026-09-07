@@ -94,38 +94,19 @@
     }
   }
 
-  @media (max-height: 768px) {
-    &:is(:nth-of-type(7),:nth-of-type(8), :nth-of-type(9), :nth-of-type(10), :nth-of-type(11), :nth-of-type(12), :nth-of-type(13)) > aside {
-      top: auto;
-    }
-  }
-
   & > aside {
     overflow: hidden;
     position: absolute;
+    left: -100vw;
+    top: 0;
+    visibility: hidden;
+    pointer-events: none;
     direction: ltr;
     text-align: left;
-    left: 3em;
-    top: 0;
-    z-index: -2;
-    pointer-events: none;
-
-    &[data-fixed-tip] {
-      position: fixed;
-      z-index: 2147483646;
-    }
     background: var(--theme-bg);
     color: var(--theme-text_color);
     box-shadow: 0 0.1em 4.5em hsla(0,0%,0%,15%);
     border-radius: 1em;
-
-    opacity: 0;
-    transform: translateX(-1em);
-    will-change: transform, opacity;
-
-    @media (prefers-reduced-motion: reduce) {
-      transition-duration: 0s;
-    }
 
     & > figure {
       margin: 0;
@@ -189,13 +170,6 @@
     }
   }
 
-  &:hover:not([data-tool="search"]) > aside,
-  &[data-tool="search"] > svg:hover + aside {
-    opacity: 1;
-    transform: translateX(0);
-    transition-delay: 1s;
-  }
-
   & input::-webkit-calendar-picker-indicator {
     background: inherit;
     color: var(--neon-pink);
@@ -236,26 +210,13 @@
 
 :host [colors] > li.prompt-action {
   --contextual_color: transparent;
-  --icon_color: var(--neon-pink);
+  --icon_color: var(--theme-icon_color);
   cursor: pointer;
   margin-bottom: 0.25em;
 
-  & > aside {
-    top: auto;
-    bottom: 0;
-  }
-
-  &:hover {
-    box-shadow: 0 0 0 2px var(--neon-pink), 0 0.25em 0.5em hsla(0,0%,0%,25%);
-  }
-
-  &:active {
-    box-shadow: 0 0 0 2px var(--neon-pink), 0 0.15em 0.35em hsla(0,0%,0%,20%);
-  }
-
   & > svg {
-    fill: var(--neon-pink);
-    width: 46%;
+    fill: var(--icon_color);
+    width: 50%;
   }
 }
 

@@ -65,6 +65,7 @@ export default class VisBug extends HTMLElement {
   disconnectedCallback() {
     this.deactivate_feature()
     this.stopChangeTracker?.()
+    this.teardownToolbarTips()
     this.cleanup()
     this.selectorEngine.disconnect()
     hotkeys.unbind(
@@ -187,34 +188,162 @@ export default class VisBug extends HTMLElement {
   }
 
   setupToolbarTips(root) {
+    this.teardownToolbarTips()
+    this.ensureToolbarTipHost()
+
     $('li[data-tool]', root).forEach(li => {
-      const aside = $('aside', li)[0]
+      const aside = li.dataset.tool === 'search'
+        ? li.querySelector('svg + aside')
+        : li.querySelector('aside')
+
       if (!aside) return
 
-      const position = () => {
-        const rect = li.getBoundingClientRect()
-        aside.dataset.fixedTip = 'true'
-        aside.style.left = `${Math.round(rect.right + 12)}px`
-        if (li.classList.contains('prompt-action')) {
-          aside.style.top = 'auto'
-          aside.style.bottom = `${Math.round(window.innerHeight - rect.bottom)}px`
-        }
-        else {
-          aside.style.top = `${Math.round(rect.top)}px`
-          aside.style.bottom = ''
-        }
+      const trigger = li.dataset.tool === 'search'
+        ? li.querySelector('svg')
+        : li
+
+      const show = () => {
+        clearTimeout(this._tipTimer)
+        this._tipTimer = setTimeout(() =>
+          this.showToolbarTip(trigger, aside), 1000)
       }
 
-      const reset = () => {
-        delete aside.dataset.fixedTip
-        aside.style.left = ''
-        aside.style.top = ''
-        aside.style.bottom = ''
+      const hide = () => {
+        clearTimeout(this._tipTimer)
+        this.hideToolbarTip()
       }
 
-      li.addEventListener('mouseenter', position)
-      li.addEventListener('mouseleave', reset)
+      trigger.addEventListener('mouseenter', show)
+      trigger.addEventListener('mouseleave', hide)
+      li.addEventListener('mouseleave', hide)
     })
+  }
+
+  ensureToolbarTipHost() {
+    if (this._tipHost) return
+
+    if (!document.getElementById('vibecheck-tip-styles')) {
+      const style = document.createElement('style')
+      style.id = 'vibecheck-tip-styles'
+      style.textContent = `
+        #vibecheck-toolbar-tip {
+          position: fixed;
+          z-index: 2147483647;
+          pointer-events: none;
+          opacity: 0;
+          transform: translateX(-8px);
+          transition: opacity 0.3s ease, transform 0.2s ease;
+          direction: ltr;
+          text-align: left;
+          overflow: hidden;
+          border-radius: 1em;
+          max-width: min(360px, calc(100vw - 24px));
+          font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+        }
+        #vibecheck-toolbar-tip figure { margin: 0; display: grid; }
+        #vibecheck-toolbar-tip img { width: 100%; display: block; }
+        #vibecheck-toolbar-tip figcaption { padding: 1em; display: grid; gap: 1em; }
+        #vibecheck-toolbar-tip h2 {
+          margin: 0;
+          font-size: 1.5em;
+          line-height: 1.1;
+          display: grid;
+          grid-auto-flow: column;
+          justify-content: space-between;
+          align-items: center;
+        }
+        #vibecheck-toolbar-tip h2 u { text-decoration-color: hotpink; }
+        #vibecheck-toolbar-tip p { margin: 0; font-size: 1em; line-height: 1.5; }
+        #vibecheck-toolbar-tip [table] { display: grid; gap: 0.5em; }
+        #vibecheck-toolbar-tip [table] > div {
+          display: grid;
+          grid-auto-flow: column;
+          grid-template-columns: 1fr auto;
+          justify-content: space-between;
+        }
+        #vibecheck-toolbar-tip [hotkey] {
+          border-radius: .25em;
+          height: 1.5em;
+          width: 1.5em;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid hotpink;
+          color: hotpink;
+          font-weight: 300;
+          font-size: 0.5em;
+          text-transform: uppercase;
+          box-shadow: 0 2px 2px hsla(0 0% 0% / .25);
+        }
+      `
+      document.head.appendChild(style)
+    }
+
+    this._tipHost = document.createElement('div')
+    this._tipHost.id = 'vibecheck-toolbar-tip'
+    this._tipHost.hidden = true
+    document.documentElement.appendChild(this._tipHost)
+  }
+
+  showToolbarTip(trigger, aside) {
+    if (!this._tipHost || !trigger || !aside) return
+
+    const rect = trigger.getBoundingClientRect()
+    const asideStyle = getComputedStyle(aside)
+
+    this._tipHost.innerHTML = aside.innerHTML
+    this._tipHost.hidden = false
+    this._tipHost.style.background = asideStyle.backgroundColor
+    this._tipHost.style.color = asideStyle.color
+    this._tipHost.style.boxShadow = asideStyle.boxShadow
+
+    const caption = this._tipHost.querySelector('p')
+    const sourceCaption = aside.querySelector('p')
+    if (caption && sourceCaption)
+      caption.style.color = getComputedStyle(sourceCaption).color
+
+    this._tipHost.style.visibility = 'hidden'
+    this._tipHost.style.opacity = '0'
+    this._tipHost.style.transform = 'translateX(-8px)'
+
+    let top = rect.top
+    let left = rect.right + 12
+    this._tipHost.style.left = `${left}px`
+    this._tipHost.style.top = `${top}px`
+
+    const tipRect = this._tipHost.getBoundingClientRect()
+    if (top + tipRect.height > window.innerHeight - 8)
+      top = Math.max(8, window.innerHeight - tipRect.height - 8)
+    if (left + tipRect.width > window.innerWidth - 8)
+      left = Math.max(8, rect.left - tipRect.width - 12)
+
+    this._tipHost.style.left = `${Math.round(left)}px`
+    this._tipHost.style.top = `${Math.round(top)}px`
+    this._tipHost.style.visibility = 'visible'
+
+    requestAnimationFrame(() => {
+      this._tipHost.style.opacity = '1'
+      this._tipHost.style.transform = 'translateX(0)'
+    })
+  }
+
+  hideToolbarTip() {
+    if (!this._tipHost) return
+    this._tipHost.style.opacity = '0'
+    this._tipHost.style.transform = 'translateX(-8px)'
+    setTimeout(() => {
+      if (this._tipHost?.style.opacity === '0') {
+        this._tipHost.hidden = true
+        this._tipHost.innerHTML = ''
+      }
+    }, 200)
+  }
+
+  teardownToolbarTips() {
+    clearTimeout(this._tipTimer)
+    this._tipTimer = null
+    this._tipHost?.remove()
+    this._tipHost = null
   }
 
   render() {
