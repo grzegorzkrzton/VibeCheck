@@ -59,8 +59,8 @@
 }
 
 :host li {
-  height: 2.25em;
-  width: 2.25em;
+  height: var(--vc-size-tool);
+  width: var(--vc-size-tool);
   margin: 0.05em 0.25em;
   display: inline-flex;
   align-items: center;
@@ -71,19 +71,16 @@
   &:first-child { margin-top: 0.25em; }
   &:last-child { margin-bottom: 0.25em; }
 
-  &.vc-divider {
+  &.vc-divider,
+  &[data-vc-component="Toolbar Divider"] {
     height: 1px;
     width: 1.35em;
     margin: 0.4em auto;
     padding: 0;
     border-radius: 1px;
-    background: hsl(0 0% 0% / 14%);
+    background: var(--vc-border-default);
     pointer-events: none;
     box-shadow: none;
-
-    @media (prefers-color-scheme: dark) {
-      background: hsl(0 0% 100% / 20%);
-    }
   }
 
   &[data-tool]:not(.prompt-action) {
@@ -96,7 +93,8 @@
     }
   }
 
-  &[data-active=true] {
+  &[data-active=true],
+  &[data-state="Active"] {
     background-color: var(--theme-icon_active-bg);
     box-shadow: var(--shadow-2);
 
@@ -224,12 +222,12 @@
 }
 
 :host [colors] > li.prompt-action {
-  --contextual_color: hsl(0 0% 8%);
-  --icon_color: white;
-  background: hsl(0 0% 8%);
+  --contextual_color: var(--vc-action-primary);
+  --icon_color: var(--vc-action-on-primary);
+  background: var(--vc-action-primary);
   cursor: pointer;
   margin-bottom: 0.25em;
-  box-shadow: 0 0 0 2px hsl(0 0% 8%), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+  box-shadow: 0 0 0 2px var(--vc-action-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
   transition: background 0.15s ease, box-shadow 0.15s ease;
 
   & > svg {
@@ -239,17 +237,17 @@
   }
 
   &:hover {
-    --contextual_color: white;
-    --icon_color: hsl(0 0% 8%);
-    background: white;
-    box-shadow: 0 0 0 2px hsl(0 0% 8%), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+    --contextual_color: var(--vc-bg-surface);
+    --icon_color: var(--vc-action-primary);
+    background: var(--vc-bg-surface);
+    box-shadow: 0 0 0 2px var(--vc-action-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
   }
 
   &:active {
-    --contextual_color: hsl(0 0% 95%);
-    --icon_color: hsl(0 0% 8%);
-    background: hsl(0 0% 95%);
-    box-shadow: 0 0 0 2px hsl(0 0% 8%), 0 0.15em 0.35em hsla(0,0%,0%,20%);
+    --contextual_color: var(--vc-action-secondary-hover);
+    --icon_color: var(--vc-action-primary);
+    background: var(--vc-action-secondary-hover);
+    box-shadow: 0 0 0 2px var(--vc-action-primary), 0 0.15em 0.35em hsla(0,0%,0%,20%);
   }
 }
 

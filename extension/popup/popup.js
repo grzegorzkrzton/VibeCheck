@@ -40,13 +40,13 @@ async function refresh() {
   const list = inbox?.data?.notifications || []
   $('inbox').innerHTML = list.length
     ? list.slice(0, 20).map(item => `
-        <li>
+        <li data-vc-component="Inbox Item">
           <b>${escapeHtml(item.type || 'update')}</b>
           ${escapeHtml(item.body || item.context || '')}
           <span>${escapeHtml(item.url || '')} · ${escapeHtml(item.createdAt || '')}</span>
         </li>
       `).join('')
-    : '<li>No notifications yet. Mentions and content suggestions will land here.</li>'
+    : '<li data-vc-component="Inbox Item">No notifications yet. Mentions and content suggestions will land here.</li>'
 }
 
 function escapeHtml(value = '') {

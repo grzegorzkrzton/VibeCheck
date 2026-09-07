@@ -1,0 +1,56 @@
+# VibeCheck design contract
+
+Figma is the visual source of truth. The codebase is the behavioral source of truth. Shared names, variants, dimensions, and color tokens keep the two in lockstep.
+
+## Who owns what
+
+| Source | Owns |
+| --- | --- |
+| **Figma** (`VibeCheck` file, Design page) | Visuals, layout, spacing, typography, elevation, and presentational states (Default / Hover / Active / Open / Resolved / Compose / Detail) |
+| **Code** | Storage, events, security, authentication, and data behavior |
+| **`design-system/tokens.json`** | Canonical light/dark token values consumed by both surfaces after generation |
+| **`design-system/figma-components.json`** | Component mapping contract: Figma node → renderer → CSS selector → `data-vc-component` |
+
+Do not restyle a mapped component in CSS or markup without updating the matching Figma node (or tokens). Do not delete runtime fields, event IDs, or security controls to match an incomplete mock.
+
+## Code Connect
+
+Official Figma Code Connect is currently unavailable: the library has no published components. This repository manifest is the mapping until a published library exists. `get_code_connect_suggestions` on the Design page returns no mappings.
+
+## Token pipeline
+
+1. Edit `design-system/tokens.json` (or the matching Figma variables, then copy values here).
+2. Run `npm run design:sync` to emit:
+   - `design-system/generated/tokens.css` — `:root, :host` custom properties for the popup and default toolbar theme
+   - `design-system/generated/tokens-light.css` / `tokens-dark.css` — `:host` properties for the toolbar theme sheets
+   - `design-system/generated/tokens.js` — injected into the feedback overlay (page layer)
+   - `extension/popup/tokens.css` — copy inside the extension package
+3. Run `npm run design:check` (also `npm run test:parity`) before review. It fails when generated files drift, mapped renderers are missing, or helper markup does not emit `data-vc-component`.
+
+Never edit generated files by hand.
+
+## Mapping manifest
+
+Every Figma family in `figma-components.json` records:
+
+- `nodeId` and Figma URL
+- `code.source` + `renderer`
+- CSS `selector`
+- stable `data-vc-component` name
+- variant attributes (`data-style`, `data-state`, `data-type`, `data-kind`, `data-vc-type`)
+
+Runtime markup must emit those attributes. Hover/Focus states are CSS-only; Active/Open/Resolved/Compose/Detail are data attributes.
+
+## Future-change recipe
+
+When a designer (or you) changes one component:
+
+1. Provide a **component-specific Figma URL** (file + `node-id`), not just the page.
+2. Read that node with design context (`get_design_context` / Figma MCP).
+3. Look the node up in `design-system/figma-components.json`.
+4. Change **canonical tokens** (`tokens.json`) and/or the **mapped renderer** (`code.source` / `renderer`).
+5. Run `npm run design:sync`, then `npm run design:check`.
+6. Verify the mapped surface: toolbar, pin, card, panel, or popup.
+7. If Figma component-set IDs changed, update `nodeId` in the manifest in the same change.
+
+Example: a Button radius change lives in Figma `4:18` and `--vc-radius-8`. A new card field is added in Figma on the Note family, then in `renderNoteCard`, never as a one-off in `feedback-ui.js` event logic.

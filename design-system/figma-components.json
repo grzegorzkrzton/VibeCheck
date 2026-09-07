@@ -1,0 +1,400 @@
+{
+  "fileKey": "3UduCyltV7tmRYSnDqTEfA",
+  "fileName": "VibeCheck",
+  "designPageNodeId": "1:3",
+  "fileUrl": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck",
+  "codeConnect": {
+    "available": false,
+    "reason": "Official Figma Code Connect is unavailable because this file has no published library components. This manifest is the mapping contract until the library is published."
+  },
+  "sourceOfTruth": {
+    "figma": [
+      "visuals",
+      "tokens",
+      "layout",
+      "presentational states"
+    ],
+    "code": [
+      "storage",
+      "events",
+      "security",
+      "data behavior"
+    ]
+  },
+  "components": [
+    {
+      "name": "Button",
+      "figmaName": "Button",
+      "nodeId": "4:18",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-18",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderButton",
+        "selector": "[data-vc-component=\"Button\"]",
+        "dataComponent": "Button"
+      },
+      "variants": {
+        "Style": ["Primary", "Secondary", "Danger"],
+        "State": ["Default", "Hover"]
+      },
+      "attributes": {
+        "data-style": "Style",
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Chip",
+      "figmaName": "Chip",
+      "nodeId": "4:31",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-31",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderChip",
+        "selector": "[data-vc-component=\"Chip\"]",
+        "dataComponent": "Chip"
+      },
+      "variants": {
+        "Kind": ["Segment", "Filter", "Annotation"],
+        "State": ["Default", "Selected"]
+      },
+      "attributes": {
+        "data-kind": "Kind",
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Field",
+      "figmaName": "Field",
+      "nodeId": "4:40",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-40",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderField",
+        "selector": "[data-vc-component=\"Field\"]",
+        "dataComponent": "Field"
+      },
+      "variants": {
+        "Type": ["Input", "Textarea"],
+        "State": ["Default", "Focus"]
+      },
+      "attributes": {
+        "data-type": "Type",
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Badge",
+      "figmaName": "Badge",
+      "nodeId": "4:43",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-43",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderBadge",
+        "selector": "[data-vc-component=\"Badge\"]",
+        "dataComponent": "Badge"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Feedback Pin",
+      "figmaName": "Feedback Pin",
+      "nodeId": "4:76",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-76",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderPin",
+        "selector": "[data-vc-component=\"Feedback Pin\"]",
+        "dataComponent": "Feedback Pin"
+      },
+      "variants": {
+        "Type": ["Note", "Implement", "Warning", "Question", "Suggestion"],
+        "State": ["Default", "Open", "Resolved"]
+      },
+      "attributes": {
+        "data-vc-type": "Type",
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Toolbar Icon",
+      "figmaName": "Toolbar Icon",
+      "nodeId": "5:54",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-54",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.icons.js",
+        "renderer": "Icons",
+        "selector": "vis-bug li[data-tool] > svg, vis-bug li.color > svg",
+        "dataComponent": "Toolbar Icon"
+      },
+      "variants": {
+        "Name": [
+          "Guides",
+          "Inspect",
+          "Comment",
+          "Wording",
+          "Position",
+          "Margin",
+          "Padding",
+          "Flex Align",
+          "Move",
+          "Accessibility",
+          "Hue Shift",
+          "Box Shadows",
+          "Font Styles",
+          "Edit Text",
+          "Search",
+          "AI Prompt"
+        ]
+      },
+      "attributes": {}
+    },
+    {
+      "name": "Toolbar Tool Button",
+      "figmaName": "Toolbar Tool Button",
+      "nodeId": "5:64",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-64",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "VisBug.render",
+        "selector": "ol:not([colors]) li[data-vc-component=\"Toolbar Tool Button\"]",
+        "dataComponent": "Toolbar Tool Button"
+      },
+      "variants": {
+        "State": ["Default", "Hover", "Active"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Toolbar AI Prompt",
+      "figmaName": "Toolbar AI Prompt",
+      "nodeId": "5:77",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-77",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "VisBug.render",
+        "selector": "[data-vc-component=\"Toolbar AI Prompt\"]",
+        "dataComponent": "Toolbar AI Prompt"
+      },
+      "variants": {
+        "State": ["Default", "Hover", "Active"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Toolbar Color Action",
+      "figmaName": "Toolbar Color Action",
+      "nodeId": "5:96",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-96",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "VisBug.render",
+        "selector": "[data-vc-component=\"Toolbar Color Action\"]",
+        "dataComponent": "Toolbar Color Action"
+      },
+      "variants": {
+        "Type": ["Text", "Background", "Border"],
+        "State": ["Default", "Hover"]
+      },
+      "attributes": {
+        "data-type": "Type",
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Toolbar Divider",
+      "figmaName": "Toolbar Divider",
+      "nodeId": "5:97",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-97",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "VisBug.render",
+        "selector": "[data-vc-component=\"Toolbar Divider\"]",
+        "dataComponent": "Toolbar Divider"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Main Toolbar",
+      "figmaName": "Main Toolbar",
+      "nodeId": "5:98",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-98",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "VisBug.render",
+        "selector": "[data-vc-component=\"Main Toolbar\"]",
+        "dataComponent": "Main Toolbar"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Color & AI Toolbar",
+      "figmaName": "Color & AI Toolbar",
+      "nodeId": "6:57",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=6-57",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "VisBug.render",
+        "selector": "[data-vc-component=\"Color & AI Toolbar\"]",
+        "dataComponent": "Color & AI Toolbar"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Feedback Card / Note",
+      "figmaName": "Feedback Card / Note",
+      "nodeId": "15:144",
+      "variantNodes": {
+        "Compose": "6:71",
+        "Detail": "15:112"
+      },
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=15-144",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderNoteCard",
+        "selector": "[data-vc-component=\"Feedback Card / Note\"]",
+        "dataComponent": "Feedback Card / Note"
+      },
+      "variants": {
+        "State": ["Compose", "Detail"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Feedback Card / Annotation",
+      "figmaName": "Feedback Card / Annotation",
+      "nodeId": "16:157",
+      "variantNodes": {
+        "Compose": "6:83",
+        "Detail": "16:121"
+      },
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=16-157",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderAnnotationCard",
+        "selector": "[data-vc-component=\"Feedback Card / Annotation\"]",
+        "dataComponent": "Feedback Card / Annotation"
+      },
+      "variants": {
+        "State": ["Compose", "Detail"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Feedback Card / Wording",
+      "figmaName": "Feedback Card / Wording",
+      "nodeId": "16:249",
+      "variantNodes": {
+        "Compose": "6:102",
+        "Detail": "16:210"
+      },
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=16-249",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderWordingCard",
+        "selector": "[data-vc-component=\"Feedback Card / Wording\"]",
+        "dataComponent": "Feedback Card / Wording"
+      },
+      "variants": {
+        "State": ["Compose", "Detail"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Notes Panel Item",
+      "figmaName": "Notes Panel Item",
+      "nodeId": "6:124",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=6-124",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderNotesPanelItem",
+        "selector": "[data-vc-component=\"Notes Panel Item\"]",
+        "dataComponent": "Notes Panel Item"
+      },
+      "variants": {
+        "State": ["Default", "Open"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Notes Panel",
+      "figmaName": "Notes Panel",
+      "nodeId": "6:151",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=6-151",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderNotesPanel",
+        "selector": "[data-vc-component=\"Notes Panel\"]",
+        "dataComponent": "Notes Panel"
+      },
+      "variants": {
+        "State": ["Expanded", "Collapsed"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Inbox Item",
+      "figmaName": "Inbox Item",
+      "nodeId": "6:152",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=6-152",
+      "code": {
+        "source": "extension/popup/popup.js",
+        "renderer": "refresh",
+        "selector": "[data-vc-component=\"Inbox Item\"]",
+        "dataComponent": "Inbox Item"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Account & Inbox Popup",
+      "figmaName": "Account & Inbox Popup",
+      "nodeId": "6:155",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=6-155",
+      "code": {
+        "source": "extension/popup/index.html",
+        "renderer": "popup markup",
+        "selector": "[data-vc-component=\"Account & Inbox Popup\"]",
+        "dataComponent": "Account & Inbox Popup"
+      },
+      "variants": {},
+      "attributes": {}
+    }
+  ]
+}

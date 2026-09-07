@@ -1,0 +1,46 @@
+/* Generated from design-system/tokens.json. Do not edit. */
+:host {
+  --vc-bg-page: #111827;
+  --vc-bg-surface: #16171f;
+  --vc-bg-subtle: #111827;
+  --vc-bg-input: #111827;
+  --vc-text-primary: #f4f4f6;
+  --vc-text-secondary: #9ca3af;
+  --vc-text-muted: #9ca3af;
+  --vc-border-default: #3a3d4a;
+  --vc-action-primary: #ffffff;
+  --vc-action-on-primary: #111827;
+  --vc-action-primary-hover: #9ca3af;
+  --vc-action-secondary-hover: #4b5563;
+  --vc-pin-note: #7c3aed;
+  --vc-pin-implement: #2563eb;
+  --vc-pin-warning: #d97706;
+  --vc-pin-question: #0f766e;
+  --vc-pin-suggestion: #f4f4f6;
+  --vc-status-danger: #b91c1c;
+  --vc-badge-background: #fef3c7;
+  --vc-badge-text: #92400e;
+  --vc-selection-background: #111827;
+  --vc-spacing-4: 4px;
+  --vc-spacing-6: 6px;
+  --vc-spacing-8: 8px;
+  --vc-spacing-10: 10px;
+  --vc-spacing-12: 12px;
+  --vc-spacing-16: 16px;
+  --vc-spacing-24: 24px;
+  --vc-radius-6: 6px;
+  --vc-radius-8: 8px;
+  --vc-radius-12: 12px;
+  --vc-radius-full: 999px;
+  --vc-size-pin: 28px;
+  --vc-size-tool: 36px;
+  --vc-size-panel: 280px;
+  --vc-size-card: 300px;
+  --vc-size-popup: 320px;
+  --vc-opacity-resolved: 0.45;
+  --vc-shadow-pin: 0 4px 16px rgb(0 0 0 / 28%);
+  --vc-shadow-card: 0 16px 50px rgb(0 0 0 / 28%);
+  --vc-shadow-panel: 0 12px 40px rgb(0 0 0 / 22%);
+  --vc-shadow-pin-open: 0 0 0 3px #ffffff, 0 0 0 6px currentColor, 0 8px 24px rgb(0 0 0 / 35%);
+  --vc-font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+}

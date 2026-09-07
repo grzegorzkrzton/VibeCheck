@@ -182,10 +182,12 @@ export default class VisBug extends HTMLElement {
 
     if (this.active_tool) {
       this.active_tool.attr('data-active', null)
+      this.active_tool.attr('data-state', 'Default')
       this.deactivate_feature()
     }
 
     el.attr('data-active', true)
+    el.attr('data-state', 'Active')
     this.active_tool = el
     this[el.dataset.tool]()
   }
@@ -352,30 +354,30 @@ export default class VisBug extends HTMLElement {
   render() {
     return `
       <visbug-hotkeys></visbug-hotkeys>
-      <ol constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
+      <ol data-vc-component="Main Toolbar" constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
         ${Object.entries(this.toolbar_model).reduce((list, [key, tool]) => `
           ${list}
-          <li aria-label="${tool.label} Tool" aria-description="${tool.description}" aria-hotkey="${key}" data-tool="${tool.tool}" data-active="${key == 'g'}">
+          <li data-vc-component="Toolbar Tool Button" data-state="${key == 'g' ? 'Active' : 'Default'}" aria-label="${tool.label} Tool" aria-description="${tool.description}" aria-hotkey="${key}" data-tool="${tool.tool}" data-active="${key == 'g'}">
             ${tool.icon}
             ${this.demoTip({key, ...tool})}
           </li>
-          ${tool.dividerAfter ? `<li class="vc-divider" aria-hidden="true"></li>` : ''}
+          ${tool.dividerAfter ? `<li class="vc-divider" data-vc-component="Toolbar Divider" aria-hidden="true"></li>` : ''}
         `,'')}
       </ol>
-      <ol colors>
-        <li class="color" id="foreground" aria-label="Text" aria-description="Change the text color">
+      <ol colors data-vc-component="Color & AI Toolbar">
+        <li class="color" data-vc-component="Toolbar Color Action" data-type="Text" data-state="Default" id="foreground" aria-label="Text" aria-description="Change the text color">
           <input type="color">
           ${Icons.color_text}
         </li>
-        <li class="color" id="background" aria-label="Background or Fill" aria-description="Change the background color or fill of svg">
+        <li class="color" data-vc-component="Toolbar Color Action" data-type="Background" data-state="Default" id="background" aria-label="Background or Fill" aria-description="Change the background color or fill of svg">
           <input type="color">
           ${Icons.color_background}
         </li>
-        <li class="color" id="border" aria-label="Border or Stroke" aria-description="Change the border color or stroke of svg">
+        <li class="color" data-vc-component="Toolbar Color Action" data-type="Border" data-state="Default" id="border" aria-label="Border or Stroke" aria-description="Change the border color or stroke of svg">
           <input type="color">
           ${Icons.color_border}
         </li>
-        <li class="color prompt-action" aria-label="${this.prompt_tool.label} Tool" aria-description="${this.prompt_tool.description}" aria-hotkey="q" data-tool="${this.prompt_tool.tool}" title="Copy AI prompt (Q)">
+        <li class="color prompt-action" data-vc-component="Toolbar AI Prompt" data-state="Default" aria-label="${this.prompt_tool.label} Tool" aria-description="${this.prompt_tool.description}" aria-hotkey="q" data-tool="${this.prompt_tool.tool}" title="Copy AI prompt (Q)">
           ${this.prompt_tool.icon}
           ${this.demoTip({ key: 'q', ...this.prompt_tool })}
         </li>

@@ -11,27 +11,35 @@ test('Should have guides as default tool', async t => {
   t.pass()
 })
 
-test('Should have 13 tools', async t => {
+test('Should have 15 tools and 3 dividers', async t => {
   const { page } = t.context
-  const tools = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('ol:first-of-type > li').length`)
+  const tools = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('ol:first-of-type > li[data-tool]').length`)
+  const dividers = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('ol:first-of-type > li.vc-divider').length`)
+  const mapped = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelector('[data-vc-component="Main Toolbar"]') !== null`)
 
-  t.is(tools, 13)
+  t.is(tools, 15)
+  t.is(dividers, 3)
+  t.true(mapped)
   t.pass()
 })
 
-test('Should have 13 key trainers', async t => {
+test('Should have 15 key trainers', async t => {
   const { page } = t.context
   const trainers = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('visbug-hotkeys > *').length`)
 
-  t.is(trainers, 13)
+  t.is(trainers, 15)
   t.pass()
 })
 
-test('Should have 3 color pickers', async t => {
+test('Should have 3 color controls and an AI action', async t => {
   const { page } = t.context
-  const pickers = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('ol[colors] > li').length`)
+  const pickers = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('ol[colors] > li.color:not(.prompt-action)').length`)
+  const ai = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelectorAll('ol[colors] > li.prompt-action').length`)
+  const colorBar = await page.evaluate(`document.querySelector('vis-bug').$shadow.querySelector('[data-vc-component="Color & AI Toolbar"]') !== null`)
 
   t.is(pickers, 3)
+  t.is(ai, 1)
+  t.true(colorBar)
   t.pass()
 })
 

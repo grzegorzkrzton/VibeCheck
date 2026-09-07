@@ -3,6 +3,17 @@ import { createAnchor, describeAnchor } from './anchor'
 import { resolveAnchor } from './resolve'
 import { feedbackStyles } from './feedback-styles'
 import {
+  KIND_LABEL,
+  escapeHtml,
+  renderAnnotationCard,
+  renderBadge,
+  renderNoteCard,
+  renderNotesPanel,
+  renderNotesPanelItem,
+  renderPin,
+  renderWordingCard,
+} from './components'
+import {
   addNotification,
   getAuthorName,
   loadStore,
@@ -18,12 +29,6 @@ import {
 const LAYER_ID = 'vibecheck-layer'
 const STYLE_ID = 'vibecheck-feedback-styles'
 const PANEL_LAYOUT_KEY = 'vibecheck:panelLayout'
-
-const KIND_LABEL = {
-  implement: 'Implement',
-  warning: 'Warning',
-  question: 'Question',
-}
 
 const state = {
   comments: [],
@@ -191,146 +196,127 @@ function placePanel(panel) {
   panel.style.right = 'auto'
 }
 
-function escapeHtml(value = '') {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-}
-
 function typeLabel(item) {
   if (item.type === 'annotation')
     return `Annotation · ${KIND_LABEL[item.kind] || 'Implement'}`
-  if (item.status) return `Content · ${item.status}`
+  if (item.status) return `Wording · ${item.status}`
   return 'Note'
+}
+
+function itemBadges(item) {
+  return `${item._orphaned ? renderBadge('Orphaned') : ''}${item.resolved ? renderBadge('Resolved') : ''}`
+}
+
+function repliesHtml(item) {
+  const replies = repliesFor(item.id)
+  if (!replies.length) return ''
+  return `<div class="vc-thread">${replies.map(reply => `
+    <div class="vc-reply"><b>${escapeHtml(reply.authorName || 'You')}</b>${escapeHtml(reply.body || '')}</div>
+  `).join('')}</div>`
 }
 
 function renderCard(open) {
   if (!open) return ''
   const { kind, item } = open
   const author = getAuthorName()
+  const composing = kind === 'draft' || (kind === 'comment' && item._editing)
 
-  if (kind === 'draft' || (kind === 'comment' && item._editing)) {
-    const isAnnotation = item.type === 'annotation'
-    const isSuggestion = kind === 'draft' && item.recordType === 'suggestion'
-    return `
-      <div class="vc-card" data-card="${item.id}">
-        <div class="vc-card-head" data-drag-handle="card" title="Drag to move">
-          ${isSuggestion ? `<strong>Content suggestion</strong>` : `
-            <div class="vc-types">
-              <button type="button" data-action="set-type" data-type="note" aria-pressed="${!isAnnotation}">Note</button>
-              <button type="button" data-action="set-type" data-type="annotation" aria-pressed="${isAnnotation}">Annotation for devs</button>
-            </div>
-          `}
-          <button type="button" class="vc-close" data-action="close" aria-label="Close">×</button>
-        </div>
-        ${!isSuggestion && isAnnotation ? `
-          <div class="vc-kinds">
-            <button type="button" data-action="set-kind" data-kind="implement" aria-pressed="${item.kind === 'implement'}">Implement</button>
-            <button type="button" data-action="set-kind" data-kind="warning" aria-pressed="${item.kind === 'warning'}">Warning</button>
-            <button type="button" data-action="set-kind" data-kind="question" aria-pressed="${item.kind === 'question'}">Question</button>
-          </div>
-        ` : ''}
-        <div class="vc-meta">${escapeHtml(describeAnchor(item.anchor))}</div>
-        ${isSuggestion ? `
-          <textarea data-field="suggestedText" placeholder="Suggested copy">${escapeHtml(item.suggestedText || '')}</textarea>
-          <textarea data-field="rationale" placeholder="Why this change? (optional)">${escapeHtml(item.rationale || '')}</textarea>
-        ` : `
-          <textarea data-field="body" placeholder="${isAnnotation ? 'What should engineering know?' : 'Write a note…'}">${escapeHtml(item.body || '')}</textarea>
-        `}
-        <input type="text" data-field="authorName" value="${escapeHtml(author)}" placeholder="Your name">
-        <div class="vc-actions">
-          <button type="button" data-action="cancel">Cancel</button>
-          ${isSuggestion ? `<button type="button" data-action="preview">Preview</button>` : ''}
-          <button type="button" class="primary" data-action="save">Save</button>
-        </div>
-      </div>
-    `
+  if (composing && item.recordType === 'suggestion') {
+    return renderWordingCard({
+      id: item.id,
+      state: 'Compose',
+      suggestedText: item.suggestedText || '',
+      rationale: item.rationale || '',
+      author,
+    })
+  }
+
+  if (composing && item.type === 'annotation') {
+    return renderAnnotationCard({
+      id: item.id,
+      state: 'Compose',
+      kind: item.kind || 'implement',
+      body: item.body || '',
+      author,
+      context: escapeHtml(describeAnchor(item.anchor)),
+    })
+  }
+
+  if (composing) {
+    return renderNoteCard({
+      id: item.id,
+      state: 'Compose',
+      body: item.body || '',
+      author,
+      context: escapeHtml(describeAnchor(item.anchor)),
+    })
   }
 
   if (kind === 'suggestion') {
-    return `
-      <div class="vc-card" data-card="${item.id}">
-        <div class="vc-card-head" data-drag-handle="card" title="Drag to move">
-          <strong>Content suggestion</strong>
-          <button type="button" class="vc-close" data-action="close" aria-label="Close">×</button>
-        </div>
-        <div class="vc-meta">${escapeHtml(item.authorName || 'You')} · ${escapeHtml(typeLabel(item))}${item._orphaned ? '<span class="vc-badge">Orphaned</span>' : ''}</div>
-        <div class="vc-body"><b>From</b><br>${escapeHtml(item.originalText || '(empty)')}</div>
-        <div class="vc-body"><b>To</b><br>${escapeHtml(item.suggestedText || '(empty)')}</div>
-        ${item.rationale ? `<div class="vc-body">${escapeHtml(item.rationale)}</div>` : ''}
-        <div class="vc-actions">
-          <button type="button" data-action="preview">Preview</button>
-          ${item.status === 'pending' ? `
-            <button type="button" data-action="reject" class="danger">Reject</button>
-            <button type="button" class="primary" data-action="approve">Approve</button>
-          ` : `<button type="button" data-action="delete" class="danger">Delete</button>`}
-        </div>
-      </div>
-    `
+    return renderWordingCard({
+      id: item.id,
+      state: 'Detail',
+      suggestedText: escapeHtml(item.suggestedText || '(empty)'),
+      rationale: item.rationale ? escapeHtml(item.rationale) : '',
+      originalText: escapeHtml(item.originalText || '(empty)'),
+      meta: `${escapeHtml(item.authorName || 'You')} · ${escapeHtml(typeLabel(item))}`,
+      badges: itemBadges(item),
+      status: item.status,
+    })
   }
 
-  const replies = repliesFor(item.id)
-  return `
-    <div class="vc-card" data-card="${item.id}">
-      <div class="vc-card-head" data-drag-handle="card" title="Drag to move">
-        <strong>${escapeHtml(typeLabel(item))}</strong>
-        <button type="button" class="vc-close" data-action="close" aria-label="Close">×</button>
-      </div>
-      <div class="vc-meta">${escapeHtml(item.authorName || 'You')} · ${escapeHtml(describeAnchor(item.anchor))}${item._orphaned ? '<span class="vc-badge">Orphaned</span>' : ''}${item.resolved ? '<span class="vc-badge">Resolved</span>' : ''}</div>
-      <div class="vc-body">${escapeHtml(item.body || '')}</div>
-      ${replies.length ? `<div class="vc-thread">${replies.map(reply => `
-        <div class="vc-reply"><b>${escapeHtml(reply.authorName || 'You')}</b>${escapeHtml(reply.body || '')}</div>
-      `).join('')}</div>` : ''}
-      <textarea data-field="reply" placeholder="Reply… use @name to mention"></textarea>
-      <div class="vc-actions">
-        <button type="button" data-action="delete" class="danger">Delete</button>
-        <button type="button" data-action="resolve">${item.resolved ? 'Reopen' : 'Resolve'}</button>
-        <button type="button" class="primary" data-action="reply">Reply</button>
-      </div>
-    </div>
-  `
+  const sharedDetail = {
+    id: item.id,
+    state: 'Detail',
+    body: escapeHtml(item.body || ''),
+    meta: `${escapeHtml(item.authorName || 'You')} · ${escapeHtml(describeAnchor(item.anchor))}`,
+    badges: itemBadges(item),
+    repliesHtml: repliesHtml(item),
+    resolved: Boolean(item.resolved),
+  }
+
+  if (item.type === 'annotation') {
+    return renderAnnotationCard({
+      ...sharedDetail,
+      kind: item.kind || 'implement',
+    })
+  }
+
+  return renderNoteCard(sharedDetail)
 }
 
 function renderPanel() {
   const items = visibleItems()
-  const filter = state.filter
-  return `
-    <aside class="vc-panel" data-collapsed="${state.panelLayout.collapsed}">
-      <div class="vc-panel-head" data-drag-handle="panel" title="Drag to move">
-        <span>VibeCheck</span>
-        <div class="vc-panel-controls">
-          ${state.panelLayout.collapsed ? '' : `<button type="button" data-action="toggle-resolved">${state.hideResolved ? 'Show resolved' : 'Hide resolved'}</button>`}
-          <button type="button" class="vc-collapse" data-action="toggle-panel" aria-label="${state.panelLayout.collapsed ? 'Expand notes panel' : 'Collapse notes panel'}" title="${state.panelLayout.collapsed ? 'Expand' : 'Collapse'}">${state.panelLayout.collapsed ? '▣' : '−'}</button>
-        </div>
-      </div>
-      ${state.panelLayout.collapsed ? '' : `
-        <div class="vc-panel-body">
-          <div class="vc-filters">
-            <button type="button" data-action="filter" data-filter="all" aria-pressed="${filter === 'all'}">All</button>
-            <button type="button" data-action="filter" data-filter="notes" aria-pressed="${filter === 'notes'}">Notes</button>
-            <button type="button" data-action="filter" data-filter="annotations" aria-pressed="${filter === 'annotations'}">Annotations</button>
-            <button type="button" data-action="filter" data-filter="content" aria-pressed="${filter === 'content'}">Content</button>
-          </div>
-          ${items.length ? items.map(({ kind, item }) => `
-            <button type="button" class="vc-item" data-action="open" data-id="${item.id}" data-kind="${kind}" data-open="${state.open?.id === item.id}">
-              <b>${escapeHtml(kind === 'suggestion' ? 'Content' : typeLabel(item))}${item._orphaned ? '<span class="vc-badge">Orphaned</span>' : ''}</b>
-              <span>${escapeHtml((kind === 'suggestion' ? item.suggestedText : item.body) || describeAnchor(item.anchor))}</span>
-            </button>
-          `).join('') : `<div class="vc-item"><span>No items yet. Press C and click an element to leave a note.</span></div>`}
-        </div>
-      `}
-    </aside>
-  `
+  const itemsHtml = items.length
+    ? items.map(({ kind, item }) => renderNotesPanelItem({
+      id: item.id,
+      kind,
+      open: state.open?.id === item.id,
+      title: `${escapeHtml(kind === 'suggestion' ? 'Wording' : typeLabel(item))}${item._orphaned ? renderBadge('Orphaned') : ''}`,
+      preview: escapeHtml((kind === 'suggestion' ? item.suggestedText : item.body) || describeAnchor(item.anchor)),
+    })).join('')
+    : `<div class="vc-item"><span>No items yet. Press C and click an element to leave a note.</span></div>`
+
+  return renderNotesPanel({
+    collapsed: state.panelLayout.collapsed,
+    hideResolved: state.hideResolved,
+    filter: state.filter,
+    itemsHtml,
+  })
 }
 
 function renderPins() {
   return visibleItems().map(({ kind, item }) => {
     if (item._orphaned) return ''
-    const label = kind === 'suggestion' ? 'S' : commentNumber(item)
-    const type = kind === 'suggestion' ? 'suggestion' : (item.type || 'note')
-    return `<button type="button" class="vc-pin" data-action="open" data-id="${item.id}" data-item="${kind}" data-type="${type}" data-kind="${item.kind || ''}" data-resolved="${Boolean(item.resolved)}" data-open="${state.open?.id === item.id}">${label}</button>`
+    return renderPin({
+      id: item.id,
+      recordKind: kind,
+      type: kind === 'suggestion' ? 'suggestion' : (item.type || 'note'),
+      kind: item.kind || '',
+      number: kind === 'suggestion' ? 'S' : commentNumber(item),
+      open: state.open?.id === item.id,
+      resolved: Boolean(item.resolved),
+    })
   }).join('')
 }
 
@@ -565,7 +551,7 @@ async function onLayerClick(event) {
 
   if (action === 'set-kind' && state.draft) {
     state.draft.type = 'annotation'
-    state.draft.kind = actionEl.dataset.kind
+    state.draft.kind = actionEl.dataset.annotationKind || actionEl.dataset.kind
     renderFeedback()
     return
   }
