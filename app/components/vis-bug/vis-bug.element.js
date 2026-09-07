@@ -9,8 +9,10 @@ import {
 import {
   Selectable, Moveable, Padding, Margin, EditText, Font,
   Flex, Search, ColorPicker, BoxShadow, HueShift, MetaTip,
-  Guides, Screenshot, Position, Accessibility, draggable
+  Guides, Screenshot, Position, Accessibility, draggable,
+  PromptExport,
 } from '../../features/'
+import { startChangeTracker } from '../../vibecheck/tracker'
 
 import {
   VisBugStyles,
@@ -54,12 +56,14 @@ export default class VisBug extends HTMLElement {
     this.colorPicker    = ColorPicker(this.$shadow, this.selectorEngine)
 
     provideSelectorEngine(this.selectorEngine)
+    this.stopChangeTracker = startChangeTracker(this.selectorEngine)
 
     this.toolSelected($('[data-tool="guides"]', this.$shadow)[0])
   }
 
   disconnectedCallback() {
     this.deactivate_feature()
+    this.stopChangeTracker?.()
     this.cleanup()
     this.selectorEngine.disconnect()
     hotkeys.unbind(
@@ -146,7 +150,10 @@ export default class VisBug extends HTMLElement {
     if (typeof el === 'string')
       el = $(`[data-tool="${el}"]`, this.$shadow)[0]
 
-    if (this.active_tool && this.active_tool.dataset.tool === el.dataset.tool) return
+    if (this.active_tool && this.active_tool.dataset.tool === el.dataset.tool) {
+      if (el.dataset.tool === 'prompt') this.prompt()
+      return
+    }
 
     if (this.active_tool) {
       this.active_tool.attr('data-active', null)
@@ -187,11 +194,11 @@ export default class VisBug extends HTMLElement {
     `
   }
 
-  demoTip({key, tool, label, description, instruction}) {
+  demoTip({key, tool, label, description, instruction, hasTutorial = true}) {
     return `
       <aside ${tool}>
         <figure>
-          <img src="${this._tutsBaseURL}/${tool}.gif" alt="${description}" />
+          ${hasTutorial ? `<img src="${this._tutsBaseURL}/${tool}.gif" alt="${description}" />` : ''}
           <figcaption>
             <h2>
               ${label}
@@ -269,6 +276,10 @@ export default class VisBug extends HTMLElement {
       this.selectorEngine.removeSelectedCallback(feature.onNodesSelected)
       feature.disconnect()
     }
+  }
+
+  prompt() {
+    this.deactivate_feature = PromptExport()
   }
 
   execCommand(command) {

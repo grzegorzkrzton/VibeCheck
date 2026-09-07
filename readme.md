@@ -48,8 +48,8 @@ Then **Reload** the extension in `chrome://extensions`.
 |-------|--------|------|
 | 0 | Done | VisBug baseline — load, toggle, live-edit |
 | 1 | Done | VibeCheck rebrand + icon |
-| 2 | Next | Copy AI prompt from live edits |
-| 3+ | Planned | SSO, comments, annotations, copy approval |
+| 2 | Done | Copy AI prompt from live edits (**Q**) |
+| 3 | Next | SSO, comments, annotations, copy approval |
 
 Earlier all-in-one work is preserved on branch `backup/full-implementation`.
 

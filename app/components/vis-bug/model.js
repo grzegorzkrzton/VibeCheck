@@ -318,4 +318,21 @@ export const VisBugModel = {
     description: 'Select elements programatically by searching for them or use built in plugins with special commands',
     instruction: '',
   },
+  q: {
+    tool:         'prompt',
+    icon:         Icons.prompt,
+    label:        '<span>AI <u>q</u>uery</span>',
+    description:  'Copy a consistent AI prompt of your live edits',
+    hasTutorial:  false,
+    instruction:  `<div table>
+                    <div>
+                      <b>Edit first:</b>
+                      <span>padding, type, color, text</span>
+                    </div>
+                    <div>
+                      <b>Export:</b>
+                      <span>click this tool or press Q</span>
+                    </div>
+                  </div>`,
+  },
 }
