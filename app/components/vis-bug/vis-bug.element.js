@@ -13,7 +13,7 @@ import {
   PromptExport, Comments, ContentSuggest,
 } from '../../features/'
 import { startChangeTracker } from '../../vibecheck/tracker'
-import { startFeedbackLayer } from '../../vibecheck/feedback-ui'
+import { startFeedbackLayer, setFeedbackScheme } from '../../vibecheck/feedback-ui'
 
 import {
   VisBugStyles,
@@ -61,6 +61,7 @@ export default class VisBug extends HTMLElement {
 
     provideSelectorEngine(this.selectorEngine)
     this.stopChangeTracker = startChangeTracker(this.selectorEngine)
+    setFeedbackScheme(this.getAttribute('color-scheme'))
     this.stopFeedbackLayer = startFeedbackLayer()
 
     this.toolSelected($('[data-tool="guides"]', this.$shadow)[0])
@@ -80,8 +81,10 @@ export default class VisBug extends HTMLElement {
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
-    if (name === 'color-scheme')
+    if (name === 'color-scheme') {
       this.applyScheme(newValue)
+      setFeedbackScheme(newValue)
+    }
   }
 
   setup() {

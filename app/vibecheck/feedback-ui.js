@@ -43,6 +43,7 @@ const state = {
   previewId: null,
   lastPointer: null,
   cardPosition: null,
+  scheme: 'auto',
   panelLayout: {
     left: null,
     top: 16,
@@ -59,12 +60,26 @@ function ensureStyles() {
   document.documentElement.appendChild(style)
 }
 
+function applyScheme(layer) {
+  if (state.scheme === 'light' || state.scheme === 'dark')
+    layer.dataset.scheme = state.scheme
+  else
+    delete layer.dataset.scheme
+}
+
+export function setFeedbackScheme(scheme) {
+  state.scheme = scheme || 'auto'
+  const layer = document.getElementById(LAYER_ID)
+  if (layer) applyScheme(layer)
+}
+
 function ensureLayer() {
   ensureStyles()
   let layer = document.getElementById(LAYER_ID)
   if (!layer) {
     layer = document.createElement('div')
     layer.id = LAYER_ID
+    applyScheme(layer)
     document.documentElement.appendChild(layer)
     layer.addEventListener('click', onLayerClick)
     layer.addEventListener('input', onLayerInput)

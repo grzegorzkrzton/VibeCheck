@@ -171,6 +171,16 @@ check('token generator emits mapped CSS custom properties', () => {
   assert.match(fs.readFileSync(path.join(ROOT, 'extension/popup/tokens.css'), 'utf8'), /:root, :host/)
 })
 
+check('feedback layer honours an explicit toolbar theme', () => {
+  const generated = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.js'), 'utf8')
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-bg-surface: #ffffff/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-bg-surface: #16171f/)
+  const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
+  assert.match(ui, /export function setFeedbackScheme/)
+  const element = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.element.js'), 'utf8')
+  assert.match(element, /setFeedbackScheme\(newValue\)/)
+})
+
 check('mapping manifest references existing sources and renderers', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/figma-components.json'), 'utf8'))
   assert.equal(manifest.codeConnect.available, false)
@@ -226,6 +236,7 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-actions \[data-style="Danger"\][\s\S]*background: var\(--vc-status-danger\)/)
   assert.match(css, /\.vc-actions button[\s\S]*border: 1px solid var\(--vc-border-default\)/)
   assert.match(css, /textarea::placeholder[\s\S]*color: var\(--vc-text-secondary\)/)
+  assert.match(css, /\.vc-panel \{\n  opacity: 1;\n  filter: none;\n  mix-blend-mode: normal;/)
 })
 
 console.log('parity checks passed')

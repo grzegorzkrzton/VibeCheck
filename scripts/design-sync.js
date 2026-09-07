@@ -82,6 +82,14 @@ ${shared}
 ${darkColors}
   }
 }
+
+#vibecheck-layer[data-scheme="light"] {
+${lightColors}
+}
+
+#vibecheck-layer[data-scheme="dark"] {
+${darkColors}
+}
 `
 
   const tokensJs = `${banner().replace('/* ', '// ').replace(' */', '')}

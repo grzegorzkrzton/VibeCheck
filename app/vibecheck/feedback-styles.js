@@ -13,6 +13,16 @@ ${layerTokenCss}
   font-family: var(--vc-font-family);
 }
 
+/* Host page rules can still match these descendants, so restate the
+   properties that would otherwise silently distort the layer. */
+#vibecheck-layer .vc-pin,
+#vibecheck-layer .vc-card,
+#vibecheck-layer .vc-panel {
+  opacity: 1;
+  filter: none;
+  mix-blend-mode: normal;
+}
+
 #vibecheck-layer .vc-pin {
   position: fixed;
   z-index: 2147483644;
