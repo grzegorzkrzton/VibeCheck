@@ -71,7 +71,7 @@
   &:first-child { margin-top: 0.25em; }
   &:last-child { margin-bottom: 0.25em; }
 
-  &[data-tool] {
+  &[data-tool]:not(.prompt-action) {
     :not([data-active=true])&:hover {
       cursor: pointer;
       background-color: var(--theme-icon_hover-bg);
@@ -211,10 +211,11 @@
 :host [colors] > li.prompt-action {
   --contextual_color: hsl(0 0% 8%);
   --icon_color: white;
+  background: hsl(0 0% 8%);
   cursor: pointer;
   margin-bottom: 0.25em;
   box-shadow: 0 0 0 2px hsl(0 0% 8%), 0 0.25em 0.5em hsla(0,0%,0%,25%);
-  transition: box-shadow 0.15s ease;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
 
   & > svg {
     fill: var(--icon_color);
@@ -225,11 +226,14 @@
   &:hover {
     --contextual_color: white;
     --icon_color: hsl(0 0% 8%);
+    background: white;
     box-shadow: 0 0 0 2px hsl(0 0% 8%), 0 0.25em 0.5em hsla(0,0%,0%,25%);
   }
 
   &:active {
     --contextual_color: hsl(0 0% 95%);
+    --icon_color: hsl(0 0% 8%);
+    background: hsl(0 0% 95%);
     box-shadow: 0 0 0 2px hsl(0 0% 8%), 0 0.15em 0.35em hsla(0,0%,0%,20%);
   }
 }
