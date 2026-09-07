@@ -17,6 +17,7 @@ import {
 
 const LAYER_ID = 'vibecheck-layer'
 const STYLE_ID = 'vibecheck-feedback-styles'
+const PANEL_LAYOUT_KEY = 'vibecheck:panelLayout'
 
 const KIND_LABEL = {
   implement: 'Implement',
@@ -33,6 +34,14 @@ const state = {
   hideResolved: true,
   mode: 'browse',
   previewId: null,
+  lastPointer: null,
+  cardPosition: null,
+  panelLayout: {
+    left: null,
+    top: 16,
+    collapsed: false,
+  },
+  drag: null,
 }
 
 function ensureStyles() {
@@ -53,8 +62,35 @@ function ensureLayer() {
     layer.addEventListener('click', onLayerClick)
     layer.addEventListener('input', onLayerInput)
     layer.addEventListener('keydown', event => event.stopPropagation())
+    layer.addEventListener('pointerdown', onDragStart)
   }
   return layer
+}
+
+function loadPanelLayout() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PANEL_LAYOUT_KEY))
+    if (!saved || typeof saved !== 'object') return
+    state.panelLayout = {
+      left: Number.isFinite(saved.left) ? saved.left : null,
+      top: Number.isFinite(saved.top) ? saved.top : 16,
+      collapsed: Boolean(saved.collapsed),
+    }
+  }
+  catch { /* use defaults */ }
+}
+
+function savePanelLayout() {
+  try {
+    localStorage.setItem(PANEL_LAYOUT_KEY, JSON.stringify(state.panelLayout))
+  }
+  catch { /* quota / private mode */ }
+}
+
+function rememberPointer(event) {
+  const target = event.target
+  if (target?.closest?.(`#${LAYER_ID}, vis-bug, #vibecheck-toolbar-tip`)) return
+  state.lastPointer = { x: event.clientX, y: event.clientY }
 }
 
 function commentNumber(comment) {
@@ -109,7 +145,27 @@ function placePin(node, el) {
   node.style.left = `${Math.round(rect.left + 8)}px`
 }
 
+function clampPosition(left, top, width, height) {
+  return {
+    left: Math.min(Math.max(8, left), Math.max(8, window.innerWidth - width - 8)),
+    top: Math.min(Math.max(8, top), Math.max(8, window.innerHeight - height - 8)),
+  }
+}
+
 function placeCard(card, el) {
+  if (state.cardPosition) {
+    const position = clampPosition(
+      state.cardPosition.left,
+      state.cardPosition.top,
+      card.offsetWidth || 300,
+      card.offsetHeight || 300,
+    )
+    state.cardPosition = position
+    card.style.top = `${Math.round(position.top)}px`
+    card.style.left = `${Math.round(position.left)}px`
+    return
+  }
+
   const rect = el?.getBoundingClientRect?.() || { top: 80, right: 40, bottom: 80 }
   const top = Math.min(Math.max(8, rect.top), window.innerHeight - 320)
   let left = (rect.right || 40) + 12
@@ -117,6 +173,22 @@ function placeCard(card, el) {
     left = Math.max(8, (rect.left || 40) - 312)
   card.style.top = `${Math.round(top)}px`
   card.style.left = `${Math.round(left)}px`
+}
+
+function placePanel(panel) {
+  if (!panel) return
+  const fallbackLeft = window.innerWidth - (panel.offsetWidth || 280) - 16
+  const position = clampPosition(
+    state.panelLayout.left ?? fallbackLeft,
+    state.panelLayout.top,
+    panel.offsetWidth || 280,
+    panel.offsetHeight || 48,
+  )
+  state.panelLayout.left = position.left
+  state.panelLayout.top = position.top
+  panel.style.left = `${Math.round(position.left)}px`
+  panel.style.top = `${Math.round(position.top)}px`
+  panel.style.right = 'auto'
 }
 
 function escapeHtml(value = '') {
@@ -144,7 +216,7 @@ function renderCard(open) {
     const isSuggestion = kind === 'draft' && item.recordType === 'suggestion'
     return `
       <div class="vc-card" data-card="${item.id}">
-        <div class="vc-card-head">
+        <div class="vc-card-head" data-drag-handle="card" title="Drag to move">
           ${isSuggestion ? `<strong>Content suggestion</strong>` : `
             <div class="vc-types">
               <button type="button" data-action="set-type" data-type="note" aria-pressed="${!isAnnotation}">Note</button>
@@ -180,7 +252,7 @@ function renderCard(open) {
   if (kind === 'suggestion') {
     return `
       <div class="vc-card" data-card="${item.id}">
-        <div class="vc-card-head">
+        <div class="vc-card-head" data-drag-handle="card" title="Drag to move">
           <strong>Content suggestion</strong>
           <button type="button" class="vc-close" data-action="close" aria-label="Close">×</button>
         </div>
@@ -202,7 +274,7 @@ function renderCard(open) {
   const replies = repliesFor(item.id)
   return `
     <div class="vc-card" data-card="${item.id}">
-      <div class="vc-card-head">
+      <div class="vc-card-head" data-drag-handle="card" title="Drag to move">
         <strong>${escapeHtml(typeLabel(item))}</strong>
         <button type="button" class="vc-close" data-action="close" aria-label="Close">×</button>
       </div>
@@ -225,23 +297,30 @@ function renderPanel() {
   const items = visibleItems()
   const filter = state.filter
   return `
-    <aside class="vc-panel">
-      <div class="vc-panel-head">
+    <aside class="vc-panel" data-collapsed="${state.panelLayout.collapsed}">
+      <div class="vc-panel-head" data-drag-handle="panel" title="Drag to move">
         <span>VibeCheck</span>
-        <button type="button" data-action="toggle-resolved">${state.hideResolved ? 'Show resolved' : 'Hide resolved'}</button>
+        <div class="vc-panel-controls">
+          ${state.panelLayout.collapsed ? '' : `<button type="button" data-action="toggle-resolved">${state.hideResolved ? 'Show resolved' : 'Hide resolved'}</button>`}
+          <button type="button" class="vc-collapse" data-action="toggle-panel" aria-label="${state.panelLayout.collapsed ? 'Expand notes panel' : 'Collapse notes panel'}" title="${state.panelLayout.collapsed ? 'Expand' : 'Collapse'}">${state.panelLayout.collapsed ? '▣' : '−'}</button>
+        </div>
       </div>
-      <div class="vc-filters">
-        <button type="button" data-action="filter" data-filter="all" aria-pressed="${filter === 'all'}">All</button>
-        <button type="button" data-action="filter" data-filter="notes" aria-pressed="${filter === 'notes'}">Notes</button>
-        <button type="button" data-action="filter" data-filter="annotations" aria-pressed="${filter === 'annotations'}">Annotations</button>
-        <button type="button" data-action="filter" data-filter="content" aria-pressed="${filter === 'content'}">Content</button>
-      </div>
-      ${items.length ? items.map(({ kind, item }) => `
-        <button type="button" class="vc-item" data-action="open" data-id="${item.id}" data-kind="${kind}" data-open="${state.open?.id === item.id}">
-          <b>${escapeHtml(kind === 'suggestion' ? 'Content' : typeLabel(item))}${item._orphaned ? '<span class="vc-badge">Orphaned</span>' : ''}</b>
-          <span>${escapeHtml((kind === 'suggestion' ? item.suggestedText : item.body) || describeAnchor(item.anchor))}</span>
-        </button>
-      `).join('') : `<div class="vc-item"><span>No items yet. Press C and click an element to leave a note.</span></div>`}
+      ${state.panelLayout.collapsed ? '' : `
+        <div class="vc-panel-body">
+          <div class="vc-filters">
+            <button type="button" data-action="filter" data-filter="all" aria-pressed="${filter === 'all'}">All</button>
+            <button type="button" data-action="filter" data-filter="notes" aria-pressed="${filter === 'notes'}">Notes</button>
+            <button type="button" data-action="filter" data-filter="annotations" aria-pressed="${filter === 'annotations'}">Annotations</button>
+            <button type="button" data-action="filter" data-filter="content" aria-pressed="${filter === 'content'}">Content</button>
+          </div>
+          ${items.length ? items.map(({ kind, item }) => `
+            <button type="button" class="vc-item" data-action="open" data-id="${item.id}" data-kind="${kind}" data-open="${state.open?.id === item.id}">
+              <b>${escapeHtml(kind === 'suggestion' ? 'Content' : typeLabel(item))}${item._orphaned ? '<span class="vc-badge">Orphaned</span>' : ''}</b>
+              <span>${escapeHtml((kind === 'suggestion' ? item.suggestedText : item.body) || describeAnchor(item.anchor))}</span>
+            </button>
+          `).join('') : `<div class="vc-item"><span>No items yet. Press C and click an element to leave a note.</span></div>`}
+        </div>
+      `}
     </aside>
   `
 }
@@ -258,6 +337,7 @@ function renderPins() {
 export function layoutFeedback() {
   const layer = document.getElementById(LAYER_ID)
   if (!layer) return
+  placePanel(layer.querySelector('.vc-panel'))
   const open = currentOpen()
   const card = layer.querySelector('.vc-card')
   if (open && card) {
@@ -304,6 +384,7 @@ function findSelectedElement(els) {
 
 export function beginCommentDraft(el, { type = 'note' } = {}) {
   if (!el) return
+  state.cardPosition = positionFromPointer(state.lastPointer)
   state.draft = {
     id: uid(),
     recordType: 'comment',
@@ -322,6 +403,7 @@ export function beginCommentDraft(el, { type = 'note' } = {}) {
 
 export function beginSuggestionDraft(el) {
   if (!el) return
+  state.cardPosition = positionFromPointer(state.lastPointer)
   const originalText = (el.innerText || '').replace(/\s+/g, ' ').trim()
   state.draft = {
     id: uid(),
@@ -340,6 +422,11 @@ export function beginSuggestionDraft(el) {
 
 export function setFeedbackMode(mode) {
   state.mode = mode
+}
+
+function positionFromPointer(pointer) {
+  if (!pointer) return null
+  return clampPosition(pointer.x + 12, pointer.y + 12, 300, 320)
 }
 
 function applySuggestionText(item, text) {
@@ -362,6 +449,67 @@ async function notifyMentions(body, context) {
   }
 }
 
+function onDragStart(event) {
+  const handle = event.target.closest('[data-drag-handle]')
+  if (!handle || event.target.closest('button, input, textarea, select, a')) return
+
+  const kind = handle.dataset.dragHandle
+  const element = kind === 'panel'
+    ? handle.closest('.vc-panel')
+    : handle.closest('.vc-card')
+  if (!element) return
+
+  const rect = element.getBoundingClientRect()
+  state.drag = {
+    kind,
+    element,
+    offsetX: event.clientX - rect.left,
+    offsetY: event.clientY - rect.top,
+  }
+
+  element.dataset.dragging = 'true'
+  event.preventDefault()
+  event.stopPropagation()
+  document.addEventListener('pointermove', onDragMove, true)
+  document.addEventListener('pointerup', onDragEnd, true)
+  document.addEventListener('pointercancel', onDragEnd, true)
+}
+
+function onDragMove(event) {
+  if (!state.drag) return
+  const { element, offsetX, offsetY, kind } = state.drag
+  const position = clampPosition(
+    event.clientX - offsetX,
+    event.clientY - offsetY,
+    element.offsetWidth,
+    element.offsetHeight,
+  )
+
+  element.style.left = `${Math.round(position.left)}px`
+  element.style.top = `${Math.round(position.top)}px`
+  element.style.right = 'auto'
+
+  if (kind === 'panel') {
+    state.panelLayout.left = position.left
+    state.panelLayout.top = position.top
+  }
+  else {
+    state.cardPosition = position
+  }
+
+  event.preventDefault()
+}
+
+function onDragEnd() {
+  if (!state.drag) return
+  state.drag.element.removeAttribute('data-dragging')
+  if (state.drag.kind === 'panel') savePanelLayout()
+  state.drag = null
+  document.removeEventListener('pointermove', onDragMove, true)
+  document.removeEventListener('pointerup', onDragEnd, true)
+  document.removeEventListener('pointercancel', onDragEnd, true)
+}
+
 async function onLayerClick(event) {
   const actionEl = event.target.closest('[data-action]')
   if (!actionEl) return
@@ -381,9 +529,17 @@ async function onLayerClick(event) {
     return
   }
 
+  if (action === 'toggle-panel') {
+    state.panelLayout.collapsed = !state.panelLayout.collapsed
+    savePanelLayout()
+    renderFeedback()
+    return
+  }
+
   if (action === 'close' || action === 'cancel') {
     state.draft = null
     state.open = null
+    state.cardPosition = null
     renderFeedback()
     return
   }
@@ -391,6 +547,10 @@ async function onLayerClick(event) {
   if (action === 'open') {
     state.draft = null
     state.open = { id: actionEl.dataset.id }
+    state.cardPosition = positionFromPointer({
+      x: event.clientX,
+      y: event.clientY,
+    })
     renderFeedback()
     return
   }
@@ -451,6 +611,7 @@ async function onLayerClick(event) {
     if (open.kind === 'suggestion') await removeSuggestion(open.item.id)
     else await removeComment(open.item.id)
     state.open = null
+    state.cardPosition = null
     await refreshFeedback()
     return
   }
@@ -528,6 +689,7 @@ function installHotkeyFilter() {
 
 export function startFeedbackLayer() {
   installHotkeyFilter()
+  loadPanelLayout()
   if (typeof chrome !== 'undefined' && chrome.storage?.local) {
     chrome.storage.local.get('vibecheck:authorName', data => {
       if (data['vibecheck:authorName']) setAuthorName(data['vibecheck:authorName'])
@@ -535,9 +697,12 @@ export function startFeedbackLayer() {
   }
   ensureLayer()
   refreshFeedback()
+  document.addEventListener('pointerdown', rememberPointer, true)
   window.addEventListener('scroll', layoutFeedback, true)
   window.addEventListener('resize', layoutFeedback)
   return () => {
+    onDragEnd()
+    document.removeEventListener('pointerdown', rememberPointer, true)
     window.removeEventListener('scroll', layoutFeedback, true)
     window.removeEventListener('resize', layoutFeedback)
     document.getElementById(LAYER_ID)?.remove()

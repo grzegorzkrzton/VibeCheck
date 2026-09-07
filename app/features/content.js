@@ -9,7 +9,7 @@ export function ContentSuggest(selectorEngine) {
     beginSuggestionDraft(el)
   }
 
-  selectorEngine.onSelectedUpdate(onSelect)
+  selectorEngine.onSelectedUpdate(onSelect, false)
 
   return () => {
     setFeedbackMode('browse')

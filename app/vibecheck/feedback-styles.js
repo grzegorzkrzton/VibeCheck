@@ -50,6 +50,15 @@ export const feedbackStyles = `
   justify-content: space-between;
   gap: 8px;
   padding: 10px 12px 0;
+  min-height: 38px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+#vibecheck-layer [data-dragging="true"] .vc-card-head,
+#vibecheck-layer .vc-panel[data-dragging="true"] .vc-panel-head {
+  cursor: grabbing;
 }
 
 #vibecheck-layer .vc-types {
@@ -182,11 +191,11 @@ export const feedbackStyles = `
 #vibecheck-layer .vc-panel {
   position: fixed;
   top: 16px;
-  right: 16px;
+  left: calc(100vw - 296px);
   z-index: 2147483645;
   width: 280px;
   max-height: calc(100vh - 32px);
-  overflow: auto;
+  overflow: hidden;
   background: #fff;
   color: #111827;
   border-radius: 12px;
@@ -199,6 +208,47 @@ export const feedbackStyles = `
   justify-content: space-between;
   padding: 12px 12px 8px;
   font: 700 13px system-ui, sans-serif;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+#vibecheck-layer .vc-panel-body {
+  max-height: calc(100vh - 80px);
+  overflow: auto;
+}
+
+#vibecheck-layer .vc-panel[data-collapsed="true"] {
+  width: 150px;
+}
+
+#vibecheck-layer .vc-panel[data-collapsed="true"] .vc-panel-head {
+  padding-bottom: 12px;
+}
+
+#vibecheck-layer .vc-panel-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#vibecheck-layer .vc-panel-controls button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 600 10px system-ui, sans-serif;
+  cursor: pointer;
+}
+
+#vibecheck-layer .vc-panel-controls .vc-collapse {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 6px;
+  background: #f3f4f6;
+  font-size: 16px;
+  line-height: 1;
 }
 
 #vibecheck-layer .vc-filters {

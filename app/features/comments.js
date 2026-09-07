@@ -9,7 +9,7 @@ export function Comments(selectorEngine) {
     beginCommentDraft(el)
   }
 
-  selectorEngine.onSelectedUpdate(onSelect)
+  selectorEngine.onSelectedUpdate(onSelect, false)
 
   return () => {
     setFeedbackMode('browse')
