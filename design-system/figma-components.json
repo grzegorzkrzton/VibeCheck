@@ -175,6 +175,31 @@
       }
     },
     {
+      "name": "Toolbar Search Popout",
+      "figmaName": "Toolbar Search Popout",
+      "nodeId": "25:142",
+      "variantNodes": {
+        "Direction=Right, State=Open": "25:128",
+        "Direction=Left, State=Open": "25:135"
+      },
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=25-142",
+      "code": {
+        "source": "app/features/search.js",
+        "renderer": "Search",
+        "selector": "[data-vc-component=\"Toolbar Search Popout\"]",
+        "dataComponent": "Toolbar Search Popout"
+      },
+      "variants": {
+        "Direction": ["Right", "Left"],
+        "State": ["Open"]
+      },
+      "attributes": {
+        "data-direction": "Direction",
+        "data-state": "State"
+      }
+    },
+    {
       "name": "Toolbar AI Prompt",
       "figmaName": "Toolbar AI Prompt",
       "nodeId": "5:77",

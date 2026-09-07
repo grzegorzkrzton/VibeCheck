@@ -40,11 +40,14 @@ ${layerTokenCss}
 #vibecheck-layer .vc-pin[data-vc-type="Question"] { background: var(--vc-pin-question); }
 #vibecheck-layer .vc-pin[data-type="annotation"] { background: var(--vc-pin-implement); }
 #vibecheck-layer .vc-pin[data-type="suggestion"],
-#vibecheck-layer .vc-pin[data-vc-type="Suggestion"] { background: var(--vc-pin-suggestion); }
+#vibecheck-layer .vc-pin[data-vc-type="Suggestion"] { background: var(--vc-action-primary); }
 #vibecheck-layer .vc-pin[data-resolved="true"],
 #vibecheck-layer .vc-pin[data-state="Resolved"] { opacity: var(--vc-opacity-resolved); }
 #vibecheck-layer .vc-pin[data-open="true"],
-#vibecheck-layer .vc-pin[data-state="Open"] { box-shadow: var(--vc-shadow-pin-open); }
+#vibecheck-layer .vc-pin[data-state="Open"] {
+  border-width: 3px;
+  box-shadow: var(--vc-shadow-pin-open);
+}
 
 #vibecheck-layer .vc-card {
   position: fixed;
@@ -98,6 +101,7 @@ ${layerTokenCss}
 }
 
 #vibecheck-layer .vc-types button {
+  background: var(--vc-bg-surface);
   padding: var(--vc-spacing-6) var(--vc-spacing-8);
   border-radius: var(--vc-radius-6);
 }
@@ -119,7 +123,7 @@ ${layerTokenCss}
   background: transparent;
   font-size: 18px;
   cursor: pointer;
-  color: var(--vc-text-muted);
+  color: var(--vc-text-secondary);
 }
 
 #vibecheck-layer .vc-kinds {
@@ -129,6 +133,7 @@ ${layerTokenCss}
 }
 
 #vibecheck-layer .vc-kinds button {
+  background: var(--vc-bg-surface);
   padding: var(--vc-spacing-4) var(--vc-spacing-8);
   border-radius: var(--vc-radius-full);
   border: 1px solid var(--vc-border-default);
@@ -137,7 +142,7 @@ ${layerTokenCss}
 #vibecheck-layer .vc-meta {
   padding: var(--vc-spacing-8) var(--vc-spacing-12) 0;
   font-size: 11px;
-  color: var(--vc-text-muted);
+  color: var(--vc-text-secondary);
 }
 
 #vibecheck-layer .vc-body,
@@ -156,6 +161,12 @@ ${layerTokenCss}
   padding: var(--vc-spacing-8);
   background: var(--vc-bg-input);
   color: var(--vc-text-primary);
+}
+
+#vibecheck-layer textarea::placeholder,
+#vibecheck-layer input::placeholder {
+  color: var(--vc-text-secondary);
+  opacity: 1;
 }
 
 #vibecheck-layer input[type="text"] {
@@ -182,7 +193,7 @@ ${layerTokenCss}
   margin: 0 0 var(--vc-spacing-8);
 }
 
-#vibecheck-layer .vc-reply b { display: block; color: var(--vc-text-muted); font-size: 10px; }
+#vibecheck-layer .vc-reply b { display: block; color: var(--vc-text-secondary); font-size: 10px; }
 
 #vibecheck-layer .vc-actions {
   display: flex;
@@ -191,16 +202,29 @@ ${layerTokenCss}
   padding: var(--vc-spacing-10) var(--vc-spacing-12) var(--vc-spacing-12);
 }
 
+#vibecheck-layer .vc-actions button {
+  background: var(--vc-bg-surface);
+  color: var(--vc-text-primary);
+  border: 1px solid var(--vc-border-default);
+  border-radius: var(--vc-radius-8);
+  padding: var(--vc-spacing-8) var(--vc-spacing-10);
+}
+
 #vibecheck-layer .vc-actions .primary,
 #vibecheck-layer .vc-actions [data-style="Primary"] {
   background: var(--vc-action-primary);
   color: var(--vc-action-on-primary);
+  border: 0;
   border-radius: var(--vc-radius-8);
-  padding: 7px var(--vc-spacing-10);
+  padding: var(--vc-spacing-8) var(--vc-spacing-10);
 }
 
 #vibecheck-layer .vc-actions .danger,
-#vibecheck-layer .vc-actions [data-style="Danger"] { color: var(--vc-status-danger); }
+#vibecheck-layer .vc-actions [data-style="Danger"] {
+  background: var(--vc-status-danger);
+  color: var(--vc-action-on-primary);
+  border: 0;
+}
 
 #vibecheck-layer .vc-badge {
   display: inline-block;
@@ -263,7 +287,7 @@ ${layerTokenCss}
   appearance: none;
   border: 0;
   background: transparent;
-  color: inherit;
+  color: var(--vc-text-secondary);
   font: 600 10px var(--vc-font-family);
   cursor: pointer;
 }
@@ -286,6 +310,7 @@ ${layerTokenCss}
 }
 
 #vibecheck-layer .vc-filters button {
+  background: var(--vc-bg-surface);
   padding: var(--vc-spacing-4) var(--vc-spacing-8);
   border-radius: var(--vc-radius-full);
   border: 1px solid var(--vc-border-default);
@@ -307,5 +332,5 @@ ${layerTokenCss}
 #vibecheck-layer .vc-item[data-open="true"],
 #vibecheck-layer .vc-item[data-state="Open"] { background: var(--vc-selection-background); }
 #vibecheck-layer .vc-item b { display: block; margin-bottom: 2px; }
-#vibecheck-layer .vc-item span { color: var(--vc-text-muted); }
+#vibecheck-layer .vc-item span { color: var(--vc-text-secondary); }
 `

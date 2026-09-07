@@ -1,6 +1,7 @@
 import hotkeys from 'hotkeys-js'
 import { createAnchor, describeAnchor } from './anchor'
 import { resolveAnchor } from './resolve'
+import { floatingPosition } from '../utilities'
 import { feedbackStyles } from './feedback-styles'
 import {
   KIND_LABEL,
@@ -171,13 +172,20 @@ function placeCard(card, el) {
     return
   }
 
-  const rect = el?.getBoundingClientRect?.() || { top: 80, right: 40, bottom: 80 }
-  const top = Math.min(Math.max(8, rect.top), window.innerHeight - 320)
-  let left = (rect.right || 40) + 12
-  if (left + 312 > window.innerWidth)
-    left = Math.max(8, (rect.left || 40) - 312)
-  card.style.top = `${Math.round(top)}px`
-  card.style.left = `${Math.round(left)}px`
+  const rect = el?.getBoundingClientRect?.() || {
+    top: 80,
+    left: 40,
+    right: 40,
+    width: 0,
+    height: 0,
+  }
+  const position = floatingPosition(rect, {
+    width: card.offsetWidth || 300,
+    height: card.offsetHeight || 300,
+  })
+  card.dataset.side = position.side
+  card.style.top = `${Math.round(position.top)}px`
+  card.style.left = `${Math.round(position.left)}px`
 }
 
 function placePanel(panel) {
@@ -412,7 +420,20 @@ export function setFeedbackMode(mode) {
 
 function positionFromPointer(pointer) {
   if (!pointer) return null
-  return clampPosition(pointer.x + 12, pointer.y + 12, 300, 320)
+  const position = floatingPosition({
+    left: pointer.x,
+    right: pointer.x,
+    top: pointer.y,
+    width: 0,
+    height: 0,
+  }, {
+    width: 300,
+    height: 320,
+  })
+  return {
+    left: position.left,
+    top: position.top,
+  }
 }
 
 function applySuggestionText(item, text) {

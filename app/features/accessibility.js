@@ -5,7 +5,7 @@ import { readability, isReadable } from '@ctrl/tinycolor'
 import {
   getStyle, isOffBounds,
   getA11ys, getWCAG2TextSize, getComputedBackgroundColor,
-  deepElementFromPoint, onRemove, contrast_color
+  deepElementFromPoint, horizontalFloatingSide, onRemove, contrast_color
 } from '../utilities/'
 
 const state = {
@@ -74,7 +74,12 @@ export function showTip(target, e) {
 }
 
 export function positionTip(tip, e) {
-  const { north, west } = mouse_quadrant(e)
+  const { north } = mouse_quadrant(e)
+  const west = horizontalFloatingSide({
+    left: e.clientX,
+    right: e.clientX,
+    width: 0,
+  }, tip.clientWidth) === 'left'
   const {left, top}     = tip_position(tip, e, north, west)
 
   tip.style.left  = left
@@ -241,14 +246,23 @@ const mouse_quadrant = e => ({
   west:  e.clientX > window.innerWidth / 2
 })
 
-const tip_position = (node, e, north, west) => ({
-  top: `${north
+const tip_position = (node, e, north, west) => {
+  const rawTop = north
     ? e.pageY - node.clientHeight - 20
-    : e.pageY + 25}px`,
-  left: `${west
+    : e.pageY + 25
+  const rawLeft = west
     ? e.pageX - node.clientWidth + 23
-    : e.pageX - 21}px`,
-})
+    : e.pageX - 21
+  const minLeft = window.scrollX + 8
+  const maxLeft = Math.max(minLeft, window.scrollX + window.innerWidth - node.clientWidth - 8)
+  const minTop = window.scrollY + 8
+  const maxTop = Math.max(minTop, window.scrollY + window.innerHeight - node.clientHeight - 8)
+
+  return {
+    top: `${Math.min(Math.max(minTop, rawTop), maxTop)}px`,
+    left: `${Math.min(Math.max(minLeft, rawLeft), maxLeft)}px`,
+  }
+}
 
 const handleBlur = e => {
   if (!e) return

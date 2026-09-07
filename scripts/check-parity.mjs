@@ -166,6 +166,7 @@ check('mapping manifest references existing sources and renderers', () => {
     'Field',
     'Badge',
     'Feedback Pin',
+    'Toolbar Search Popout',
     'Main Toolbar',
     'Color & AI Toolbar',
     'Feedback Card / Note',
@@ -200,6 +201,14 @@ check('mapping manifest references existing sources and renderers', () => {
       assert.ok(contents.includes(`export function ${item.code.renderer}`), `missing renderer ${item.code.renderer}`)
     }
   }
+})
+
+check('feedback CSS matches Figma semantic treatments', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-styles.js'), 'utf8')
+  assert.match(css, /\.vc-pin\[data-state="Open"\][\s\S]*border-width: 3px/)
+  assert.match(css, /\.vc-actions \[data-style="Danger"\][\s\S]*background: var\(--vc-status-danger\)/)
+  assert.match(css, /\.vc-actions button[\s\S]*border: 1px solid var\(--vc-border-default\)/)
+  assert.match(css, /textarea::placeholder[\s\S]*color: var\(--vc-text-secondary\)/)
 })
 
 console.log('parity checks passed')

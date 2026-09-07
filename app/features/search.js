@@ -2,7 +2,7 @@ import $ from 'blingblingjs'
 import hotkeys from 'hotkeys-js'
 import { querySelectorAllDeep } from 'query-selector-shadow-dom'
 import { PluginRegistry, PluginHints } from '../plugins/_registry'
-import { notList } from '../utilities'
+import { floatingOffset, floatingPosition, notList } from '../utilities'
 import { isFirefox } from '../utilities/cross-browser.js'
 
 let SelectorEngine
@@ -10,6 +10,9 @@ let SelectorEngine
 // create input
 const search_base = document.createElement('div')
 search_base.classList.add('search')
+search_base.dataset.vcComponent = 'Toolbar Search Popout'
+search_base.dataset.vcFloating = 'search'
+search_base.dataset.state = 'Open'
 search_base.innerHTML = `
   <input list="visbug-plugins" type="search" placeholder="ex: images, .btn, button, text, ..."/>
   <datalist id="visbug-plugins">
@@ -41,12 +44,116 @@ search_base.innerHTML = `
 const search        = $(search_base)
 const searchInput   = $('input', search_base)
 
-const showSearchBar = () => search.attr('style', 'display:block')
-const hideSearchBar = () => search.attr('style', 'display:none')
+let positionFrame
+
+const ensureSearchStyles = () => {
+  if (document.getElementById('vibecheck-search-styles')) return
+  const style = document.createElement('style')
+  style.id = 'vibecheck-search-styles'
+  style.textContent = `
+    [data-vc-floating="search"] {
+      position: fixed;
+      z-index: 2147483647;
+      display: none;
+      height: 36px;
+      width: min(250px, calc(100vw - 24px));
+      overflow: hidden;
+      border-radius: 2em;
+      box-shadow: 0 0.25em 0.5em hsl(0 0% 0% / 18%);
+      opacity: 0;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    [data-vc-floating="search"] > input {
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: 0;
+      padding: 0.4em 0.75em;
+      background: inherit;
+      color: inherit;
+      caret-color: hotpink;
+      font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+      direction: ltr;
+      -webkit-appearance: none;
+    }
+    [data-vc-floating="search"] > input::placeholder {
+      color: currentColor;
+      opacity: 0.65;
+      font-size: 0.8em;
+      font-weight: lighter;
+    }
+  `
+  document.head.appendChild(style)
+}
+
+const placeSearchBar = trigger => {
+  if (!trigger?.isConnected || search_base.style.display === 'none') return
+  const anchorRect = trigger.getBoundingClientRect()
+  const floatingRect = search_base.getBoundingClientRect()
+  const position = floatingPosition(anchorRect, floatingRect)
+  search_base.dataset.side = position.side
+  search_base.dataset.direction = position.side === 'left' ? 'Left' : 'Right'
+  search_base.style.left = `${Math.round(position.left)}px`
+  search_base.style.top = `${Math.round(position.top)}px`
+}
+
+const trackSearchBar = trigger => {
+  placeSearchBar(trigger)
+  positionFrame = requestAnimationFrame(() => trackSearchBar(trigger))
+}
+
+const resolvedTheme = trigger => {
+  const probe = document.createElement('span')
+  probe.style.cssText = `
+    position: absolute;
+    visibility: hidden;
+    background: var(--theme-bg);
+    color: var(--theme-text_color);
+  `
+  trigger.appendChild(probe)
+  const style = getComputedStyle(probe)
+  const theme = {
+    background: style.backgroundColor,
+    color: style.color,
+  }
+  probe.remove()
+  return theme
+}
+
+const showSearchBar = trigger => {
+  ensureSearchStyles()
+  if (!search_base.isConnected)
+    document.documentElement.appendChild(search_base)
+
+  const theme = resolvedTheme(trigger)
+  search_base.style.background = theme.background
+  search_base.style.color = theme.color
+  search_base.style.display = 'block'
+  search_base.style.visibility = 'hidden'
+  placeSearchBar(trigger)
+  search_base.style.opacity = '0'
+  search_base.style.transform = `translateX(${floatingOffset(search_base.dataset.side)}px)`
+  search_base.style.visibility = 'visible'
+
+  cancelAnimationFrame(positionFrame)
+  requestAnimationFrame(() => {
+    search_base.style.opacity = '1'
+    search_base.style.transform = 'translateX(0)'
+    trackSearchBar(trigger)
+  })
+}
+
+const hideSearchBar = () => {
+  cancelAnimationFrame(positionFrame)
+  positionFrame = null
+  search_base.style.display = 'none'
+}
 const stopBubbling  = e => e.key != 'Escape' && e.stopPropagation()
 
 export function Search(node) {
-  if (node) node[0].appendChild(search[0])
+  const trigger = node?.[0]
+  if (!trigger) return () => {}
 
   const onQuery = e => {
     e.preventDefault()
@@ -66,7 +173,7 @@ export function Search(node) {
   searchInput.on('keydown', stopBubbling)
   // searchInput.on('blur', hideSearchBar)
 
-  showSearchBar()
+  showSearchBar(trigger)
   focus()
 
   // hotkeys('escape,esc', (e, handler) => {

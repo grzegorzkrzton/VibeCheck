@@ -251,46 +251,6 @@
   }
 }
 
-:host li[data-tool="search"] {
-  &:before {
-    transform: translateX(-1em);
-    opacity: 0;
-  }
-}
-
-:host li[data-tool="search"] > .search {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  z-index: -1;
-  box-shadow: 0 0.25em 0.5em hsla(0,0%,0%,10%);
-  border-radius: 2em;
-  overflow: hidden;
-}
-
-:host li[data-tool="search"] > .search > input {
-  direction: ltr;
-  border: none;
-  font-size: 1em;
-  padding: 0.4em 0.4em 0.4em 3em;
-  outline: none;
-  height: 100%;
-  width: 250px;
-  box-sizing: border-box;
-  caret-color: var(--neon-pink);
-  background-color: var(--theme-bg);
-  color: var(--theme-text_color);
-  cursor: initial;
-  -webkit-appearance: none;
-
-  &::placeholder {
-    font-weight: lighter;
-    font-size: 0.8em;
-    color: var(--theme-icon_color);
-  }
-}
-
 :host [colors] > li > svg {
   fill: var(--icon_color);
 }

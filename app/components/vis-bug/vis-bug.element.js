@@ -26,6 +26,8 @@ import * as Icons                 from './vis-bug.icons'
 import { provideSelectorEngine }  from '../../features/search'
 import { PluginRegistry }         from '../../plugins/_registry'
 import {
+  floatingOffset,
+  floatingPosition,
   metaKey,
   isPolyfilledCE,
   constructibleStylesheetSupport,
@@ -309,21 +311,16 @@ export default class VisBug extends HTMLElement {
 
     this._tipHost.style.visibility = 'hidden'
     this._tipHost.style.opacity = '0'
-    this._tipHost.style.transform = 'translateX(-8px)'
 
-    let top = rect.top
-    let left = rect.right + 12
-    this._tipHost.style.left = `${left}px`
-    this._tipHost.style.top = `${top}px`
+    this._tipHost.style.left = '0'
+    this._tipHost.style.top = '0'
 
     const tipRect = this._tipHost.getBoundingClientRect()
-    if (top + tipRect.height > window.innerHeight - 8)
-      top = Math.max(8, window.innerHeight - tipRect.height - 8)
-    if (left + tipRect.width > window.innerWidth - 8)
-      left = Math.max(8, rect.left - tipRect.width - 12)
-
-    this._tipHost.style.left = `${Math.round(left)}px`
-    this._tipHost.style.top = `${Math.round(top)}px`
+    const position = floatingPosition(rect, tipRect)
+    this._tipHost.dataset.side = position.side
+    this._tipHost.style.left = `${Math.round(position.left)}px`
+    this._tipHost.style.top = `${Math.round(position.top)}px`
+    this._tipHost.style.transform = `translateX(${floatingOffset(position.side)}px)`
     this._tipHost.style.visibility = 'visible'
 
     requestAnimationFrame(() => {
@@ -335,7 +332,8 @@ export default class VisBug extends HTMLElement {
   hideToolbarTip() {
     if (!this._tipHost) return
     this._tipHost.style.opacity = '0'
-    this._tipHost.style.transform = 'translateX(-8px)'
+    this._tipHost.style.transform =
+      `translateX(${floatingOffset(this._tipHost.dataset.side)}px)`
     setTimeout(() => {
       if (this._tipHost?.style.opacity === '0') {
         this._tipHost.hidden = true

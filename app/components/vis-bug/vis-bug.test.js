@@ -43,6 +43,67 @@ test('Should have 3 color controls and an AI action', async t => {
   t.pass()
 })
 
+test('Search opens outside the toolbar toward available space', async t => {
+  const { page } = t.context
+
+  const positions = await page.evaluate(async () => {
+    const toolbar = document.querySelector('vis-bug')
+    toolbar.style.left = '8px'
+    toolbar.toolSelected('search')
+    await new Promise(resolve => setTimeout(resolve, 50))
+
+    const search = document.querySelector('[data-vc-floating="search"]')
+    const trigger = toolbar.$shadow.querySelector('[data-tool="search"]')
+    const left = {
+      side: search.dataset.side,
+      search: search.getBoundingClientRect().toJSON(),
+      trigger: trigger.getBoundingClientRect().toJSON(),
+    }
+
+    toolbar.style.left =
+      `${window.innerWidth - toolbar.getBoundingClientRect().width - 8}px`
+    await new Promise(resolve => setTimeout(resolve, 50))
+    const right = {
+      side: search.dataset.side,
+      search: search.getBoundingClientRect().toJSON(),
+      trigger: trigger.getBoundingClientRect().toJSON(),
+    }
+
+    return { left, right, viewportWidth: window.innerWidth }
+  })
+
+  t.is(positions.left.side, 'right')
+  t.true(positions.left.search.left >= positions.left.trigger.right)
+  t.is(positions.right.side, 'left')
+  t.true(positions.right.search.right <= positions.right.trigger.left)
+  t.true(positions.right.search.left >= 8)
+  t.true(positions.right.search.right <= positions.viewportWidth - 8)
+})
+
+test('Toolbar tips open toward available space', async t => {
+  const { page } = t.context
+
+  const sides = await page.evaluate(() => {
+    const toolbar = document.querySelector('vis-bug')
+    const trigger = toolbar.$shadow.querySelector('[data-tool="guides"]')
+    const aside = trigger.querySelector('aside')
+
+    toolbar.style.left = '8px'
+    toolbar.showToolbarTip(trigger, aside)
+    const left = document.getElementById('vibecheck-toolbar-tip').dataset.side
+
+    toolbar.style.left =
+      `${window.innerWidth - toolbar.getBoundingClientRect().width - 8}px`
+    toolbar.showToolbarTip(trigger, aside)
+    const right = document.getElementById('vibecheck-toolbar-tip').dataset.side
+
+    return { left, right }
+  })
+
+  t.is(sides.left, 'right')
+  t.is(sides.right, 'left')
+})
+
 test('Should allow selecting 1 element', async t => {
   const { page } = t.context
 
