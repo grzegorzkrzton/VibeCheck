@@ -150,7 +150,10 @@
           "Font Styles",
           "Edit Text",
           "Search",
-          "AI Prompt"
+          "AI Prompt",
+          "Border color",
+          "Palette",
+          "Text color"
         ]
       },
       "attributes": {}
@@ -352,6 +355,21 @@
       "attributes": {
         "data-state": "State"
       }
+    },
+    {
+      "name": "Avatar",
+      "figmaName": "Avatar",
+      "nodeId": "61:2177",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=61-2177",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderAvatar",
+        "selector": "[data-vc-component=\"Avatar\"]",
+        "dataComponent": "Avatar"
+      },
+      "variants": {},
+      "attributes": {}
     },
     {
       "name": "Notes Panel Item",

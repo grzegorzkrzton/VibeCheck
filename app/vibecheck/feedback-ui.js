@@ -422,6 +422,13 @@ export function renderFeedback() {
   const layer = ensureLayer()
   const open = currentOpen()
   layer.innerHTML = `${renderPins()}${renderCard(open)}${renderPanel()}`
+  layer.querySelectorAll('.vc-avatar img').forEach(image => {
+    if (image.complete && !image.naturalWidth) {
+      image.remove()
+      return
+    }
+    image.addEventListener('error', () => image.remove(), { once: true })
+  })
   layoutFeedback()
 }
 

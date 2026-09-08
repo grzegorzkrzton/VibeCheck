@@ -396,6 +396,33 @@ export function renderWordingCard({
   })
 }
 
+function avatarInitials(name = '') {
+  const words = String(name).trim().split(/\s+/).filter(Boolean)
+  if (!words.length) return '?'
+  return `${words[0][0]}${words.length > 1 ? words[words.length - 1][0] : ''}`.toUpperCase()
+}
+
+function safeImageUrl(value = '') {
+  const url = String(value).trim()
+  return /^(https?:|data:image\/)/i.test(url) ? url : ''
+}
+
+export function renderAvatar({
+  name = '',
+  imageUrl = '',
+  tone = 'implement',
+} = {}) {
+  const safeUrl = safeImageUrl(imageUrl)
+  return `<span class="vc-avatar" ${attrs({
+    'data-vc-component': 'Avatar',
+    'data-tone': tone,
+    title: name || 'Unknown participant',
+  })}>
+    <span aria-hidden="true">${escapeHtml(avatarInitials(name))}</span>
+    ${safeUrl ? `<img src="${escapeHtml(safeUrl)}" alt="">` : ''}
+  </span>`
+}
+
 export function renderNotesPanelItem({
   id,
   kind,
@@ -409,7 +436,11 @@ export function renderNotesPanelItem({
   replyCount = 0,
   badges = '',
 } = {}) {
-  const names = [...new Set([author, ...participants].filter(Boolean))].slice(0, 4)
+  const people = [author, ...participants]
+    .map(person => typeof person === 'string' ? { name: person } : person)
+    .filter(person => person?.name)
+    .filter((person, index, all) => all.findIndex(candidate => candidate.name === person.name) === index)
+    .slice(0, 4)
   const highlightedMessage = escapeHtml(message).replace(
     /(^|[\s(])(@[a-z0-9._-]+)/gi,
     '$1<span class="vc-mention">$2</span>',
@@ -423,8 +454,12 @@ export function renderNotesPanelItem({
       'data-kind': kind,
       'data-open': Boolean(open),
     })}>
-      <span class="vc-item-avatars" aria-label="${escapeHtml(names.join(', '))}">
-        ${names.map(name => `<span class="vc-avatar" title="${escapeHtml(name)}">${escapeHtml(name.trim().charAt(0).toUpperCase() || '?')}</span>`).join('')}
+      <span class="vc-item-avatars" aria-label="${escapeHtml(people.map(person => person.name).join(', '))}">
+        ${people.map((person, index) => renderAvatar({
+          name: person.name,
+          imageUrl: person.imageUrl,
+          tone: ['note', 'implement', 'question', 'warning'][index],
+        })).join('')}
       </span>
       <span class="vc-item-context">
         <span class="vc-item-number">#${escapeHtml(number)}</span>
@@ -475,7 +510,7 @@ export function renderNotesPanel({
           <div class="vc-panel-tools">
             <label class="vc-panel-search">
               <span aria-hidden="true">
-                <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="7" cy="7" r="4.25"></circle><path d="m10.25 10.25 3 3"></path></svg>
+                <svg viewBox="0 0 14 14" width="14" height="14"><path d="M6 10C8.20914 10 10 8.20914 10 6C10 3.79086 8.20914 2 6 2C3.79086 2 2 3.79086 2 6C2 8.20914 3.79086 10 6 10Z"></path><path d="M9 9L12.5 12.5"></path></svg>
               </span>
               <input type="search" data-field="panel-search" value="${escapeHtml(search)}" placeholder="Search" aria-label="Search notes">
             </label>

@@ -9,6 +9,7 @@ import {
   pinVisualState,
   pinVisualType,
   renderAnnotationCard,
+  renderAvatar,
   renderBadge,
   renderButton,
   renderChip,
@@ -93,6 +94,19 @@ check('Badge, pin, and panel item emit stable data-vc-component names', () => {
   assert.match(item, /1 reply/)
 })
 
+check('Avatar matches Figma initials, tones, and photo fallback markup', () => {
+  const avatar = renderAvatar({
+    name: 'Maya Johnson',
+    imageUrl: 'https://example.com/maya.jpg',
+    tone: 'implement',
+  })
+  assert.match(avatar, /data-vc-component="Avatar"/)
+  assert.match(avatar, /data-tone="implement"/)
+  assert.match(avatar, />MJ<\/span>/)
+  assert.match(avatar, /<img src="https:\/\/example.com\/maya.jpg" alt="">/)
+  assert.doesNotMatch(renderAvatar({ name: '', imageUrl: 'javascript:alert(1)' }), /<img/)
+})
+
 check('Figma pin and card variant translation', () => {
   assert.equal(pinVisualType('comment', 'note'), 'Note')
   assert.equal(pinVisualType('comment', 'annotation', 'implement'), 'Implement')
@@ -143,6 +157,8 @@ check('Notes panel uses Notes title and Wording filter', () => {
   assert.match(html, />Notes</)
   assert.match(html, /Show resolved/)
   assert.match(html, /placeholder="Search"/)
+  assert.match(html, /<svg viewBox="0 0 14 14" width="14" height="14">/)
+  assert.match(html, /M9 9L12\.5 12\.5/)
   assert.match(html, /data-field="panel-search"/)
   assert.match(html, /data-action="cycle-filter"/)
   assert.match(html, /Wording/)
@@ -199,6 +215,7 @@ check('mapping manifest references existing sources and renderers', () => {
     'Feedback Card / Note',
     'Feedback Card / Annotation',
     'Feedback Card / Wording',
+    'Avatar',
     'Notes Panel',
     'Account & Inbox Popup',
   ])
@@ -213,6 +230,7 @@ check('mapping manifest references existing sources and renderers', () => {
     'renderNoteCard',
     'renderAnnotationCard',
     'renderWordingCard',
+    'renderAvatar',
     'renderNotesPanelItem',
     'renderNotesPanel',
   ]
@@ -228,6 +246,9 @@ check('mapping manifest references existing sources and renderers', () => {
       assert.ok(contents.includes(`export function ${item.code.renderer}`), `missing renderer ${item.code.renderer}`)
     }
   }
+  const toolbarIcons = manifest.components.find(item => item.name === 'Toolbar Icon')
+  for (const name of ['Border color', 'Palette', 'Text color'])
+    assert.ok(toolbarIcons.variants.Name.includes(name), `missing toolbar icon ${name}`)
 })
 
 check('feedback CSS matches Figma semantic treatments', () => {
@@ -238,6 +259,8 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /textarea::placeholder[\s\S]*color: var\(--vc-text-secondary\)/)
   assert.match(css, /\.vc-panel \{\n  opacity: 1;\n  filter: none;\n  mix-blend-mode: normal;/)
   assert.match(css, /\.vc-card-head \{[\s\S]*min-height: 32px;\n  font: 700 13px var\(--vc-font-family\)/)
+  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border-default\)/)
+  assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)
 })
 
 console.log('parity checks passed')
