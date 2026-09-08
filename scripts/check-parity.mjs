@@ -150,6 +150,48 @@ check('Annotation and wording cards keep delegated actions', () => {
   assert.match(wording, /<b>From<\/b>/)
 })
 
+check('card action rows keep the Figma button order and alignment', () => {
+  // Figma puts the destructive/secondary action on the left and groups the rest right.
+  const detail = renderNoteCard({ id: 'n1', state: 'Detail', body: 'Hi' })
+  assert.match(detail, /class="vc-actions" data-align="between"/)
+  assert.match(
+    detail,
+    /data-action="delete"[\s\S]*vc-actions-group[\s\S]*data-action="resolve"[\s\S]*data-action="reply"/,
+  )
+
+  const compose = renderWordingCard({ id: 'w1', state: 'Compose' })
+  assert.match(compose, /class="vc-actions" data-align="between"/)
+  assert.match(
+    compose,
+    /data-action="preview"[\s\S]*vc-actions-group[\s\S]*data-action="cancel"[\s\S]*data-action="save"/,
+  )
+
+  const noteCompose = renderNoteCard({ id: 'n2', state: 'Compose' })
+  assert.match(noteCompose, /class="vc-actions">[\s\S]*data-action="cancel"[\s\S]*data-action="save"/)
+  assert.equal(noteCompose.includes('data-align="between"'), false)
+})
+
+check('toolbar icons carry the synced Figma geometry', () => {
+  const icons = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.icons.js'), 'utf8')
+  const signatures = {
+    inspector: 'M11.9996 2C17.5225 2 21.9992 6.47794',
+    comments: 'M19.0004 2C20.6572 2 22.0004 3.34312',
+    content: 'M10.4147 3.58566C10.9666 3.58586',
+    hueshift: 'M12.333 2.91699C17.528 2.91702',
+    font: 'M20.0004 3C20.5524 3.00021',
+    text: 'M13.8274 5.10679C15.3034 3.63107',
+    search: 'M10.9992 3.28571C15.4172 3.28571',
+    prompt: 'M12.3748 2.51753C12.9271 2.51753',
+    color_text: 'M10.4004 4.89961C10.7888 4.89974',
+    color_background: 'M18.8089 14.4C19.0272 14.4',
+    color_border: 'M10.9338 2.37105C11.5225 2.37128',
+  }
+  for (const [name, signature] of Object.entries(signatures))
+    assert.ok(icons.includes(signature), `toolbar icon ${name} is out of sync with Figma`)
+  // Figma exports carry a baked-in fill; the toolbar tints icons via currentColor.
+  assert.equal(icons.includes('#111827'), false)
+})
+
 check('Notes panel uses Notes title and Wording filter', () => {
   const html = renderNotesPanel({ collapsed: false, hideResolved: true, filter: 'content', itemsHtml: '<div></div>' })
   assert.match(html, /data-vc-component="Notes Panel"/)

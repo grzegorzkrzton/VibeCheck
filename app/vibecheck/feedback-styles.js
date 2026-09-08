@@ -215,6 +215,19 @@ ${layerTokenCss}
   padding: var(--vc-spacing-10) var(--vc-spacing-12) var(--vc-spacing-12);
 }
 
+#vibecheck-layer .vc-actions[data-align="between"] { justify-content: space-between; }
+
+#vibecheck-layer .vc-actions-group {
+  display: flex;
+  align-items: center;
+  gap: var(--vc-spacing-8);
+}
+
+#vibecheck-layer .vc-card[data-vc-component="Feedback Card / Wording"] .vc-actions,
+#vibecheck-layer .vc-card[data-vc-component="Feedback Card / Wording"] .vc-actions-group {
+  gap: var(--vc-spacing-6);
+}
+
 #vibecheck-layer .vc-actions button {
   background: var(--vc-bg-surface);
   color: var(--vc-text-primary);

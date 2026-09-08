@@ -261,10 +261,12 @@ export function renderNoteCard({
       <div class="vc-body">${body}</div>
       ${repliesHtml}
       ${renderField({ type: 'Textarea', field: 'reply', placeholder: 'Reply… use @name to mention' })}
-      <div class="vc-actions">
+      <div class="vc-actions" data-align="between">
         ${renderButton({ style: 'Danger', label: 'Delete', action: 'delete' })}
-        ${renderButton({ style: 'Secondary', label: resolved ? 'Reopen' : 'Resolve', action: 'resolve' })}
-        ${renderButton({ style: 'Primary', label: 'Reply', action: 'reply' })}
+        <div class="vc-actions-group">
+          ${renderButton({ style: 'Secondary', label: resolved ? 'Reopen' : 'Resolve', action: 'resolve' })}
+          ${renderButton({ style: 'Primary', label: 'Reply', action: 'reply' })}
+        </div>
       </div>
     `,
   })
@@ -321,10 +323,12 @@ export function renderAnnotationCard({
       <div class="vc-body">${body}</div>
       ${repliesHtml}
       ${renderField({ type: 'Textarea', field: 'reply', placeholder: 'Reply… use @name to mention' })}
-      <div class="vc-actions">
+      <div class="vc-actions" data-align="between">
         ${renderButton({ style: 'Danger', label: 'Delete', action: 'delete' })}
-        ${renderButton({ style: 'Secondary', label: resolved ? 'Reopen' : 'Resolve', action: 'resolve' })}
-        ${renderButton({ style: 'Primary', label: 'Reply', action: 'reply' })}
+        <div class="vc-actions-group">
+          ${renderButton({ style: 'Secondary', label: resolved ? 'Reopen' : 'Resolve', action: 'resolve' })}
+          ${renderButton({ style: 'Primary', label: 'Reply', action: 'reply' })}
+        </div>
       </div>
     `,
   })
@@ -366,10 +370,12 @@ export function renderWordingCard({
           value: author,
           placeholder: 'Your name',
         })}
-        <div class="vc-actions">
-          ${renderButton({ style: 'Secondary', label: 'Cancel', action: 'cancel' })}
+        <div class="vc-actions" data-align="between">
           ${renderButton({ style: 'Secondary', label: 'Preview', action: 'preview' })}
-          ${renderButton({ style: 'Primary', label: 'Save', action: 'save' })}
+          <div class="vc-actions-group">
+            ${renderButton({ style: 'Secondary', label: 'Cancel', action: 'cancel' })}
+            ${renderButton({ style: 'Primary', label: 'Save', action: 'save' })}
+          </div>
         </div>
       `,
     })
@@ -385,12 +391,14 @@ export function renderWordingCard({
       <div class="vc-body"><b>From</b><br>${originalText}</div>
       <div class="vc-body"><b>To</b><br>${suggestedText}</div>
       ${rationale ? `<div class="vc-body">${rationale}</div>` : ''}
-      <div class="vc-actions">
+      <div class="vc-actions" data-align="between">
         ${renderButton({ style: 'Secondary', label: 'Preview', action: 'preview' })}
-        ${status === 'pending' ? `
-          ${renderButton({ style: 'Danger', label: 'Reject', action: 'reject' })}
-          ${renderButton({ style: 'Primary', label: 'Approve', action: 'approve' })}
-        ` : renderButton({ style: 'Danger', label: 'Delete', action: 'delete' })}
+        <div class="vc-actions-group">
+          ${status === 'pending' ? `
+            ${renderButton({ style: 'Danger', label: 'Reject', action: 'reject' })}
+            ${renderButton({ style: 'Primary', label: 'Approve', action: 'approve' })}
+          ` : renderButton({ style: 'Danger', label: 'Delete', action: 'delete' })}
+        </div>
       </div>
     `,
   })
