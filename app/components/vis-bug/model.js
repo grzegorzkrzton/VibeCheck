@@ -93,26 +93,6 @@ export const VisBugModel = {
                     </div>
                   </div>`,
   },
-  l: {
-    tool:        'position',
-    icon:        Icons.position,
-    label:       'Position',
-    description: 'Grab and position elements anywhere',
-    instruction: `<div table>
-                    <div>
-                      <b>Nudge:</b>
-                      <span>◀ ▶ ▲ ▼</span>
-                    </div>
-                    <div>
-                      <b>Place:</b>
-                      <span>Click & drag</span>
-                    </div>
-                    <div>
-                      <b>Restore:</b>
-                      <span>${altKey} + delete</span>
-                    </div>
-                  </div>`,
-  },
   m: {
     tool:        'margin',
     icon:        Icons.margin,

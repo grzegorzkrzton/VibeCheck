@@ -9,7 +9,7 @@ import {
 import {
   Selectable, Moveable, Padding, Margin, EditText, Font,
   Flex, Search, ColorPicker, BoxShadow, HueShift, MetaTip,
-  Guides, Screenshot, Position, Accessibility, draggable,
+  Guides, Screenshot, Accessibility, draggable,
   PromptExport, Comments, ContentSuggest,
 } from '../../features/'
 import { startChangeTracker } from '../../vibecheck/tracker'
@@ -459,15 +459,6 @@ export default class VisBug extends HTMLElement {
 
   screenshot() {
     this.deactivate_feature = Screenshot()
-  }
-
-  position() {
-    let feature = Position()
-    this.selectorEngine.onSelectedUpdate(feature.onNodesSelected)
-    this.deactivate_feature = () => {
-      this.selectorEngine.removeSelectedCallback(feature.onNodesSelected)
-      feature.disconnect()
-    }
   }
 
   prompt() {

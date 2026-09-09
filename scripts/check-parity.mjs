@@ -182,6 +182,12 @@ check('toolbar icons carry the synced Figma geometry', () => {
     text: 'M13.8274 5.10679C15.3034 3.63107',
     search: 'M10.9992 3.28571C15.4172 3.28571',
     prompt: 'M12.3748 2.51753C12.9271 2.51753',
+    margin: 'M2 18V9C2 8.44772 2.44772 8 3 8',
+    padding: 'M4.54297 20.8086C4.6287 20.2631',
+    align: 'M18.9996 3.99961C18.9998 3.4475',
+    move: 'M9.8787 21.1924L8.46449 19.7782',
+    accessibility: 'M21 12C21 7.02944 16.9706 3 12 3',
+    boxshadow: 'M6 3L5.8457 3.00391C4.66962 3.06349',
     color_text: 'M10.4004 4.89961C10.7888 4.89974',
     color_background: 'M18.8089 14.4C19.0272 14.4',
     color_border: 'M10.9338 2.37105C11.5225 2.37128',
@@ -190,6 +196,19 @@ check('toolbar icons carry the synced Figma geometry', () => {
     assert.ok(icons.includes(signature), `toolbar icon ${name} is out of sync with Figma`)
   // Figma exports carry a baked-in fill; the toolbar tints icons via currentColor.
   assert.equal(icons.includes('#111827'), false)
+})
+
+check('Position stays dormant and is excluded from the production toolbar', () => {
+  const model = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/model.js'), 'utf8')
+  const element = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.element.js'), 'utf8')
+  const dormant = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/dormant-tools.js'), 'utf8')
+
+  assert.equal(model.includes("tool:        'position'"), false)
+  assert.equal(/\bPosition\b/.test(element), false)
+  assert.equal(element.includes('  position() {'), false)
+  assert.match(dormant, /export const DormantVisBugTools/)
+  assert.match(dormant, /tool:\s+'position'/)
+  assert.match(dormant, /export function activateDormantPosition/)
 })
 
 check('Notes panel uses Notes title and Wording filter', () => {
