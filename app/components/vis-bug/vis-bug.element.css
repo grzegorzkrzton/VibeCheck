@@ -99,11 +99,11 @@
     box-shadow: var(--shadow-2);
 
     & > .icon-cursor {
-      stroke: var(--neon-pink);
+      stroke: var(--theme-icon_active-color);
     }
 
     & > svg:not(.icon-cursor) {
-      fill: var(--neon-pink);
+      fill: var(--theme-icon_active-color);
     }
   }
 

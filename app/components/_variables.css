@@ -23,6 +23,7 @@
   --theme-icon_color: var(--vc-text-secondary);
   --theme-icon_hover-bg: var(--vc-action-secondary-hover);
   --theme-icon_active-bg: var(--vc-bg-subtle);
+  --theme-icon_active-color: var(--vc-toolbar-tool-active-icon);
 
   --layer-top: 2147483647;
   --layer-1: 2147483646;
@@ -46,6 +47,7 @@
     --theme-icon_color: var(--vc-text-secondary);
     --theme-icon_hover-bg: var(--vc-action-secondary-hover);
     --theme-icon_active-bg: var(--vc-bg-subtle);
+    --theme-icon_active-color: var(--vc-toolbar-tool-active-icon);
   }
 
   @supports (backdrop-filter: blur(5px)) {
