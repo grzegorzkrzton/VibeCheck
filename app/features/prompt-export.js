@@ -13,7 +13,7 @@ function showToast(message, ms = 2600) {
     toast.id = 'vibecheck-toast'
     toast.style.cssText = [
       'position:fixed', 'bottom:24px', 'right:24px', 'z-index:2147483647',
-      'background:#16171f', 'color:#f4f4f6', 'border:1px solid #3a3d4a',
+      'background:#111827', 'color:#f9fafb', 'border:1px solid #374151',
       'border-radius:10px', 'padding:10px 14px', 'font:13px/1.4 system-ui,sans-serif',
       'box-shadow:0 10px 40px rgb(0 0 0 / 35%)', 'max-width:280px',
     ].join(';')

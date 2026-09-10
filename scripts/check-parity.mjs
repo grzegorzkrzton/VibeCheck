@@ -238,8 +238,8 @@ check('generated token files match tokens.json', () => {
 check('token generator emits mapped CSS custom properties', () => {
   const tokens = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/tokens.json'), 'utf8'))
   const css = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.css'), 'utf8')
-  assert.equal(tokens.color.light['bg-surface'], '#ffffff')
-  assert.match(css, /--vc-bg-surface: #ffffff/)
+  assert.equal(tokens.color.light['bg-surface'], '#f9fafb')
+  assert.match(css, /--vc-bg-surface: #f9fafb/)
   assert.match(css, /--vc-action-primary/)
   assert.match(css, /--vc-size-pin: 28px/)
   assert.match(css, /--vc-shadow-card/)
@@ -250,8 +250,8 @@ check('token generator emits mapped CSS custom properties', () => {
 
 check('feedback layer honours an explicit toolbar theme', () => {
   const generated = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.js'), 'utf8')
-  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-bg-surface: #ffffff/)
-  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-bg-surface: #16171f/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-bg-surface: #f9fafb/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-bg-surface: #111827/)
   const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
   assert.match(ui, /export function setFeedbackScheme/)
   const element = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.element.js'), 'utf8')

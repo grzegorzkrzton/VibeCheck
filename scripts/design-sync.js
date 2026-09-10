@@ -29,6 +29,7 @@ function colorDecls(tokens, mode) {
 
 function sharedDecls(tokens) {
   return [
+    declsFor(tokens.primitives, tokens.cssPrefix),
     declsFor(tokens.dimension, tokens.cssPrefix),
     declsFor(tokens.effect, tokens.cssPrefix),
     `  ${tokens.cssPrefix}-font-family: ${tokens.font.family};`,
