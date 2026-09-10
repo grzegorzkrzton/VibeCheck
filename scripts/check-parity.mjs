@@ -172,7 +172,7 @@ check('card action rows keep the Figma button order and alignment', () => {
 })
 
 check('toolbar icons carry the synced Figma geometry', () => {
-  const icons = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.icons.js'), 'utf8')
+  const icons = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.icons.js'), 'utf8')
   const signatures = {
     inspector: 'M11.9996 2C17.5225 2 21.9992 6.47794',
     comments: 'M19.0004 2C20.6572 2 22.0004 3.34312',
@@ -199,14 +199,14 @@ check('toolbar icons carry the synced Figma geometry', () => {
 })
 
 check('Position stays dormant and is excluded from the production toolbar', () => {
-  const model = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/model.js'), 'utf8')
-  const element = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.element.js'), 'utf8')
-  const dormant = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/dormant-tools.js'), 'utf8')
+  const model = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/model.js'), 'utf8')
+  const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
+  const dormant = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/dormant-tools.js'), 'utf8')
 
   assert.equal(model.includes("tool:        'position'"), false)
   assert.equal(/\bPosition\b/.test(element), false)
   assert.equal(element.includes('  position() {'), false)
-  assert.match(dormant, /export const DormantVisBugTools/)
+  assert.match(dormant, /export const DormantVibeCheckTools/)
   assert.match(dormant, /tool:\s+'position'/)
   assert.match(dormant, /export function activateDormantPosition/)
 })
@@ -254,7 +254,7 @@ check('feedback layer honours an explicit toolbar theme', () => {
   assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-bg-surface: #111827/)
   const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
   assert.match(ui, /export function setFeedbackScheme/)
-  const element = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.element.js'), 'utf8')
+  const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
   assert.match(element, /setFeedbackScheme\(newValue\)/)
 })
 
@@ -322,6 +322,30 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-card-head \{[\s\S]*min-height: 32px;\n  font: 700 13px var\(--vc-font-family\)/)
   assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border-default\)/)
   assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)
+})
+
+check('active product code and paths use the VibeCheck name', () => {
+  const tracked = execFileSync('git', ['ls-files', '-z'], {
+    cwd: ROOT,
+    encoding: 'utf8',
+  }).split('\0').filter(Boolean)
+  const legacyName = /vis[ -]?bug/i
+  const legalAndOperationalExceptions = new Set([
+    '.firebaserc',
+    'NOTICE',
+    'PLAN.md',
+    'package.json',
+    'readme.md',
+  ])
+
+  tracked.forEach(file => {
+    assert.doesNotMatch(file, legacyName, `legacy product name in path: ${file}`)
+    if (legalAndOperationalExceptions.has(file)) return
+
+    const contents = fs.readFileSync(path.join(ROOT, file))
+    if (contents.includes(0)) return
+    assert.doesNotMatch(contents.toString('utf8'), legacyName, `legacy product name in ${file}`)
+  })
 })
 
 console.log('parity checks passed')

@@ -128,9 +128,9 @@
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-54",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.icons.js",
+        "source": "app/components/vibe-check/vibe-check.icons.js",
         "renderer": "Icons",
-        "selector": "vis-bug li[data-tool] > svg, vis-bug li.color > svg",
+        "selector": "vibe-check li[data-tool] > svg, vibe-check li.color > svg",
         "dataComponent": "Toolbar Icon"
       },
       "variants": {
@@ -165,8 +165,8 @@
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-64",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.element.js",
-        "renderer": "VisBug.render",
+        "source": "app/components/vibe-check/vibe-check.element.js",
+        "renderer": "VibeCheck.render",
         "selector": "ol:not([colors]) li[data-vc-component=\"Toolbar Tool Button\"]",
         "dataComponent": "Toolbar Tool Button"
       },
@@ -209,8 +209,8 @@
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-77",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.element.js",
-        "renderer": "VisBug.render",
+        "source": "app/components/vibe-check/vibe-check.element.js",
+        "renderer": "VibeCheck.render",
         "selector": "[data-vc-component=\"Toolbar AI Prompt\"]",
         "dataComponent": "Toolbar AI Prompt"
       },
@@ -228,8 +228,8 @@
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-96",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.element.js",
-        "renderer": "VisBug.render",
+        "source": "app/components/vibe-check/vibe-check.element.js",
+        "renderer": "VibeCheck.render",
         "selector": "[data-vc-component=\"Toolbar Color Action\"]",
         "dataComponent": "Toolbar Color Action"
       },
@@ -249,8 +249,8 @@
       "type": "COMPONENT",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-97",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.element.js",
-        "renderer": "VisBug.render",
+        "source": "app/components/vibe-check/vibe-check.element.js",
+        "renderer": "VibeCheck.render",
         "selector": "[data-vc-component=\"Toolbar Divider\"]",
         "dataComponent": "Toolbar Divider"
       },
@@ -264,8 +264,8 @@
       "type": "COMPONENT",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-98",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.element.js",
-        "renderer": "VisBug.render",
+        "source": "app/components/vibe-check/vibe-check.element.js",
+        "renderer": "VibeCheck.render",
         "selector": "[data-vc-component=\"Main Toolbar\"]",
         "dataComponent": "Main Toolbar"
       },
@@ -279,8 +279,8 @@
       "type": "COMPONENT",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=6-57",
       "code": {
-        "source": "app/components/vis-bug/vis-bug.element.js",
-        "renderer": "VisBug.render",
+        "source": "app/components/vibe-check/vibe-check.element.js",
+        "renderer": "VibeCheck.render",
         "selector": "[data-vc-component=\"Color & AI Toolbar\"]",
         "dataComponent": "Color & AI Toolbar"
       },

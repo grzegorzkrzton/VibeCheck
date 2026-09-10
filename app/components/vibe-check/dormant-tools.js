@@ -7,9 +7,9 @@
  */
 import { Position } from '../../features/'
 import { altKey } from '../../utilities/'
-import * as Icons from './vis-bug.icons'
+import * as Icons from './vibe-check.icons'
 
-export const DormantVisBugTools = {
+export const DormantVibeCheckTools = {
   l: {
     tool:        'position',
     icon:        Icons.position,

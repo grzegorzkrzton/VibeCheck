@@ -63,8 +63,8 @@ export const showHideNodeLabel = (el, show = false) => {
   const label_id = el.getAttribute('data-label-id')
 
   const nodes = $(`
-    visbug-label[data-label-id="${label_id}"],
-    visbug-handles[data-label-id="${label_id}"]
+    vibecheck-label[data-label-id="${label_id}"],
+    vibecheck-handles[data-label-id="${label_id}"]
   `)
 
   nodes.length && show
@@ -84,15 +84,15 @@ export const isOffBounds = node => {
   while (current) {
     if (current.closest) {
       if (
-        current.closest('vis-bug')
+        current.closest('vibe-check')
         || current.closest('hotkey-map')
-        || current.closest('visbug-metatip')
-        || current.closest('visbug-ally')
-        || current.closest('visbug-label')
-        || current.closest('visbug-handles')
-        || current.closest('visbug-corners')
-        || current.closest('visbug-grip')
-        || current.closest('visbug-gridlines')
+        || current.closest('vibecheck-metatip')
+        || current.closest('vibecheck-ally')
+        || current.closest('vibecheck-label')
+        || current.closest('vibecheck-handles')
+        || current.closest('vibecheck-corners')
+        || current.closest('vibecheck-grip')
+        || current.closest('vibecheck-gridlines')
         || current.closest('#vibecheck-toast')
         || current.closest('#vibecheck-layer')
         || current.closest('#vibecheck-toolbar-tip')

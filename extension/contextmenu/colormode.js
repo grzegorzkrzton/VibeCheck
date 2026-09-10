@@ -1,4 +1,4 @@
-const storagekey = 'visbug-color-mode'
+const storagekey = 'vibecheck-color-mode'
 const defaultcolormode = 'hex'
 
 const color_options = [
@@ -29,7 +29,7 @@ const sendColorMode = () => {
       action: 'COLOR_MODE',
       params: {mode: colormodestate.mode},
     }).catch(() => {
-      // No listener yet — VisBug is not injected on this tab.
+      // No listener yet — VibeCheck is not injected on this tab.
     })
   })
 }
@@ -65,7 +65,7 @@ export const getColorMode = () => {
       })
     })
 
-    // send visbug user preference
+    // send vibecheck user preference
     colormodestate.mode = found_value
     sendColorMode()
 

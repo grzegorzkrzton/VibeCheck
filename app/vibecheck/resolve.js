@@ -3,7 +3,7 @@ import { isSelectorValid } from '../utilities/'
 function isPageElement(el) {
   if (!el || el.nodeType !== 1) return false
   const name = el.nodeName
-  if (name === 'VIS-BUG' || name.startsWith('VISBUG-') || name.startsWith('VIBECHECK-'))
+  if (name === 'VIBE-CHECK' || name.startsWith('VIBECHECK-'))
     return false
   if (el.id === 'vibecheck-toast' || el.id === 'vibecheck-layer' || el.id === 'vibecheck-toolbar-tip')
     return false

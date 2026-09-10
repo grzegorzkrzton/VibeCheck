@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  VisBug
+//  VibeCheck
 //
 //  Created by Adam Argyle on 11/3/20.
 //

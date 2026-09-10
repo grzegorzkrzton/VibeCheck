@@ -16,13 +16,13 @@ import { startChangeTracker } from '../../vibecheck/tracker'
 import { startFeedbackLayer, setFeedbackScheme } from '../../vibecheck/feedback-ui'
 
 import {
-  VisBugStyles,
-  VisBugLightStyles,
-  VisBugDarkStyles
+  VibeCheckStyles,
+  VibeCheckLightStyles,
+  VibeCheckDarkStyles
 } from '../styles.store'
 
-import { VisBugModel, VisBugPromptTool }  from './model'
-import * as Icons                 from './vis-bug.icons'
+import { VibeCheckModel, VibeCheckPromptTool }  from './model'
+import * as Icons                 from './vibe-check.icons'
 import { provideSelectorEngine }  from '../../features/search'
 import { PluginRegistry }         from '../../plugins/_registry'
 import {
@@ -34,16 +34,16 @@ import {
   schemeRule
 } from '../../utilities/'
 
-export default class VisBug extends HTMLElement {
+export default class VibeCheck extends HTMLElement {
   constructor() {
     super()
 
-    this.toolbar_model  = VisBugModel
-    this.prompt_tool    = VisBugPromptTool
+    this.toolbar_model  = VibeCheckModel
+    this.prompt_tool    = VibeCheckPromptTool
     this.$shadow        = this.attachShadow({mode: 'closed'})
     this.applyScheme    = schemeRule(
       this.$shadow,
-      VisBugStyles, VisBugLightStyles, VisBugDarkStyles
+      VibeCheckStyles, VibeCheckLightStyles, VibeCheckDarkStyles
     )
   }
 
@@ -166,7 +166,7 @@ export default class VisBug extends HTMLElement {
     this.hidePopover && this.hidePopover()
 
     Array.from(document.body.children)
-      .filter(node => node.nodeName.includes('VISBUG'))
+      .filter(node => node.nodeName.includes('VIBECHECK'))
       .forEach(el => el.remove())
 
     this.teardown()
@@ -354,7 +354,7 @@ export default class VisBug extends HTMLElement {
 
   render() {
     return `
-      <visbug-hotkeys></visbug-hotkeys>
+      <vibecheck-hotkeys></vibecheck-hotkeys>
       <ol data-vc-component="Main Toolbar" constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
         ${Object.entries(this.toolbar_model).reduce((list, [key, tool]) => `
           ${list}
@@ -441,7 +441,7 @@ export default class VisBug extends HTMLElement {
   hueshift() {
     this.deactivate_feature = HueShift({
       Color:  this.colorPicker,
-      Visbug: this.selectorEngine,
+      VibeCheck: this.selectorEngine,
     })
   }
 
@@ -490,4 +490,4 @@ export default class VisBug extends HTMLElement {
   }
 }
 
-customElements.define('vis-bug', VisBug)
+customElements.define('vibe-check', VibeCheck)

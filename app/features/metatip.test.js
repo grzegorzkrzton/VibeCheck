@@ -35,7 +35,7 @@ test('Should show 1 metatip on click', async t => {
   const { page } = t.context
 
   await page.click(test_selector)
-  const metatip_element = await page.evaluate(`document.querySelectorAll('visbug-metatip').length`)
+  const metatip_element = await page.evaluate(`document.querySelectorAll('vibecheck-metatip').length`)
 
   t.is(metatip_element, 1)
   t.pass()
@@ -46,7 +46,7 @@ test('Should show tag name in header', async t => {
 
   await page.click(test_selector)
   const metatip_header_tag = await page.evaluate(
-    `document.querySelector('visbug-metatip').$shadow.querySelector('figure > header a[node]').textContent`
+    `document.querySelector('vibecheck-metatip').$shadow.querySelector('figure > header a[node]').textContent`
   )
 
   t.is(metatip_header_tag, 'b')

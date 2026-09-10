@@ -1,4 +1,4 @@
-import VisBug from './components/vis-bug/vis-bug.element'
+import VibeCheck from './components/vibe-check/vibe-check.element'
 import { metaKey } from './utilities'
 
 if ('ontouchstart' in document.documentElement)

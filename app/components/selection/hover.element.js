@@ -29,4 +29,4 @@ export class Hover extends Handles {
   }
 }
 
-customElements.define('visbug-hover', Hover)
+customElements.define('vibecheck-hover', Hover)

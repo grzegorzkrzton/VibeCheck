@@ -15,7 +15,7 @@
     "https://*.supabase.co/*"
   ],
   "background": {
-    "service_worker": "visbug.js",
+    "service_worker": "vibecheck.js",
     "type": "module"
   },
   "action": {

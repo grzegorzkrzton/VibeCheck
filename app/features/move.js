@@ -19,25 +19,25 @@ const state = {
 }
 // todo: indicator for when node can descend
 // todo: have it work with shadowDOM
-export function Moveable(visbug) {
+export function Moveable(vibecheck) {
   hotkeys(key_events, (e, {key}) => {
     if (e.cancelBubble) return
 
     e.preventDefault()
     e.stopPropagation()
 
-    visbug.selection().forEach(el => {
+    vibecheck.selection().forEach(el => {
       moveElement(el, key)
       updateFeedback(el)
     })
   })
 
-  visbug.onSelectedUpdate(dragNDrop)
+  vibecheck.onSelectedUpdate(dragNDrop)
   toggleWatching({watch: false})
 
   return () => {
     toggleWatching({watch: true})
-    visbug.removeSelectedCallback(dragNDrop)
+    vibecheck.removeSelectedCallback(dragNDrop)
     clearListeners()
     hotkeys.unbind(key_events)
   }
@@ -105,8 +105,8 @@ export function dragNDrop(selection) {
   const hasNoSiblingsToDrag   = validMoveableChildren.length <= 1
   const isAnSVG               = src instanceof SVGElement
 
-  if (tooManySelected || hasNoSiblingsToDrag || isAnSVG) 
-    return 
+  if (tooManySelected || hasNoSiblingsToDrag || isAnSVG)
+    return
 
   validMoveableChildren.forEach(sibling =>
     state.drag.siblings.set(sibling, createGripUI(sibling)))
@@ -155,18 +155,18 @@ const dragStart = ({target}) => {
   state.hover.dropzones.push(createDropzoneUI(target))
   state.drag.siblings.get(target).style.opacity = 0.01
 
-  target.setAttribute('visbug-drag-src', true)
+  target.setAttribute('vibecheck-drag-src', true)
   ghostNode(target)
 
-  $('visbug-hover').forEach(el =>
-    !el.hasAttribute('visbug-drag-container') && el.remove())
+  $('vibecheck-hover').forEach(el =>
+    !el.hasAttribute('vibecheck-drag-container') && el.remove())
 }
 
 const dragOver = e => {
   if (
-    !state.drag.src || 
-    state.drag.swapping.get(e.target) || 
-    e.target.hasAttribute('visbug-drag-src') || 
+    !state.drag.src ||
+    state.drag.swapping.get(e.target) ||
+    e.target.hasAttribute('vibecheck-drag-src') ||
     !state.drag.siblings.has(e.currentTarget) ||
     e.currentTarget !== e.target
   ) return
@@ -174,7 +174,7 @@ const dragOver = e => {
   state.drag.swapping.set(e.target, true)
   swapElements(state.drag.src, e.target)
 
-  setTimeout(() => 
+  setTimeout(() =>
     state.drag.swapping.delete(e.target)
   , 250)
 }
@@ -182,7 +182,7 @@ const dragOver = e => {
 const dragDrop = e => {
   if (!state.drag.src) return
 
-  state.drag.src.removeAttribute('visbug-drag-src')
+  state.drag.src.removeAttribute('vibecheck-drag-src')
   ghostBuster(state.drag.src)
 
   if (state.drag.siblings.has(state.drag.src))
@@ -221,7 +221,7 @@ const ghostBuster = ({style}) => {
 }
 
 const createDropzoneUI = el => {
-  const zone = document.createElement('visbug-corners')
+  const zone = document.createElement('vibecheck-corners')
 
   zone.position = {el}
   document.body.appendChild(zone)
@@ -229,9 +229,9 @@ const createDropzoneUI = el => {
   const observer = new MutationObserver(list =>
     zone.position = {el})
 
-  observer.observe(el.parentNode, { 
-    childList: true, 
-    subtree: true, 
+  observer.observe(el.parentNode, {
+    childList: true,
+    subtree: true,
   })
 
   state.hover.observers.push(observer)
@@ -240,7 +240,7 @@ const createDropzoneUI = el => {
 }
 
 const createGripUI = el => {
-  const grip = document.createElement('visbug-grip')
+  const grip = document.createElement('vibecheck-grip')
 
   grip.position = {el}
   document.body.appendChild(grip)
@@ -248,9 +248,9 @@ const createGripUI = el => {
   const observer = new MutationObserver(list =>
     grip.position = {el})
 
-  observer.observe(el.parentNode, { 
-    childList: true, 
-    subtree: true, 
+  observer.observe(el.parentNode, {
+    childList: true,
+    subtree: true,
   })
 
   state.hover.observers.push(observer)
@@ -259,11 +259,11 @@ const createGripUI = el => {
 }
 
 const createParentUI = parent => {
-  const hover = document.createElement('visbug-hover')
-  const label = document.createElement('visbug-label')
+  const hover = document.createElement('vibecheck-hover')
+  const label = document.createElement('vibecheck-label')
 
   hover.position = {el:parent}
-  hover.setAttribute('visbug-drag-container', true)
+  hover.setAttribute('vibecheck-drag-container', true)
 
   label.text = 'Drag Bounds'
   label.position = {boundingRect: parent.getBoundingClientRect()}
@@ -277,9 +277,9 @@ const createParentUI = parent => {
     label.position = {boundingRect: parent.getBoundingClientRect()}
   })
 
-  observer.observe(parent, { 
-    childList: true, 
-    subtree: true, 
+  observer.observe(parent, {
+    childList: true,
+    subtree: true,
   })
 
   state.hover.observers.push(observer)
@@ -290,16 +290,16 @@ const createParentUI = parent => {
 export function clearListeners() {
   moveUnwatch(state.drag.parent)
 
-  state.hover.observers.forEach(observer => 
+  state.hover.observers.forEach(observer =>
     observer.disconnect())
 
-  state.hover.dropzones.forEach(zone => 
+  state.hover.dropzones.forEach(zone =>
     zone.remove())
 
-  state.drag.siblings.forEach((grip, sibling) => 
+  state.drag.siblings.forEach((grip, sibling) =>
     grip.remove())
 
-  state.drag.parent_ui.forEach(ui => 
+  state.drag.parent_ui.forEach(ui =>
     ui.remove())
 
   state.hover.observers = []

@@ -15,7 +15,7 @@ export function cssPath(el) {
   let node = el
 
   while (node && node.nodeType === 1 && node !== document.body && node !== document.documentElement) {
-    if (node.nodeName === 'VIS-BUG' || node.id === 'vibecheck-toast')
+    if (node.nodeName === 'VIBE-CHECK' || node.id === 'vibecheck-toast')
       break
 
     let selector = node.nodeName.toLowerCase()
@@ -33,7 +33,7 @@ export function cssPath(el) {
     }
 
     const classes = [...node.classList]
-      .filter(name => name && !name.startsWith('visbug'))
+      .filter(name => name && !name.startsWith('vibecheck'))
       .slice(0, 3)
       .map(name => `.${CSS.escape(name)}`)
       .join('')
@@ -91,7 +91,7 @@ export function getSectionContext(el) {
 
     if (SECTION_TAGS.has(node.tagName)) {
       const tag = node.tagName.toLowerCase()
-      const cls = [...node.classList].find(name => name && !name.startsWith('visbug'))
+      const cls = [...node.classList].find(name => name && !name.startsWith('vibecheck'))
       return {
         label: cls ? `${tag}.${cls}` : tag,
         tag,
@@ -111,7 +111,7 @@ export function createAnchor(el) {
   return {
     tag: el.tagName.toLowerCase(),
     id: el.id || null,
-    classes: [...el.classList].filter(name => name && !name.startsWith('visbug')).slice(0, 12),
+    classes: [...el.classList].filter(name => name && !name.startsWith('vibecheck')).slice(0, 12),
     cssPath: cssPath(el),
     text,
     role: el.getAttribute('role') || null,

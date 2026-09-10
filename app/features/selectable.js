@@ -19,7 +19,7 @@ import {
   getTextShadowValues, isFixed, onRemove
 } from '../utilities/'
 
-export function Selectable(visbug) {
+export function Selectable(vibecheck) {
   const page              = document.body
   let selected            = []
   let selectedCallbacks   = []
@@ -119,7 +119,7 @@ export function Selectable(visbug) {
     e.preventDefault()
     e.stopPropagation()
     if (isOffBounds(e.target)) return
-    visbug.toolSelected('text')
+    vibecheck.toolSelected('text')
   }
 
   const watchCommandKey = e => {
@@ -127,7 +127,7 @@ export function Selectable(visbug) {
 
     document.onkeydown = function(e) {
       if (hotkeys.ctrl && selected.length) {
-        $('visbug-handles, visbug-label, visbug-hover, visbug-grip').forEach(el =>
+        $('vibecheck-handles, vibecheck-label, vibecheck-hover, vibecheck-grip').forEach(el =>
           el.style.display = 'none')
 
         did_hide = true
@@ -136,7 +136,7 @@ export function Selectable(visbug) {
 
     document.onkeyup = function(e) {
       if (did_hide) {
-        $('visbug-handles, visbug-label, visbug-hover, visbug-grip').forEach(el =>
+        $('vibecheck-handles, vibecheck-label, vibecheck-hover, vibecheck-grip').forEach(el =>
           el.style.display = null)
 
         did_hide = false
@@ -215,7 +215,7 @@ export function Selectable(visbug) {
       getStyles(el))
 
     try {
-      const colormode = $('vis-bug').attr('color-mode')
+      const colormode = $('vibe-check').attr('color-mode')
 
       const styles = window.copied_styles[0]
         .map(({prop,value}) => {
@@ -361,7 +361,7 @@ export function Selectable(visbug) {
   }
 
   const show_tip = el => {
-    const active_tool = visbug.activeTool
+    const active_tool = vibecheck.activeTool
     let tipFactory
 
     if (active_tool === 'accessibility') {
@@ -388,7 +388,7 @@ export function Selectable(visbug) {
 
   const on_hover = e => {
     const $target = deepElementFromPoint(e.clientX, e.clientY)
-    const tool = visbug.activeTool
+    const tool = vibecheck.activeTool
 
     if (isOffBounds($target) || $target.hasAttribute('data-selected') || $target.hasAttribute('draggable')) {
       clearMeasurements()
@@ -411,11 +411,11 @@ export function Selectable(visbug) {
       const [$anchor] = selected
       createMeasurements({$anchor, $target})
     }
-    else if (tool === 'margin' && !hover_state.element.$shadow.querySelector('visbug-boxmodel')) {
+    else if (tool === 'margin' && !hover_state.element.$shadow.querySelector('vibecheck-boxmodel')) {
       hover_state.element.$shadow.appendChild(
         createMarginVisual(hover_state.target, true))
     }
-    else if (tool === 'padding' && !hover_state.element.$shadow.querySelector('visbug-boxmodel')) {
+    else if (tool === 'padding' && !hover_state.element.$shadow.querySelector('vibecheck-boxmodel')) {
       hover_state.element.$shadow.appendChild(
         createPaddingVisual(hover_state.target, true))
     }
@@ -434,7 +434,7 @@ export function Selectable(visbug) {
 
   const select = el => {
     const id = handles.length
-    const tool = visbug.activeTool
+    const tool = vibecheck.activeTool
 
     el.setAttribute('data-selected', true)
     el.setAttribute('data-label-id', id)
@@ -452,7 +452,7 @@ export function Selectable(visbug) {
         || tool === 'accessibility',
     })
 
-    $('visbug-metatip, visbug-ally').forEach(tip => {
+    $('vibecheck-metatip, vibecheck-ally').forEach(tip => {
       tip.hidePopover && tip.hidePopover()
       tip.showPopover && tip.showPopover()
     })
@@ -479,10 +479,10 @@ export function Selectable(visbug) {
       hover.removeAttribute('data-pseudo-select'))
 
     Array.from([
-      ...$('visbug-handles'),
-      ...$('visbug-label'),
-      ...$('visbug-hover'),
-      ...$('visbug-distance'),
+      ...$('vibecheck-handles'),
+      ...$('vibecheck-label'),
+      ...$('vibecheck-hover'),
+      ...$('vibecheck-distance'),
     ]).forEach(el =>
       el.remove())
 
@@ -552,7 +552,7 @@ export function Selectable(visbug) {
 
     hover_state.label   = no_label
       ? null
-      : createHoverLabel(el, handleLabelText(el, visbug.activeTool))
+      : createHoverLabel(el, handleLabelText(el, vibecheck.activeTool))
   }
 
   const clearHover = () => {
@@ -573,7 +573,7 @@ export function Selectable(visbug) {
       : createLabel({
           el,
           id,
-          template: handleLabelText(el, visbug.activeTool)
+          template: handleLabelText(el, vibecheck.activeTool)
         })
 
     let observer        = createObserver(el, {handle,label})
@@ -591,7 +591,7 @@ export function Selectable(visbug) {
   }
 
   const setLabel = (el, label) => {
-    label.text = handleLabelText(el, visbug.activeTool)
+    label.text = handleLabelText(el, vibecheck.activeTool)
     label.update = {boundingRect: el.getBoundingClientRect(), isFixed: isFixed(el)}
 
     handles.forEach(handle => {
@@ -602,7 +602,7 @@ export function Selectable(visbug) {
 
   const createLabel = ({el, id, template}) => {
     if (!labels[id]) {
-      const label = document.createElement('visbug-label')
+      const label = document.createElement('vibecheck-label')
 
       label.text = template
       label.position = {
@@ -645,7 +645,7 @@ export function Selectable(visbug) {
 
   const createHandle = ({el, id}) => {
     if (!handles[id]) {
-      const handle = document.createElement('visbug-handles')
+      const handle = document.createElement('vibecheck-handles')
 
       handle.position = { el, node_label_id: id }
 
@@ -661,7 +661,7 @@ export function Selectable(visbug) {
       if (hover_state.element)
         hover_state.element.remove()
 
-      hover_state.element = document.createElement('visbug-hover')
+      hover_state.element = document.createElement('vibecheck-hover')
       document.body.appendChild(hover_state.element)
       hover_state.element.position = {el}
 
@@ -674,7 +674,7 @@ export function Selectable(visbug) {
       if (hover_state.label)
         hover_state.label.remove()
 
-      hover_state.label = document.createElement('visbug-label')
+      hover_state.label = document.createElement('vibecheck-label')
       document.body.appendChild(hover_state.label)
 
       hover_state.label.text = text
@@ -695,7 +695,7 @@ export function Selectable(visbug) {
       if (hover_state.element)
         hover_state.element.remove()
 
-      hover_state.element = document.createElement('visbug-corners')
+      hover_state.element = document.createElement('vibecheck-corners')
       document.body.appendChild(hover_state.element)
       hover_state.element.position = {el}
 

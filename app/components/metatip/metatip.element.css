@@ -138,7 +138,7 @@
   text-align: var(--is-flipped);
 }
 
-:host [visbug-ally] > header {
+:host [vibecheck-ally] > header {
   padding: .1ex 10px .25ex;
   border-radius: var(--radius-round);
 }

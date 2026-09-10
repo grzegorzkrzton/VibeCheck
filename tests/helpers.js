@@ -9,7 +9,7 @@ export const setupPptrTab = async t => {
 
   await t.context.page.goto('http://localhost:3000')
   await t.context.page.evaluateHandle(`document.body.setAttribute('testing', true)`)
-  await t.context.page.waitForSelector('vis-bug')
+  await t.context.page.waitForSelector('vibe-check')
 }
 
 export const teardownPptrTab = async ({context:{ page, browser }}) => {
@@ -20,11 +20,11 @@ export const changeMode = async ({page, tool}) =>
   await page.evaluateHandle(`
     var mouseUpEvent = document.createEvent("MouseEvents");
     mouseUpEvent.initEvent("mouseup", true, true);
-    document.querySelector('vis-bug').$shadow.querySelector('li[data-tool=${tool}]').dispatchEvent(mouseUpEvent);
+    document.querySelector('vibe-check').$shadow.querySelector('li[data-tool=${tool}]').dispatchEvent(mouseUpEvent);
   `)
 
 export const getActiveTool = async page =>
-  await page.$eval('vis-bug', el =>
+  await page.$eval('vibe-check', el =>
     el.activeTool)
 
 export const pptrMetaKey = async page => {

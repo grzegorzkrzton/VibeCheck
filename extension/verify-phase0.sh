@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")"
 
 missing=0
-for file in manifest.json visbug.js toolbar/bundle.css toolbar/bundle.min.js toolbar/inject.js; do
+for file in manifest.json vibecheck.js toolbar/bundle.css toolbar/bundle.min.js toolbar/inject.js; do
   if [ ! -f "$file" ]; then
     echo "MISSING: $file"
     missing=1

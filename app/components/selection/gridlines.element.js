@@ -69,4 +69,4 @@ export class Gridlines extends HTMLElement {
   }
 }
 
-customElements.define('visbug-gridlines', Gridlines)
+customElements.define('vibecheck-gridlines', Gridlines)

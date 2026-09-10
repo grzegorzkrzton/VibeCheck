@@ -7,7 +7,7 @@ Internal Chrome extension for designers, PMs, engineers, and content design. Bui
 | Remote | URL |
 |--------|-----|
 | **origin** (yours) | https://github.com/grzegorzkrzton/design-feedback-tool |
-| **upstream** (VisBug) | https://github.com/GoogleChromeLabs/ProjectVisBug |
+| **upstream** (original project) | https://github.com/GoogleChromeLabs/ProjectVisBug |
 
 ---
 
@@ -55,7 +55,7 @@ Reload the extension. Comments, annotations, and content suggestions are stored 
 
 | Phase | Status | What |
 |-------|--------|------|
-| 0 | Done | VisBug baseline — load, toggle, live-edit |
+| 0 | Done | Upstream baseline — load, toggle, live-edit |
 | 1 | Done | VibeCheck rebrand + icon |
 | 2 | Done | Copy AI prompt from live edits (**Q**) |
 | 3 | Done | Figma-like comments (**C**), localStorage |

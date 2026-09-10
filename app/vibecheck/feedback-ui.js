@@ -111,7 +111,7 @@ function savePanelLayout() {
 
 function rememberPointer(event) {
   const target = event.target
-  if (target?.closest?.(`#${LAYER_ID}, vis-bug, #vibecheck-toolbar-tip`)) return
+  if (target?.closest?.(`#${LAYER_ID}, vibe-check, #vibecheck-toolbar-tip`)) return
   state.lastPointer = { x: event.clientX, y: event.clientY }
 }
 

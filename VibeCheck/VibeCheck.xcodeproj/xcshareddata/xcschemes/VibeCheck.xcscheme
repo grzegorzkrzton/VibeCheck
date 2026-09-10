@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "8EBF957C2550B10A007B8136"
-               BuildableName = "VisBug.app"
-               BlueprintName = "VisBug"
-               ReferencedContainer = "container:VisBug.xcodeproj">
+               BuildableName = "VibeCheck.app"
+               BlueprintName = "VibeCheck"
+               ReferencedContainer = "container:VibeCheck.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8EBF957C2550B10A007B8136"
-            BuildableName = "VisBug.app"
-            BlueprintName = "VisBug"
-            ReferencedContainer = "container:VisBug.xcodeproj">
+            BuildableName = "VibeCheck.app"
+            BlueprintName = "VibeCheck"
+            ReferencedContainer = "container:VibeCheck.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "8EBF957C2550B10A007B8136"
-            BuildableName = "VisBug.app"
-            BlueprintName = "VisBug"
-            ReferencedContainer = "container:VisBug.xcodeproj">
+            BuildableName = "VibeCheck.app"
+            BlueprintName = "VibeCheck"
+            ReferencedContainer = "container:VibeCheck.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

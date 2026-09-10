@@ -63,9 +63,9 @@ export class Hotkeys extends HTMLElement {
 
   showTool() {
     this.cur_tool = this.tool_map[
-      $('vis-bug')[0].activeTool]
+      $('vibe-check')[0].activeTool]
     this.cur_tool?.show?.()
   }
 }
 
-customElements.define('visbug-hotkeys', Hotkeys)
+customElements.define('vibecheck-hotkeys', Hotkeys)

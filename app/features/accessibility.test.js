@@ -3,7 +3,7 @@ import { setupPptrTab, teardownPptrTab, getActiveTool, changeMode } from '../../
 
 test.beforeEach(setupPptrTab)
 
-const contrastValueSelector = `document.querySelector('visbug-ally').$shadow.querySelector('span[contrast]').textContent.trim()`
+const contrastValueSelector = `document.querySelector('vibecheck-ally').$shadow.querySelector('span[contrast]').textContent.trim()`
 
 test('Can be activated', async t => {
   const {page} = t.context;
@@ -45,7 +45,7 @@ test('Does not show a11y tooltip on <svg> node', async t => {
   t.is(targetNodeName, 'svg')
   t.pass()
 
-  t.is(await page.$('visbug-ally'), null)
+  t.is(await page.$('vibecheck-ally'), null)
   t.pass()
 })
 

@@ -1,7 +1,7 @@
 .DS_Store
 .vscode
 .cursor/
-node_modules/
+node_modules
 .env
 .env.*
 !.env.example
@@ -15,4 +15,4 @@ extension/build
 .*.png
 .scratch/
 
-VisBug/VisBug.xcodeproj/project.xcworkspace/xcuserdata/argyle.xcuserdatad/UserInterfaceState.xcuserstate
+VibeCheck/VibeCheck.xcodeproj/project.xcworkspace/xcuserdata/argyle.xcuserdatad/UserInterfaceState.xcuserstate

@@ -1,6 +1,6 @@
 //
 //  ViewController.swift
-//  VisBug
+//  VibeCheck
 //
 //  Created by Adam Argyle on 11/2/20.
 //
@@ -9,8 +9,8 @@ import Cocoa
 import SafariServices.SFSafariApplication
 import SafariServices.SFSafariExtensionManager
 
-let appName = "VisBug"
-let extensionBundleIdentifier = "argyleink.VisBug.Extension"
+let appName = "VibeCheck"
+let extensionBundleIdentifier = "argyleink.VibeCheck.Extension"
 
 class ViewController: NSViewController {
 

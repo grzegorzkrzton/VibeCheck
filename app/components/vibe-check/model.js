@@ -1,7 +1,7 @@
-import * as Icons from './vis-bug.icons'
+import * as Icons from './vibe-check.icons'
 import { metaKey, altKey } from '../../utilities/'
 
-export const VisBugModel = {
+export const VibeCheckModel = {
   g: {
     tool:        'guides',
     icon:        Icons.guides,
@@ -339,7 +339,7 @@ export const VisBugModel = {
   },
 }
 
-export const VisBugPromptTool = {
+export const VibeCheckPromptTool = {
   tool:         'prompt',
   icon:         Icons.prompt,
   label:        '<span><u>Q</u> AI Prompt</span>',

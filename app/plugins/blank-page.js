@@ -8,6 +8,6 @@ export const description = 'remove all elements on the page (body tag)'
 
 export default function () {
   document
-    .querySelectorAll('body > *:not(vis-bug):not(script)')
+    .querySelectorAll('body > *:not(vibe-check):not(script)')
     .forEach(node => node.remove())
 }

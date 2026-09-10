@@ -13,7 +13,7 @@ test('Can show 1 label on click', async t => {
 
   await page.click(test_selector)
 
-  const label_element = await page.evaluate(`document.querySelectorAll('visbug-label').length`)
+  const label_element = await page.evaluate(`document.querySelectorAll('vibecheck-label').length`)
 
   t.is(label_element, 1)
   t.pass()
@@ -26,7 +26,7 @@ test('Can show tag name label on click', async t => {
   await page.click(test_selector)
 
   const label_element = await page.evaluate(
-    `document.querySelector('visbug-label').$shadow.querySelector('span a').textContent`
+    `document.querySelector('vibecheck-label').$shadow.querySelector('span a').textContent`
   );
 
   t.is(label_element, 'b');
@@ -40,7 +40,7 @@ test('Can show layout property label on click', async t => {
   await page.click(test_selector)
 
   const label_element = await page.evaluate(
-    `document.querySelector('visbug-label').$shadow.querySelector('span').textContent`
+    `document.querySelector('vibecheck-label').$shadow.querySelector('span').textContent`
   );
 
   t.is(label_element, 'inline');
@@ -54,7 +54,7 @@ test('Can show proper tag name label after position tool clicked', async t => {
   await page.click(test_selector)
 
   const label_element = await page.evaluate(
-    `document.querySelector('visbug-label').$shadow.querySelector('span a').textContent`
+    `document.querySelector('vibecheck-label').$shadow.querySelector('span a').textContent`
   );
 
   t.is(label_element, "b");

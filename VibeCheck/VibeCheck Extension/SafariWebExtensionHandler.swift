@@ -1,6 +1,6 @@
 //
 //  SafariWebExtensionHandler.swift
-//  VisBug Extension
+//  VibeCheck Extension
 //
 //  Created by Adam Argyle on 11/2/20.
 //

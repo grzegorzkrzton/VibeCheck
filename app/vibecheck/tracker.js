@@ -16,9 +16,9 @@ function isVibeCheckNode(node) {
   return node.id === 'vibecheck-toast'
     || node.id === 'vibecheck-layer'
     || node.id === 'vibecheck-toolbar-tip'
-    || node.nodeName.startsWith('VISBUG-')
-    || node.nodeName === 'VIS-BUG'
-    || node.closest?.('vis-bug, #vibecheck-toast, #vibecheck-layer, #vibecheck-toolbar-tip')
+    || node.nodeName.startsWith('VIBECHECK-')
+    || node.nodeName === 'VIBE-CHECK'
+    || node.closest?.('vibe-check, #vibecheck-toast, #vibecheck-layer, #vibecheck-toolbar-tip')
 }
 
 export function snapshotElement(el) {

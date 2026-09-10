@@ -8,7 +8,7 @@ test.beforeEach(setupPptrTab)
 test('toolbar exposes Figma mapped component names', async t => {
   const { page } = t.context
   const mapped = await page.evaluate(`(() => {
-    const root = document.querySelector('vis-bug').$shadow
+    const root = document.querySelector('vibe-check').$shadow
     return {
       main: !!root.querySelector('[data-vc-component="Main Toolbar"]'),
       color: !!root.querySelector('[data-vc-component="Color & AI Toolbar"]'),

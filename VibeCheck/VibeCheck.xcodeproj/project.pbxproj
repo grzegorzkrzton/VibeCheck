@@ -11,10 +11,10 @@
 		8EBF95852550B10A007B8136 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95832550B10A007B8136 /* Main.storyboard */; };
 		8EBF95872550B10A007B8136 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF95862550B10A007B8136 /* ViewController.swift */; };
 		8EBF95892550B10B007B8136 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95882550B10B007B8136 /* Assets.xcassets */; };
-		8EBF95902550B10B007B8136 /* VisBug Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8EBF958F2550B10B007B8136 /* VisBug Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		8EBF95902550B10B007B8136 /* VibeCheck Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8EBF958F2550B10B007B8136 /* VibeCheck Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8EBF95952550B10B007B8136 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EBF95942550B10B007B8136 /* Cocoa.framework */; };
 		8EBF95982550B10B007B8136 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBF95972550B10B007B8136 /* SafariWebExtensionHandler.swift */; };
-		8EBF95AC2550B10C007B8136 /* visbug.js in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95A52550B10C007B8136 /* visbug.js */; };
+		8EBF95AC2550B10C007B8136 /* vibecheck.js in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95A52550B10C007B8136 /* vibecheck.js */; };
 		8EBF95AD2550B10C007B8136 /* toolbar in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95A62550B10C007B8136 /* toolbar */; };
 		8EBF95AE2550B10C007B8136 /* contextmenu in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95A72550B10C007B8136 /* contextmenu */; };
 		8EBF95AF2550B10C007B8136 /* icons in Resources */ = {isa = PBXBuildFile; fileRef = 8EBF95A82550B10C007B8136 /* icons */; };
@@ -29,7 +29,7 @@
 			containerPortal = 8EBF95752550B10A007B8136 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 8EBF958E2550B10B007B8136;
-			remoteInfo = "VisBug Extension";
+			remoteInfo = "VibeCheck Extension";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -40,7 +40,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				8EBF95902550B10B007B8136 /* VisBug Extension.appex in Embed App Extensions */,
+				8EBF95902550B10B007B8136 /* VibeCheck Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -48,19 +48,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		8EBF957D2550B10A007B8136 /* VisBug.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisBug.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8EBF95802550B10A007B8136 /* VisBug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VisBug.entitlements; sourceTree = "<group>"; };
+		8EBF957D2550B10A007B8136 /* VibeCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VibeCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8EBF95802550B10A007B8136 /* VibeCheck.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCheck.entitlements; sourceTree = "<group>"; };
 		8EBF95812550B10A007B8136 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8EBF95842550B10A007B8136 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8EBF95862550B10A007B8136 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		8EBF95882550B10B007B8136 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8EBF958A2550B10B007B8136 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8EBF958F2550B10B007B8136 /* VisBug Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "VisBug Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8EBF958F2550B10B007B8136 /* VibeCheck Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "VibeCheck Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8EBF95942550B10B007B8136 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		8EBF95972550B10B007B8136 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
 		8EBF95992550B10B007B8136 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8EBF959A2550B10B007B8136 /* VisBug_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VisBug_Extension.entitlements; sourceTree = "<group>"; };
-		8EBF95A52550B10C007B8136 /* visbug.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = visbug.js; path = ../../extension/visbug.js; sourceTree = "<group>"; };
+		8EBF959A2550B10B007B8136 /* VibeCheck_Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VibeCheck_Extension.entitlements; sourceTree = "<group>"; };
+		8EBF95A52550B10C007B8136 /* vibecheck.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; name = vibecheck.js; path = ../../extension/vibecheck.js; sourceTree = "<group>"; };
 		8EBF95A62550B10C007B8136 /* toolbar */ = {isa = PBXFileReference; lastKnownFileType = folder; name = toolbar; path = ../../extension/toolbar; sourceTree = "<group>"; };
 		8EBF95A72550B10C007B8136 /* contextmenu */ = {isa = PBXFileReference; lastKnownFileType = folder; name = contextmenu; path = ../../extension/contextmenu; sourceTree = "<group>"; };
 		8EBF95A82550B10C007B8136 /* icons */ = {isa = PBXFileReference; lastKnownFileType = folder; name = icons; path = ../../extension/icons; sourceTree = "<group>"; };
@@ -91,8 +91,8 @@
 		8EBF95742550B10A007B8136 = {
 			isa = PBXGroup;
 			children = (
-				8EBF957F2550B10A007B8136 /* VisBug */,
-				8EBF95962550B10B007B8136 /* VisBug Extension */,
+				8EBF957F2550B10A007B8136 /* VibeCheck */,
+				8EBF95962550B10B007B8136 /* VibeCheck Extension */,
 				8EBF95932550B10B007B8136 /* Frameworks */,
 				8EBF957E2550B10A007B8136 /* Products */,
 			);
@@ -103,23 +103,23 @@
 		8EBF957E2550B10A007B8136 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8EBF957D2550B10A007B8136 /* VisBug.app */,
-				8EBF958F2550B10B007B8136 /* VisBug Extension.appex */,
+				8EBF957D2550B10A007B8136 /* VibeCheck.app */,
+				8EBF958F2550B10B007B8136 /* VibeCheck Extension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8EBF957F2550B10A007B8136 /* VisBug */ = {
+		8EBF957F2550B10A007B8136 /* VibeCheck */ = {
 			isa = PBXGroup;
 			children = (
-				8EBF95802550B10A007B8136 /* VisBug.entitlements */,
+				8EBF95802550B10A007B8136 /* VibeCheck.entitlements */,
 				8EBF95812550B10A007B8136 /* AppDelegate.swift */,
 				8EBF95832550B10A007B8136 /* Main.storyboard */,
 				8EBF95862550B10A007B8136 /* ViewController.swift */,
 				8EBF95882550B10B007B8136 /* Assets.xcassets */,
 				8EBF958A2550B10B007B8136 /* Info.plist */,
 			);
-			path = VisBug;
+			path = VibeCheck;
 			sourceTree = "<group>";
 		};
 		8EBF95932550B10B007B8136 /* Frameworks */ = {
@@ -130,21 +130,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8EBF95962550B10B007B8136 /* VisBug Extension */ = {
+		8EBF95962550B10B007B8136 /* VibeCheck Extension */ = {
 			isa = PBXGroup;
 			children = (
 				8EBF95A42550B10C007B8136 /* Resources */,
 				8EBF95972550B10B007B8136 /* SafariWebExtensionHandler.swift */,
 				8EBF95992550B10B007B8136 /* Info.plist */,
-				8EBF959A2550B10B007B8136 /* VisBug_Extension.entitlements */,
+				8EBF959A2550B10B007B8136 /* VibeCheck_Extension.entitlements */,
 			);
-			path = "VisBug Extension";
+			path = "VibeCheck Extension";
 			sourceTree = "<group>";
 		};
 		8EBF95A42550B10C007B8136 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				8EBF95A52550B10C007B8136 /* visbug.js */,
+				8EBF95A52550B10C007B8136 /* vibecheck.js */,
 				8EBF95A62550B10C007B8136 /* toolbar */,
 				8EBF95A72550B10C007B8136 /* contextmenu */,
 				8EBF95A82550B10C007B8136 /* icons */,
@@ -153,15 +153,15 @@
 				8EBF95AB2550B10C007B8136 /* tuts */,
 			);
 			name = Resources;
-			path = "VisBug Extension";
+			path = "VibeCheck Extension";
 			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8EBF957C2550B10A007B8136 /* VisBug */ = {
+		8EBF957C2550B10A007B8136 /* VibeCheck */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8EBF95A12550B10B007B8136 /* Build configuration list for PBXNativeTarget "VisBug" */;
+			buildConfigurationList = 8EBF95A12550B10B007B8136 /* Build configuration list for PBXNativeTarget "VibeCheck" */;
 			buildPhases = (
 				8EBF95792550B10A007B8136 /* Sources */,
 				8EBF957A2550B10A007B8136 /* Frameworks */,
@@ -173,14 +173,14 @@
 			dependencies = (
 				8EBF95922550B10B007B8136 /* PBXTargetDependency */,
 			);
-			name = VisBug;
-			productName = VisBug;
-			productReference = 8EBF957D2550B10A007B8136 /* VisBug.app */;
+			name = VibeCheck;
+			productName = VibeCheck;
+			productReference = 8EBF957D2550B10A007B8136 /* VibeCheck.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8EBF958E2550B10B007B8136 /* VisBug Extension */ = {
+		8EBF958E2550B10B007B8136 /* VibeCheck Extension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8EBF959D2550B10B007B8136 /* Build configuration list for PBXNativeTarget "VisBug Extension" */;
+			buildConfigurationList = 8EBF959D2550B10B007B8136 /* Build configuration list for PBXNativeTarget "VibeCheck Extension" */;
 			buildPhases = (
 				8EBF958B2550B10B007B8136 /* Sources */,
 				8EBF958C2550B10B007B8136 /* Frameworks */,
@@ -190,9 +190,9 @@
 			);
 			dependencies = (
 			);
-			name = "VisBug Extension";
-			productName = "VisBug Extension";
-			productReference = 8EBF958F2550B10B007B8136 /* VisBug Extension.appex */;
+			name = "VibeCheck Extension";
+			productName = "VibeCheck Extension";
+			productReference = 8EBF958F2550B10B007B8136 /* VibeCheck Extension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -212,7 +212,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 8EBF95782550B10A007B8136 /* Build configuration list for PBXProject "VisBug" */;
+			buildConfigurationList = 8EBF95782550B10A007B8136 /* Build configuration list for PBXProject "VibeCheck" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -225,8 +225,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8EBF957C2550B10A007B8136 /* VisBug */,
-				8EBF958E2550B10B007B8136 /* VisBug Extension */,
+				8EBF957C2550B10A007B8136 /* VibeCheck */,
+				8EBF958E2550B10B007B8136 /* VibeCheck Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -251,7 +251,7 @@
 				8EBF95B02550B10C007B8136 /* manifest.json in Resources */,
 				8EBF95B12550B10C007B8136 /* build in Resources */,
 				8EBF95AD2550B10C007B8136 /* toolbar in Resources */,
-				8EBF95AC2550B10C007B8136 /* visbug.js in Resources */,
+				8EBF95AC2550B10C007B8136 /* vibecheck.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,7 +280,7 @@
 /* Begin PBXTargetDependency section */
 		8EBF95922550B10B007B8136 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8EBF958E2550B10B007B8136 /* VisBug Extension */;
+			target = 8EBF958E2550B10B007B8136 /* VibeCheck Extension */;
 			targetProxy = 8EBF95912550B10B007B8136 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -415,10 +415,10 @@
 		8EBF959E2550B10B007B8136 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "VisBug Extension/VisBug_Extension.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "VibeCheck Extension/VibeCheck_Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				INFOPLIST_FILE = "VisBug Extension/Info.plist";
+				INFOPLIST_FILE = "VibeCheck Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -426,7 +426,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 0.3.21;
-				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VisBug.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VibeCheck.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -436,10 +436,10 @@
 		8EBF959F2550B10B007B8136 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = "VisBug Extension/VisBug_Extension.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "VibeCheck Extension/VibeCheck_Extension.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 5;
-				INFOPLIST_FILE = "VisBug Extension/Info.plist";
+				INFOPLIST_FILE = "VibeCheck Extension/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -447,7 +447,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 0.3.21;
-				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VisBug.Extension;
+				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VibeCheck.Extension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -460,18 +460,18 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = VisBug/VisBug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = VibeCheck/VibeCheck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 5;
-				INFOPLIST_FILE = VisBug/Info.plist;
+				INFOPLIST_FILE = VibeCheck/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 0.3.21;
-				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VisBug;
+				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VibeCheck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -483,18 +483,18 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = VisBug/VisBug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = VibeCheck/VibeCheck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 5;
-				INFOPLIST_FILE = VisBug/Info.plist;
+				INFOPLIST_FILE = VibeCheck/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MARKETING_VERSION = 0.3.21;
-				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VisBug;
+				PRODUCT_BUNDLE_IDENTIFIER = argyleink.VibeCheck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -503,7 +503,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8EBF95782550B10A007B8136 /* Build configuration list for PBXProject "VisBug" */ = {
+		8EBF95782550B10A007B8136 /* Build configuration list for PBXProject "VibeCheck" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8EBF959B2550B10B007B8136 /* Debug */,
@@ -512,7 +512,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8EBF959D2550B10B007B8136 /* Build configuration list for PBXNativeTarget "VisBug Extension" */ = {
+		8EBF959D2550B10B007B8136 /* Build configuration list for PBXNativeTarget "VibeCheck Extension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8EBF959E2550B10B007B8136 /* Debug */,
@@ -521,7 +521,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8EBF95A12550B10B007B8136 /* Build configuration list for PBXNativeTarget "VisBug" */ = {
+		8EBF95A12550B10B007B8136 /* Build configuration list for PBXNativeTarget "VibeCheck" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8EBF95A22550B10B007B8136 /* Debug */,

@@ -21,7 +21,7 @@ export class Metatip extends HTMLElement {
   connectedCallback() {
     this.setAttribute('popover', 'manual')
     this.showPopover && this.showPopover()
-    this.applyScheme(document.querySelector("vis-bug").getAttribute("color-scheme"))
+    this.applyScheme(document.querySelector("vibe-check").getAttribute("color-scheme"))
     $(this.$shadow.host).on('mouseenter', this.observe)
   }
 
@@ -112,4 +112,4 @@ export class Metatip extends HTMLElement {
   }
 }
 
-customElements.define('visbug-metatip', Metatip)
+customElements.define('vibecheck-metatip', Metatip)

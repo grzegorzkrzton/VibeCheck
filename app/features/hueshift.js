@@ -18,11 +18,11 @@ const state = {
   elements: [],
 }
 
-export function HueShift({Color:ColorTool, Visbug}) {
+export function HueShift({Color:ColorTool, VibeCheck}) {
   state.active_color   = ColorTool.getActive()
   state.elements       = []
 
-  Visbug.onSelectedUpdate(elements => {
+  VibeCheck.onSelectedUpdate(elements => {
     state.elements = elements
     ColorTool.setActive(state.active_color)
   })

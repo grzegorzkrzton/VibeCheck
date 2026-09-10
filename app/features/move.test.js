@@ -67,7 +67,7 @@ test('Grips overlay siblings when 1 is selected', async t => {
 
   await page.click(test_selector)
   
-  const grips_count = await page.evaluate('document.querySelectorAll("visbug-grip").length')
+  const grips_count = await page.evaluate('document.querySelectorAll("vibecheck-grip").length')
 
   t.is(grips_count, 3)
 
@@ -79,7 +79,7 @@ test('Drag bounds are highlighted', async t => {
 
   await page.click(test_selector)
   
-  const bounds_count = await page.evaluate('document.querySelectorAll("[visbug-drag-container]").length')
+  const bounds_count = await page.evaluate('document.querySelectorAll("[vibecheck-drag-container]").length')
 
   t.is(bounds_count, 1)
 

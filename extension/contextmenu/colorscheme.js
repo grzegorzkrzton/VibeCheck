@@ -1,4 +1,4 @@
-const schemestoragekey = 'visbug-color-scheme';
+const schemestoragekey = 'vibecheck-color-scheme';
 const defaultcolorscheme = 'auto';
 
 const scheme_option = [
@@ -22,7 +22,7 @@ const sendColorScheme = () => {
       action: 'COLOR_SCHEME',
       params: {mode: colorschemestate.mode},
     }).catch(() => {
-      // No listener yet — VisBug is not injected on this tab.
+      // No listener yet — VibeCheck is not injected on this tab.
     })
   })
 }
@@ -44,7 +44,7 @@ export const getColorScheme = () => {
       })
     })
 
-    // send visbug user preference
+    // send vibecheck user preference
     colorschemestate.mode = found_value
     sendColorScheme()
 

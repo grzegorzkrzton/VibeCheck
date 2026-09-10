@@ -16,11 +16,11 @@ const state = {
   tips: new Map(),
 }
 
-export function Accessibility(visbug) {
+export function Accessibility(vibecheck) {
   state.restoring = true
 
   $('body').on('mousemove', mouseMove)
-  visbug.onSelectedUpdate(togglePinned)
+  vibecheck.onSelectedUpdate(togglePinned)
 
   hotkeys('esc', _ => removeAll())
 
@@ -28,7 +28,7 @@ export function Accessibility(visbug) {
 
   return () => {
     $('body').off('mousemove', mouseMove)
-    visbug.removeSelectedCallback(togglePinned)
+    vibecheck.removeSelectedCallback(togglePinned)
     hotkeys.unbind('esc')
     hideAll()
   }
@@ -37,7 +37,7 @@ export function Accessibility(visbug) {
 const mouseMove = e => {
   const target = deepElementFromPoint(e.clientX, e.clientY)
 
-  if (isOffBounds(target) || target.nodeName.toUpperCase() === 'SVG' || target.nodeName === 'VISBUG-ALLYTIP' || target.hasAttribute('data-allytip')) { // aka: mouse out
+  if (isOffBounds(target) || target.nodeName.toUpperCase() === 'SVG' || target.nodeName === 'VIBECHECK-ALLYTIP' || target.hasAttribute('data-allytip')) { // aka: mouse out
     if (state.active.tip) {
       wipe({
         tip: state.active.tip,
@@ -132,7 +132,7 @@ export function removeAll() {
     unobserve({tip, target})
   })
 
-  $('visbug-allytip').forEach(tip =>
+  $('vibecheck-allytip').forEach(tip =>
     tip.remove())
 
   $('[data-allytip]').attr('data-allytip', null)
@@ -140,7 +140,7 @@ export function removeAll() {
   state.tips.clear()
 }
 
-const render = (el, tip = document.createElement('visbug-ally')) => {
+const render = (el, tip = document.createElement('vibecheck-ally')) => {
   const contrast_results = determineColorContrast(el)
   const ally_attributes = getA11ys(el)
 

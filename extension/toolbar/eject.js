@@ -1,4 +1,4 @@
-document.querySelectorAll('vis-bug')
+document.querySelectorAll('vibe-check')
   .forEach(node => {
     node.animate(
       [{transform: 'translateX(-200%)', opacity:0}],

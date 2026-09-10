@@ -1,10 +1,10 @@
 # Internal design-handoff Chrome extension
 
-> Clone VisBug locally as the foundation, then add a collaboration layer in small testable phases — frontend first (localStorage), backend later (Supabase + Google Workspace SSO).
+> Clone the upstream project locally as the foundation, then add a collaboration layer in small testable phases — frontend first (localStorage), backend later (Supabase + Google Workspace SSO).
 
 ## What you are actually building
 
-VisBug is already a **on-page design inspector**. It does **none** of the collaboration work. VibeCheck adds comments, annotations, AI prompt export, and content-approval on top — without rewriting VisBug.
+The upstream project is already an **on-page design inspector**. It does **none** of the collaboration work. VibeCheck adds comments, annotations, AI prompt export, and content-approval on top — without rewriting the upstream base.
 
 ```mermaid
 flowchart LR
@@ -41,7 +41,7 @@ flowchart LR
 
 ## Decisions already made
 
-- **Base:** [GoogleChromeLabs/ProjectVisBug](https://github.com/GoogleChromeLabs/ProjectVisBug) (Apache-2.0, Manifest V3, JavaScript, custom elements).
+- **Base:** [GoogleChromeLabs upstream project](https://github.com/GoogleChromeLabs/ProjectVisBug) (Apache-2.0, Manifest V3, JavaScript, custom elements).
 - **Product name:** VibeCheck.
 - **Frontend-first:** comments, annotations, and content suggestions ship against **localStorage** (keyed by normalized prototype URL). Not cookies.
 - **Comments + annotations:** one toolbar button (hotkey **C**). Type is chosen in the composer (Note vs Annotation for devs).
@@ -53,7 +53,7 @@ flowchart LR
 
 ## Phase checklist
 
-- [x] **Phase 0** — Clone ProjectVisBug, load unpacked, verify Alt+Shift+D
+- [x] **Phase 0** — Clone the upstream project, load unpacked, verify Alt+Shift+D
 - [x] **Phase 1** — Private GitHub repo, Apache-2.0 attribution, VibeCheck rebrand
 - [x] **Phase 2** — Copy AI prompt tool (Q) from live edits (no backend)
 - [x] **Phase 3** — Figma-like comment notes, localStorage, orphaned fallback
@@ -137,4 +137,4 @@ Mentions that notify, inbox + email, thread replies, tester zip / admin install 
 - Full Figma parity (version history, branching, FigJam-like canvas)
 - Editing the actual Lovable/GitHub source (the AI prompt is the handoff)
 - Public Chrome Web Store listing
-- Rewriting VisBug into React/TypeScript
+- Rewriting the upstream base into React/TypeScript

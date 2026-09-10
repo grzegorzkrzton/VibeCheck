@@ -10,27 +10,27 @@ const key_events = 'up,down,left,right'
 
 const command_events = `${metaKey}+up,${metaKey}+shift+up,${metaKey}+down,${metaKey}+shift+down`
 
-export function Padding(visbug) {
+export function Padding(vibecheck) {
   hotkeys(key_events, (e, handler) => {
     if (e.cancelBubble) return
 
     e.preventDefault()
-    padElement(visbug.selection(), handler.key)
+    padElement(vibecheck.selection(), handler.key)
   })
 
   hotkeys(command_events, (e, handler) => {
     e.preventDefault()
-    padAllElementSides(visbug.selection(), handler.key)
+    padAllElementSides(vibecheck.selection(), handler.key)
   })
 
-  visbug.onSelectedUpdate(paintBackgrounds)
+  vibecheck.onSelectedUpdate(paintBackgrounds)
 
   return () => {
     hotkeys.unbind(key_events)
     hotkeys.unbind(command_events)
     hotkeys.unbind('up,down,left,right') // bug in lib?
-    visbug.removeSelectedCallback(paintBackgrounds)
-    removeBackgrounds(visbug.selection())
+    vibecheck.removeSelectedCallback(paintBackgrounds)
+    removeBackgrounds(vibecheck.selection())
   }
 }
 
@@ -70,7 +70,7 @@ function paintBackgrounds(els) {
     const label_id = el.getAttribute('data-label-id')
 
     document
-      .querySelector(`visbug-handles[data-label-id="${label_id}"]`)
+      .querySelector(`vibecheck-handles[data-label-id="${label_id}"]`)
       .backdrop = {
         element:  createPaddingVisual(el),
         update:   createPaddingVisual,
@@ -81,8 +81,8 @@ function paintBackgrounds(els) {
 function removeBackgrounds(els) {
   els.forEach(el => {
     const label_id = el.getAttribute('data-label-id')
-    const boxmodel = document.querySelector(`visbug-handles[data-label-id="${label_id}"]`)
-      .$shadow.querySelector('visbug-boxmodel')
+    const boxmodel = document.querySelector(`vibecheck-handles[data-label-id="${label_id}"]`)
+      .$shadow.querySelector('vibecheck-boxmodel')
 
     if (boxmodel) boxmodel.remove()
   })
@@ -92,7 +92,7 @@ export function createPaddingVisual(el, hover = false) {
   const bounds            = el.getBoundingClientRect()
   const calculatedStyle   = getStyle(el, 'padding')
   const calculatedBorder   = expandBorders(getStyle(el, 'border-width'))
-  const boxdisplay        = document.createElement('visbug-boxmodel')
+  const boxdisplay        = document.createElement('vibecheck-boxmodel')
 
   if (calculatedStyle !== '0px') {
     const sides = {

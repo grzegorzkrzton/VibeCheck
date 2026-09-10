@@ -7,16 +7,16 @@ script.type = 'module'
 script.src = platform.runtime.getURL('toolbar/bundle.min.js')
 document.body.appendChild(script)
 
-const visbug = document.createElement('vis-bug')
+const vibecheck = document.createElement('vibe-check')
 
 const src_path = platform.runtime.getURL(`tuts/guides.gif`)
-visbug.setAttribute('tutsBaseURL', src_path.slice(0, src_path.lastIndexOf('/')))
+vibecheck.setAttribute('tutsBaseURL', src_path.slice(0, src_path.lastIndexOf('/')))
 
-document.body.prepend(visbug)
+document.body.prepend(vibecheck)
 
 platform.runtime.onMessage.addListener(request => {
   if (request.action === 'COLOR_MODE')
-    visbug.setAttribute('color-mode', request.params.mode)
+    vibecheck.setAttribute('color-mode', request.params.mode)
   else if (request.action === 'COLOR_SCHEME')
-    visbug.setAttribute("color-scheme", request.params.mode)
+    vibecheck.setAttribute("color-scheme", request.params.mode)
 })

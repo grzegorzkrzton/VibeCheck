@@ -37,7 +37,7 @@ export class Ally extends Metatip {
   }
 
   render({el, ally_attributes, contrast_results}) {
-    const colormode = $('vis-bug').attr('color-mode')
+    const colormode = $('vibe-check').attr('color-mode')
 
     const foreground = el instanceof SVGElement
       ? (getStyle(el, 'fill') || getStyle(el, 'stroke'))
@@ -51,7 +51,7 @@ export class Ally extends Metatip {
     this.style.setProperty('--copy-message-right-color', contrastingBackgroundColor)
 
     return `
-      <figure visbug-ally>
+      <figure vibecheck-ally>
         <header>
           <h5>&#60;${el.nodeName.toLowerCase()}&#62;${el.id && '#' + el.id}</h5>
         </header>
@@ -94,4 +94,4 @@ export class Ally extends Metatip {
   }
 }
 
-customElements.define('visbug-ally', Ally)
+customElements.define('vibecheck-ally', Ally)

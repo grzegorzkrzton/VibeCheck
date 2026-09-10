@@ -10,7 +10,7 @@ test('Should show 1 overlay element on hover', async t => {
 
   await page.mouse.move(100, 200)
 
-  const gridlines_element = await page.evaluate(`document.querySelectorAll('visbug-gridlines').length`)
+  const gridlines_element = await page.evaluate(`document.querySelectorAll('vibecheck-gridlines').length`)
 
   t.is(gridlines_element, 1)
   t.pass()
