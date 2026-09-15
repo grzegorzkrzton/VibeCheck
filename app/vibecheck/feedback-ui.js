@@ -2,16 +2,16 @@ import hotkeys from 'hotkeys-js'
 import { createAnchor, describeAnchor } from './anchor'
 import { resolveAnchor } from './resolve'
 import { floatingPosition } from '../utilities'
+import { convertDraftType as convertDraftTypeState, relativeTime } from './card-state'
 import { feedbackStyles } from './feedback-styles'
 import {
   KIND_LABEL,
-  escapeHtml,
   renderAnnotationCard,
-  renderBadge,
   renderNoteCard,
   renderNotesPanel,
   renderNotesPanelItem,
   renderPin,
+  renderReply,
   renderWordingCard,
 } from './components'
 import {
@@ -41,6 +41,11 @@ const state = {
   hideResolved: true,
   mode: 'browse',
   previewId: null,
+  typeMenuOpen: false,
+  overflowOpen: false,
+  submissionState: null,
+  submitError: '',
+  replyDraft: '',
   lastPointer: null,
   cardPosition: null,
   scheme: 'auto',
@@ -83,7 +88,7 @@ function ensureLayer() {
     document.documentElement.appendChild(layer)
     layer.addEventListener('click', onLayerClick)
     layer.addEventListener('input', onLayerInput)
-    layer.addEventListener('keydown', event => event.stopPropagation())
+    layer.addEventListener('keydown', onLayerKeyDown)
     layer.addEventListener('pointerdown', onDragStart)
   }
   return layer
@@ -117,7 +122,7 @@ function rememberPointer(event) {
 
 function commentNumber(comment) {
   const roots = state.comments
-    .filter(item => !item.parentId)
+    .filter(item => !item.parentId && !item.parentSuggestionId)
     .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
   const index = roots.findIndex(item => item.id === comment.id)
   return index >= 0 ? index + 1 : '•'
@@ -125,33 +130,15 @@ function commentNumber(comment) {
 
 function threadNumber(record) {
   const roots = [
-    ...state.comments.filter(item => !item.parentId),
+    ...state.comments.filter(item => !item.parentId && !item.parentSuggestionId),
     ...state.suggestions,
   ].sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
   const index = roots.findIndex(item => item.id === record.id)
   return index >= 0 ? index + 1 : '•'
 }
 
-function relativeTime(value) {
-  const timestamp = new Date(value).getTime()
-  if (!Number.isFinite(timestamp)) return 'recently'
-  const seconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000))
-  if (seconds < 60) return 'just now'
-  const units = [
-    ['year', 31536000],
-    ['month', 2592000],
-    ['week', 604800],
-    ['day', 86400],
-    ['hour', 3600],
-    ['minute', 60],
-  ]
-  const [unit, duration] = units.find(([, size]) => seconds >= size) || units[units.length - 1]
-  const count = Math.floor(seconds / duration)
-  return `${count} ${unit}${count === 1 ? '' : 's'} ago`
-}
-
 function visibleItems() {
-  const comments = state.comments.filter(item => !item.parentId)
+  const comments = state.comments.filter(item => !item.parentId && !item.parentSuggestionId)
   const suggestions = state.suggestions
   const all = [
     ...comments.map(item => ({ kind: 'comment', item })),
@@ -160,7 +147,7 @@ function visibleItems() {
 
   const search = state.search.trim().toLocaleLowerCase()
   return all.filter(({ kind, item }) => {
-    if (state.hideResolved && (item.resolved || item.status === 'approved' || item.status === 'rejected'))
+    if (state.hideResolved && item.resolved)
       return false
     if (state.filter === 'notes') return kind === 'comment' && item.type !== 'annotation'
     if (state.filter === 'annotations') return kind === 'comment' && item.type === 'annotation'
@@ -168,7 +155,7 @@ function visibleItems() {
     return true
   }).filter(({ kind, item }) => {
     if (!search) return true
-    const replies = kind === 'comment' ? repliesFor(item.id) : []
+    const replies = repliesFor(item.id, kind)
     return [
       item.authorName,
       item.body,
@@ -181,9 +168,9 @@ function visibleItems() {
   })
 }
 
-function repliesFor(id) {
+function repliesFor(id, kind = 'comment') {
   return state.comments
-    .filter(item => item.parentId === id)
+    .filter(item => kind === 'suggestion' ? item.parentSuggestionId === id : item.parentId === id)
     .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))
 }
 
@@ -263,20 +250,16 @@ function placePanel(panel) {
 function typeLabel(item) {
   if (item.type === 'annotation')
     return `Annotation · ${KIND_LABEL[item.kind] || 'Implement'}`
-  if (item.status) return `Wording · ${item.status}`
-  return 'Note'
+  if (item.status) return `Wording · ${item.status === 'applied' ? 'Applied' : 'Pending'}`
+  return 'Comment'
 }
 
-function itemBadges(item) {
-  return `${item._orphaned ? renderBadge('Orphaned') : ''}${item.resolved ? renderBadge('Resolved') : ''}`
-}
-
-function repliesHtml(item) {
-  const replies = repliesFor(item.id)
-  if (!replies.length) return ''
-  return `<div class="vc-thread">${replies.map(reply => `
-    <div class="vc-reply"><b>${escapeHtml(reply.authorName || 'You')}</b>${escapeHtml(reply.body || '')}</div>
-  `).join('')}</div>`
+function repliesHtml(item, kind = 'comment') {
+  return repliesFor(item.id, kind).map(reply => renderReply({
+    name: reply.authorName || 'You',
+    timestamp: relativeTime(reply.createdAt || reply.updatedAt),
+    body: reply.body || '',
+  })).join('')
 }
 
 function renderCard(open) {
@@ -292,6 +275,11 @@ function renderCard(open) {
       suggestedText: item.suggestedText || '',
       rationale: item.rationale || '',
       author,
+      originalText: item.originalText || '',
+      context: describeAnchor(item.anchor),
+      typeMenuOpen: state.typeMenuOpen,
+      inputState: state.submissionState,
+      submitError: state.submitError,
     })
   }
 
@@ -301,8 +289,9 @@ function renderCard(open) {
       state: 'Compose',
       kind: item.kind || 'implement',
       body: item.body || '',
-      author,
-      context: escapeHtml(describeAnchor(item.anchor)),
+      context: describeAnchor(item.anchor),
+      typeMenuOpen: state.typeMenuOpen,
+      submissionState: state.submissionState,
     })
   }
 
@@ -311,8 +300,9 @@ function renderCard(open) {
       id: item.id,
       state: 'Compose',
       body: item.body || '',
-      author,
-      context: escapeHtml(describeAnchor(item.anchor)),
+      context: describeAnchor(item.anchor),
+      typeMenuOpen: state.typeMenuOpen,
+      submissionState: state.submissionState,
     })
   }
 
@@ -320,23 +310,30 @@ function renderCard(open) {
     return renderWordingCard({
       id: item.id,
       state: 'Detail',
-      suggestedText: escapeHtml(item.suggestedText || '(empty)'),
-      rationale: item.rationale ? escapeHtml(item.rationale) : '',
-      originalText: escapeHtml(item.originalText || '(empty)'),
-      meta: `${escapeHtml(item.authorName || 'You')} · ${escapeHtml(typeLabel(item))}`,
-      badges: itemBadges(item),
+      suggestedText: item.suggestedText || '(empty)',
+      rationale: item.rationale || '',
+      originalText: item.originalText || '(empty)',
+      author: item.authorName || 'You',
+      context: describeAnchor(item.anchor),
       status: item.status,
+      resolved: Boolean(item.resolved),
+      repliesHtml: repliesHtml(item, 'suggestion'),
+      overflowOpen: state.overflowOpen,
+      reply: state.replyDraft,
     })
   }
 
   const sharedDetail = {
     id: item.id,
     state: 'Detail',
-    body: escapeHtml(item.body || ''),
-    meta: `${escapeHtml(item.authorName || 'You')} · ${escapeHtml(describeAnchor(item.anchor))}`,
-    badges: itemBadges(item),
+    body: item.body || '',
+    author: item.authorName || 'You',
+    timestamp: relativeTime(item.createdAt || item.updatedAt),
+    context: describeAnchor(item.anchor),
     repliesHtml: repliesHtml(item),
     resolved: Boolean(item.resolved),
+    overflowOpen: state.overflowOpen,
+    reply: state.replyDraft,
   }
 
   if (item.type === 'annotation') {
@@ -353,7 +350,7 @@ function renderPanel() {
   const items = visibleItems()
   const itemsHtml = items.length
     ? items.map(({ kind, item }) => {
-      const replies = kind === 'comment' ? repliesFor(item.id) : []
+      const replies = repliesFor(item.id, kind)
       return renderNotesPanelItem({
         id: item.id,
         kind,
@@ -442,6 +439,12 @@ export async function refreshFeedback() {
     const { orphaned } = resolveAnchor(item.anchor)
     return { ...item, _orphaned: orphaned }
   })
+  if (!state.open && !state.draft) {
+    const match = location.hash.match(/^#vibecheck-thread=(.+)$/)
+    const id = match ? decodeURIComponent(match[1]) : ''
+    if (id && [...state.comments, ...state.suggestions].some(item => item.id === id))
+      state.open = { id }
+  }
   renderFeedback()
 }
 
@@ -590,79 +593,46 @@ function onDragEnd() {
   document.removeEventListener('pointercancel', onDragEnd, true)
 }
 
-async function onLayerClick(event) {
-  const actionEl = event.target.closest('[data-action]')
-  if (!actionEl) return
-  event.preventDefault()
-  event.stopPropagation()
-  const action = actionEl.dataset.action
+function resetTransientCardState() {
+  state.typeMenuOpen = false
+  state.overflowOpen = false
+  state.submissionState = null
+  state.submitError = ''
+  state.replyDraft = ''
+}
 
-  if (action === 'filter') {
-    state.filter = actionEl.dataset.filter
-    renderFeedback()
+function renderAndFocus(selector) {
+  renderFeedback()
+  requestAnimationFrame(() => document.querySelector(selector)?.focus())
+}
+
+export function convertDraftType(draft, cardType) {
+  const { el } = resolveAnchor(draft.anchor)
+  const originalText = (el?.innerText || '').replace(/\s+/g, ' ').trim()
+  return convertDraftTypeState(draft, cardType, originalText)
+}
+
+async function submitDraft() {
+  if (!state.draft) return
+  const isSuggestion = state.draft.recordType === 'suggestion'
+  const value = isSuggestion ? state.draft.suggestedText : state.draft.body
+  if (!value?.trim()) {
+    state.submissionState = isSuggestion ? 'Error - First' : null
+    state.submitError = isSuggestion ? 'Add suggested copy before sending.' : ''
+    renderAndFocus(`[data-field="${isSuggestion ? 'suggestedText' : 'body'}"]`)
     return
   }
-
-  if (action === 'cycle-filter') {
-    const filters = ['all', 'notes', 'annotations', 'content']
-    state.filter = filters[(filters.indexOf(state.filter) + 1) % filters.length]
-    renderFeedback()
-    return
-  }
-
-  if (action === 'toggle-resolved') {
-    state.hideResolved = !state.hideResolved
-    renderFeedback()
-    return
-  }
-
-  if (action === 'toggle-panel') {
-    state.panelLayout.collapsed = !state.panelLayout.collapsed
-    savePanelLayout()
-    renderFeedback()
-    return
-  }
-
-  if (action === 'close' || action === 'cancel') {
-    state.draft = null
-    state.open = null
-    state.cardPosition = null
-    renderFeedback()
-    return
-  }
-
-  if (action === 'open') {
-    state.draft = null
-    state.open = { id: actionEl.dataset.id }
-    state.cardPosition = positionFromPointer({
-      x: event.clientX,
-      y: event.clientY,
-    })
-    renderFeedback()
-    return
-  }
-
-  if (action === 'set-type' && state.draft) {
-    state.draft.type = actionEl.dataset.type
-    if (state.draft.type === 'annotation' && !state.draft.kind)
-      state.draft.kind = 'implement'
-    renderFeedback()
-    return
-  }
-
-  if (action === 'set-kind' && state.draft) {
-    state.draft.type = 'annotation'
-    state.draft.kind = actionEl.dataset.annotationKind || actionEl.dataset.kind
-    renderFeedback()
-    return
-  }
-
-  if (action === 'save' && state.draft) {
-    const author = setAuthorName(state.draft.authorName || getAuthorName())
-    if (state.draft.recordType === 'suggestion') {
+  state.submissionState = 'Submitting'
+  state.submitError = ''
+  renderFeedback()
+  try {
+    const authorName = getAuthorName()
+    if (isSuggestion) {
       const saved = await upsertSuggestion({
         ...state.draft,
-        authorName: author,
+        status: 'pending',
+        resolved: false,
+        authorName,
       })
       await addNotification({
         type: 'suggestion',
@@ -672,90 +642,178 @@ async function onLayerClick(event) {
     }
     else {
       const saved = await upsertComment({
-        id: state.draft.id,
+        ...state.draft,
         type: state.draft.type || 'note',
         kind: state.draft.type === 'annotation' ? (state.draft.kind || 'implement') : null,
-        body: state.draft.body || '',
         resolved: false,
         parentId: null,
-        anchor: state.draft.anchor,
-        createdAt: state.draft.createdAt,
-        authorName: author,
+        parentSuggestionId: null,
+        authorName,
       })
       await notifyMentions(saved.body, typeLabel(saved))
     }
     const id = state.draft.id
     state.draft = null
     state.open = { id }
+    resetTransientCardState()
     await refreshFeedback()
+  }
+  catch (error) {
+    state.submissionState = 'Submit failed'
+    state.submitError = error?.message || 'Could not send. Your text is still here.'
+    renderAndFocus('[data-action="retry-send"]')
+  }
+}
+
+async function onLayerClick(event) {
+  const actionEl = event.target.closest('[data-action]')
+  if (!actionEl) {
+    if (state.typeMenuOpen || state.overflowOpen) {
+      state.typeMenuOpen = false
+      state.overflowOpen = false
+      renderFeedback()
+    }
     return
   }
+  event.preventDefault()
+  event.stopPropagation()
+  const action = actionEl.dataset.action
 
-  const open = currentOpen()
-  if (!open) return
-
-  if (action === 'delete') {
-    if (open.kind === 'suggestion') await removeSuggestion(open.item.id)
-    else await removeComment(open.item.id)
+  if (action === 'filter') state.filter = actionEl.dataset.filter
+  else if (action === 'cycle-filter') {
+    const filters = ['all', 'notes', 'annotations', 'content']
+    state.filter = filters[(filters.indexOf(state.filter) + 1) % filters.length]
+  }
+  else if (action === 'toggle-resolved') state.hideResolved = !state.hideResolved
+  else if (action === 'toggle-panel') {
+    state.panelLayout.collapsed = !state.panelLayout.collapsed
+    savePanelLayout()
+  }
+  else if (action === 'close' || action === 'cancel') {
+    state.draft = null
     state.open = null
     state.cardPosition = null
-    await refreshFeedback()
+    resetTransientCardState()
+  }
+  else if (action === 'open') {
+    state.draft = null
+    state.open = { id: actionEl.dataset.id }
+    state.cardPosition = positionFromPointer({ x: event.clientX, y: event.clientY })
+    resetTransientCardState()
+    const suggestion = state.suggestions.find(item => item.id === state.open.id)
+    const comment = state.comments.find(item => item.id === state.open.id)
+    const openedAt = new Date().toISOString()
+    if (suggestion) {
+      suggestion.readAt = openedAt
+      await upsertSuggestion({ ...suggestion, readAt: openedAt })
+    }
+    else if (comment) {
+      comment.readAt = openedAt
+      await upsertComment({ ...comment, readAt: openedAt })
+    }
+  }
+  else if (action === 'toggle-type-menu') {
+    state.typeMenuOpen = !state.typeMenuOpen
+    state.overflowOpen = false
+    renderAndFocus(state.typeMenuOpen ? '.vc-type-menu [role^="menuitem"]' : '.vc-type-trigger')
     return
   }
+  else if (action === 'set-card-type' && state.draft) {
+    state.draft = convertDraftType(state.draft, actionEl.dataset.cardType)
+    state.typeMenuOpen = false
+    renderAndFocus('.vc-type-trigger')
+    return
+  }
+  else if (action === 'set-kind' && state.draft) {
+    state.draft.type = 'annotation'
+    state.draft.kind = actionEl.dataset.annotationKind || actionEl.dataset.kind
+  }
+  else if ((action === 'send' || action === 'retry-send') && state.draft) {
+    await submitDraft()
+    return
+  }
+  else {
+    const open = currentOpen()
+    if (!open) return
 
-  if (action === 'resolve' && open.kind === 'comment') {
-    await upsertComment({ ...open.item, resolved: !open.item.resolved })
-    await refreshFeedback()
-    return
+    if (action === 'toggle-overflow') {
+      state.overflowOpen = !state.overflowOpen
+      state.typeMenuOpen = false
+      renderAndFocus(state.overflowOpen ? '.vc-overflow-menu [role="menuitem"]' : '[data-action="toggle-overflow"]')
+      return
+    }
+    if (action === 'delete') {
+      if (open.kind === 'suggestion') await removeSuggestion(open.item.id)
+      else await removeComment(open.item.id)
+      state.open = null
+      state.cardPosition = null
+      resetTransientCardState()
+      await refreshFeedback()
+      return
+    }
+    if (action === 'resolve') {
+      if (open.kind === 'suggestion')
+        await upsertSuggestion({ ...open.item, resolved: !open.item.resolved })
+      else
+        await upsertComment({ ...open.item, resolved: !open.item.resolved })
+      await refreshFeedback()
+      return
+    }
+    if (action === 'reply') {
+      const box = document.querySelector('#vibecheck-layer textarea[data-field="reply"]')
+      const body = box?.value?.trim()
+      if (!body) return
+      await upsertComment({
+        id: uid(),
+        type: 'note',
+        kind: null,
+        body,
+        resolved: false,
+        parentId: open.kind === 'comment' ? open.item.id : null,
+        parentSuggestionId: open.kind === 'suggestion' ? open.item.id : null,
+        anchor: open.item.anchor,
+        createdAt: new Date().toISOString(),
+        authorName: getAuthorName(),
+      })
+      await notifyMentions(body, `Reply on ${typeLabel(open.item)}`)
+      state.replyDraft = ''
+      await refreshFeedback()
+      renderAndFocus('[data-field="reply"]')
+      return
+    }
+    if (action === 'apply-suggestion' && open.kind === 'suggestion') {
+      if (!applySuggestionText(open.item, open.item.suggestedText)) return
+      await upsertSuggestion({ ...open.item, status: 'applied' })
+      await addNotification({ type: 'suggestion-status', body: 'Suggestion applied', context: open.item.id })
+      await refreshFeedback()
+      return
+    }
+    if (action === 'mark-unread') {
+      const update = { ...open.item, readAt: null }
+      if (open.kind === 'suggestion') await upsertSuggestion(update)
+      else await upsertComment(update)
+      state.overflowOpen = false
+      await refreshFeedback()
+      return
+    }
+    if (action === 'copy-link') {
+      const url = new URL(location.href)
+      url.hash = `vibecheck-thread=${encodeURIComponent(open.item.id)}`
+      await navigator.clipboard?.writeText?.(url.href)
+      state.overflowOpen = false
+      renderAndFocus('[data-action="toggle-overflow"]')
+      return
+    }
   }
-
-  if (action === 'reply' && open.kind === 'comment') {
-    const box = document.querySelector('#vibecheck-layer textarea[data-field="reply"]')
-    const body = box?.value?.trim()
-    if (!body) return
-    await upsertComment({
-      id: uid(),
-      type: 'note',
-      kind: null,
-      body,
-      resolved: false,
-      parentId: open.item.id,
-      anchor: open.item.anchor,
-      createdAt: new Date().toISOString(),
-      authorName: getAuthorName(),
-    })
-    await notifyMentions(body, `Reply on ${typeLabel(open.item)}`)
-    await refreshFeedback()
-    return
-  }
-
-  if (action === 'preview' && (open.kind === 'suggestion' || state.draft?.recordType === 'suggestion')) {
-    const item = open.item
-    applySuggestionText(item, item.suggestedText)
-    state.previewId = item.id
-    return
-  }
-
-  if (action === 'approve' && open.kind === 'suggestion') {
-    applySuggestionText(open.item, open.item.suggestedText)
-    await upsertSuggestion({ ...open.item, status: 'approved' })
-    await addNotification({ type: 'suggestion-status', body: 'Suggestion approved', context: open.item.id })
-    await refreshFeedback()
-    return
-  }
-
-  if (action === 'reject' && open.kind === 'suggestion') {
-    if (open.item._restoreText)
-      applySuggestionText(open.item, open.item._restoreText)
-    await upsertSuggestion({ ...open.item, status: 'rejected' })
-    await addNotification({ type: 'suggestion-status', body: 'Suggestion rejected', context: open.item.id })
-    await refreshFeedback()
-    return
-  }
+  renderFeedback()
 }
 
 function onLayerInput(event) {
   const field = event.target.dataset.field
+  if (event.target.matches('textarea')) {
+    event.target.style.height = 'auto'
+    event.target.style.height = `${Math.min(event.target.scrollHeight, 180)}px`
+  }
   if (field === 'panel-search') {
     state.search = event.target.value
     const cursor = event.target.selectionStart
@@ -765,8 +823,60 @@ function onLayerInput(event) {
     search?.setSelectionRange?.(cursor, cursor)
     return
   }
+  if (field === 'reply') {
+    state.replyDraft = event.target.value
+    const send = event.target.closest('.vc-field')?.querySelector('.vc-send')
+    if (send) send.dataset.state = event.target.value.trim() ? 'Active' : 'Default'
+    return
+  }
   if (!field || !state.draft) return
   state.draft[field] = event.target.value
+  state.submissionState = null
+  state.submitError = ''
+  if (field === 'body' || field === 'suggestedText') {
+    const send = event.target.closest('.vc-field, .vc-combo-field')?.querySelector('.vc-send')
+    if (send) send.dataset.state = event.target.value.trim() ? 'Active' : 'Default'
+  }
+}
+
+function onLayerKeyDown(event) {
+  event.stopPropagation()
+  const menu = event.target.closest('[role="menu"]')
+  if (event.key === 'Escape') {
+    if (state.typeMenuOpen || state.overflowOpen) {
+      const selector = state.typeMenuOpen ? '.vc-type-trigger' : '[data-action="toggle-overflow"]'
+      state.typeMenuOpen = false
+      state.overflowOpen = false
+      renderAndFocus(selector)
+    }
+    return
+  }
+  if (menu && ['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+    event.preventDefault()
+    const items = [...menu.querySelectorAll('[role^="menuitem"]')]
+    const current = items.indexOf(event.target)
+    const index = event.key === 'Home'
+      ? 0
+      : event.key === 'End'
+        ? items.length - 1
+        : (current + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length
+    items[index]?.focus()
+    return
+  }
+  if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+    const combo = event.target.closest('.vc-combo-field')
+    if (!combo) return
+    event.preventDefault()
+    combo.querySelector('[data-action="send"], [data-action="retry-send"]')?.click()
+  }
+}
+
+function closeMenusOutside(event) {
+  if (!state.typeMenuOpen && !state.overflowOpen) return
+  if (event.target.closest?.('.vc-type-selector, .vc-overflow-menu, [data-action="toggle-overflow"]')) return
+  state.typeMenuOpen = false
+  state.overflowOpen = false
+  renderFeedback()
 }
 
 let installedFilter = false
@@ -794,11 +904,13 @@ export function startFeedbackLayer() {
   ensureLayer()
   refreshFeedback()
   document.addEventListener('pointerdown', rememberPointer, true)
+  document.addEventListener('pointerdown', closeMenusOutside, true)
   window.addEventListener('scroll', layoutFeedback, true)
   window.addEventListener('resize', layoutFeedback)
   return () => {
     onDragEnd()
     document.removeEventListener('pointerdown', rememberPointer, true)
+    document.removeEventListener('pointerdown', closeMenusOutside, true)
     window.removeEventListener('scroll', layoutFeedback, true)
     window.removeEventListener('resize', layoutFeedback)
     document.getElementById(LAYER_ID)?.remove()
