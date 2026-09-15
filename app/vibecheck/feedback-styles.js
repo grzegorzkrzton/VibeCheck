@@ -236,13 +236,23 @@ ${layerTokenCss}
   width: 200px;
 }
 
-#vibecheck-layer .vc-type-menu-item,
-#vibecheck-layer .vc-overflow-menu button {
+#vibecheck-layer .vc-type-menu-item {
   display: flex;
   min-height: 32px;
   align-items: center;
   justify-content: space-between;
   padding: var(--vc-spacing-6) var(--vc-spacing-10);
+  border-radius: var(--vc-radius-8);
+  color: var(--vc-text-primary);
+  font: 400 12px/1.2 var(--vc-font-family);
+  text-align: left;
+}
+
+#vibecheck-layer .vc-overflow-menu button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: var(--vc-spacing-8) var(--vc-spacing-10);
   border-radius: var(--vc-radius-8);
   color: var(--vc-text-primary);
   font: 400 12px/1.2 var(--vc-font-family);

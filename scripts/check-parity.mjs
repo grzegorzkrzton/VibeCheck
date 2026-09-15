@@ -366,6 +366,8 @@ check('mapping manifest references existing sources and renderers', () => {
 
 check('feedback CSS matches Figma semantic treatments', () => {
   const css = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-styles.js'), 'utf8')
+  const contract = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/cards-v2-contract.json'), 'utf8'))
+  assert.deepEqual(contract.behavior.overflow.menu, ['Mark unread', 'Copy link', 'Delete'])
   assert.match(css, /\.vc-pin\[data-state="Open"\][\s\S]*border-width: 3px/)
   assert.match(css, /\.vc-pin \{[\s\S]*border-radius: var\(--vc-radius-full\) var\(--vc-radius-full\) var\(--vc-radius-full\) var\(--vc-radius-6\)/)
   assert.match(css, /\.vc-combo-second \{[\s\S]*align-items: flex-end/)
@@ -378,6 +380,7 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-card-surface \{[\s\S]*width: 240px/)
   assert.match(css, /\.vc-card-surface \{[\s\S]*overflow: visible/)
   assert.match(css, /\.vc-badge\[data-type="Applied"\][\s\S]*--vc-badge-success-background/)
+  assert.match(css, /\.vc-overflow-menu button \{[\s\S]*padding: var\(--vc-spacing-8\) var\(--vc-spacing-10\)/)
   assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border-default\)/)
   assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)
 })

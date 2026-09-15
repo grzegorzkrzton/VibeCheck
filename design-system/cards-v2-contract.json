@@ -64,7 +64,7 @@
     },
     "overflow": {
       "header": ["More", "Resolve/Reopen", "Close"],
-      "menu": ["Delete", "Copy link", "Mark unread"],
+      "menu": ["Mark unread", "Copy link", "Delete"],
       "openMenu": "instance overlay, not a card-level variant"
     },
     "comboField": {
