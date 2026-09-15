@@ -144,7 +144,7 @@
         align-items: center;
 
         & u {
-          text-decoration-color: var(--theme-color);
+          text-decoration-color: var(--vc-text-primary);
         }
       }
 
@@ -174,8 +174,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--theme-color);
-      color: var(--theme-color);
+      border: 1px solid var(--vc-border-default);
+      color: var(--vc-text-primary);
       font-weight: 300;
       font-size: 0.5em;
       text-transform: uppercase;

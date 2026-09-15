@@ -7,6 +7,8 @@
   --vc-text-primary: #111827;
   --vc-text-secondary: #4b5563;
   --vc-text-muted: #6b7280;
+  --vc-text-on-accent: #f9fafb;
+  --vc-icon-on-accent: #f9fafb;
   --vc-border-default: #d4d7de;
   --vc-action-primary: #111827;
   --vc-action-on-primary: #f9fafb;
@@ -95,6 +97,8 @@
   --vc-green-700: #4d7c0f;
   --vc-green-800: #3f6212;
   --vc-green-900: #365314;
+  --vc-spacing-0: 0px;
+  --vc-spacing-2: 2px;
   --vc-spacing-4: 4px;
   --vc-spacing-6: 6px;
   --vc-spacing-8: 8px;
@@ -102,6 +106,7 @@
   --vc-spacing-12: 12px;
   --vc-spacing-16: 16px;
   --vc-spacing-24: 24px;
+  --vc-radius-4: 4px;
   --vc-radius-6: 6px;
   --vc-radius-8: 8px;
   --vc-radius-12: 12px;
@@ -128,6 +133,8 @@
   --vc-text-primary: #f9fafb;
   --vc-text-secondary: #9ca3af;
   --vc-text-muted: #9ca3af;
+  --vc-text-on-accent: #f9fafb;
+  --vc-icon-on-accent: #f9fafb;
   --vc-border-default: #374151;
   --vc-action-primary: #1f2937;
   --vc-action-on-primary: #111827;
