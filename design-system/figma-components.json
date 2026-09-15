@@ -19,7 +19,25 @@
       "events",
       "security",
       "data behavior"
-    ]
+    ],
+    "layers": {
+      "visual": "Figma component sets",
+      "behavior": "Figma 07 · Behavior Contract (Cards v2 222:1720)",
+      "manifest": [
+        "design-system/figma-components.json",
+        "design-system/cards-v2-contract.json"
+      ],
+      "changelog": [
+        "design-system/CHANGELOG.md",
+        "Figma 08 · Changelog 222:2234"
+      ]
+    },
+    "cardsV2": {
+      "file": "design-system/cards-v2-contract.json",
+      "sectionNodeId": "175:688",
+      "behaviorNodeId": "222:1720",
+      "changelogNodeId": "222:2234"
+    }
   },
   "components": [
     {
@@ -65,25 +83,218 @@
       }
     },
     {
-      "name": "Field",
-      "figmaName": "Field",
-      "nodeId": "4:40",
+      "name": "Card / Field",
+      "figmaName": "Card / Field",
+      "nodeId": "180:1977",
       "type": "COMPONENT_SET",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-40",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=180-1977",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderField",
-        "selector": "[data-vc-component=\"Field\"]",
-        "dataComponent": "Field"
+        "selector": "[data-vc-component=\"Card / Field\"]",
+        "dataComponent": "Card / Field"
       },
       "variants": {
         "Type": ["Input", "Textarea"],
-        "State": ["Default", "Focus"]
+        "State": ["Default", "Focus", "Filled"]
       },
       "attributes": {
         "data-type": "Type",
         "data-state": "State"
       }
+    },
+    {
+      "name": "Card / Selected Item",
+      "figmaName": "Card / Selected Item",
+      "nodeId": "176:1920",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=176-1920",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderSelectedItem",
+        "selector": "[data-vc-component=\"Card / Selected Item\"]",
+        "dataComponent": "Card / Selected Item"
+      },
+      "variants": {
+        "Type": ["Comment", "Implement", "Warning", "Question", "Wording"]
+      },
+      "attributes": { "data-vc-type": "Type" }
+    },
+    {
+      "name": "Card / Type Menu Item",
+      "figmaName": "Card / Type Menu Item",
+      "nodeId": "177:1911",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=177-1911",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderTypeMenuItem",
+        "selector": "[data-vc-component=\"Card / Type Menu Item\"]",
+        "dataComponent": "Card / Type Menu Item"
+      },
+      "variants": { "State": ["Default", "Selected"] },
+      "attributes": { "aria-checked": "State" }
+    },
+    {
+      "name": "Card / Type Selector",
+      "figmaName": "Card / Type Selector",
+      "nodeId": "178:2136",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=178-2136",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderTypeSelector",
+        "selector": "[data-vc-component=\"Card / Type Selector\"]",
+        "dataComponent": "Card / Type Selector"
+      },
+      "variants": {
+        "Type": ["Comment", "Annotation", "Wording"],
+        "State": ["Default", "Open", "Disabled"]
+      },
+      "attributes": { "data-state": "State" }
+    },
+    {
+      "name": "Card / Send",
+      "figmaName": "Card / Send",
+      "nodeId": "179:737",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=179-737",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderSend",
+        "selector": "[data-vc-component=\"Card / Send\"]",
+        "dataComponent": "Card / Send"
+      },
+      "variants": { "State": ["Default", "Hover", "Active", "Disabled"] },
+      "attributes": { "data-state": "State" }
+    },
+    {
+      "name": "Card / ComboField",
+      "figmaName": "Card / ComboField",
+      "nodeId": "229:5660",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=229-5660",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderComboField",
+        "selector": "[data-vc-component=\"Card / ComboField\"]",
+        "dataComponent": "Card / ComboField"
+      },
+      "variants": {
+        "State": ["Default", "Hover", "Focus - First", "Focus - Second", "Focus - Second (First filled)", "Filled - First", "Filled - Both", "Editing - First", "Editing - Both", "Disabled", "Error - First", "Submitting", "Submit failed"]
+      },
+      "attributes": { "data-state": "State" }
+    },
+    {
+      "name": "Card / Apply Suggestion",
+      "figmaName": "Card / Apply Suggestion",
+      "nodeId": "236:2946",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=236-2946",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderApplySuggestion",
+        "selector": "[data-vc-component=\"Card / Apply Suggestion\"]",
+        "dataComponent": "Card / Apply Suggestion"
+      },
+      "variants": { "State": ["Default", "Hover", "Active"] },
+      "attributes": { "data-state": "State" }
+    },
+    {
+      "name": "Card / Kind Chip",
+      "figmaName": "Card / Kind Chip",
+      "nodeId": "181:761",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=181-761",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderKindChip",
+        "selector": "[data-vc-component=\"Card / Kind Chip\"]",
+        "dataComponent": "Card / Kind Chip"
+      },
+      "variants": {
+        "Kind": ["Implement", "Warning", "Question"],
+        "State": ["Default", "Selected"]
+      },
+      "attributes": { "data-kind": "Kind", "data-state": "State" }
+    },
+    {
+      "name": "Card / Reply",
+      "figmaName": "Card / Reply",
+      "nodeId": "184:755",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=184-755",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderReply",
+        "selector": "[data-vc-component=\"Card / Reply\"]",
+        "dataComponent": "Card / Reply"
+      },
+      "variants": { "State": ["Default", "Hover"] },
+      "attributes": { "data-state": "State" }
+    },
+    {
+      "name": "Card / Quote",
+      "figmaName": "Card / Quote",
+      "nodeId": "191:949",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=191-949",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderQuote",
+        "selector": "[data-vc-component=\"Card / Quote\"]",
+        "dataComponent": "Card / Quote"
+      },
+      "variants": { "Role": ["Original", "Suggestion", "Reasoning"] },
+      "attributes": { "data-role": "Role" }
+    },
+    {
+      "name": "Card / Header Icon",
+      "figmaName": "Card / Header Icon",
+      "nodeId": "203:1208",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=203-1208",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderHeaderIcon",
+        "selector": "[data-vc-component=\"Card / Header Icon\"]",
+        "dataComponent": "Card / Header Icon"
+      },
+      "variants": {
+        "Action": ["More", "Resolve", "Close"],
+        "State": ["Default", "Active"]
+      },
+      "attributes": { "data-state": "State" }
+    },
+    {
+      "name": "Card / Overflow Item",
+      "figmaName": "Card / Overflow Item",
+      "nodeId": "204:1198",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=204-1198",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderOverflowItem",
+        "selector": "[data-vc-component=\"Card / Overflow Item\"]",
+        "dataComponent": "Card / Overflow Item"
+      },
+      "variants": { "State": ["Default", "Hover"] },
+      "attributes": {}
+    },
+    {
+      "name": "Card / Overflow Menu",
+      "figmaName": "Card / Overflow Menu",
+      "nodeId": "204:1213",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=204-1213",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderOverflowMenu",
+        "selector": "[data-vc-component=\"Card / Overflow Menu\"]",
+        "dataComponent": "Card / Overflow Menu"
+      },
+      "variants": {},
+      "attributes": {}
     },
     {
       "name": "Badge",
@@ -288,72 +499,114 @@
       "attributes": {}
     },
     {
-      "name": "Feedback Card / Note",
-      "figmaName": "Feedback Card / Note",
-      "nodeId": "15:144",
-      "variantNodes": {
-        "Compose": "6:71",
-        "Detail": "15:112"
+      "name": "Toolbar Tip Hotkey",
+      "figmaName": "Toolbar Tip Hotkey",
+      "nodeId": "160:215",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=160-215",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "demoTip",
+        "selector": "[data-vc-component=\"Toolbar Tip\"] [hotkey]",
+        "dataComponent": "Toolbar Tip Hotkey"
       },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Toolbar Tip Row",
+      "figmaName": "Toolbar Tip Row",
+      "nodeId": "160:1429",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=160-1429",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "demoTip",
+        "selector": "[data-vc-component=\"Toolbar Tip\"] [table] > div",
+        "dataComponent": "Toolbar Tip Row"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
+      "name": "Toolbar Tip",
+      "figmaName": "Toolbar Tip",
+      "nodeId": "163:1452",
       "type": "COMPONENT_SET",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=15-144",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=163-1452",
+      "code": {
+        "source": "app/components/vis-bug/vis-bug.element.js",
+        "renderer": "demoTip",
+        "selector": "[data-vc-component=\"Toolbar Tip\"]",
+        "dataComponent": "Toolbar Tip"
+      },
+      "variants": {
+        "Tutorial": ["On", "Off"]
+      },
+      "attributes": {}
+    },
+    {
+      "name": "Card / Comment",
+      "figmaName": "Card / Comment",
+      "nodeId": "187:955",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=187-955",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderNoteCard",
-        "selector": "[data-vc-component=\"Feedback Card / Note\"]",
-        "dataComponent": "Feedback Card / Note"
+        "selector": "[data-vc-component=\"Card / Comment\"]",
+        "dataComponent": "Card / Comment"
       },
       "variants": {
-        "State": ["Compose", "Detail"]
+        "Mode": ["Compose", "Detail"],
+        "State": ["Default", "Hover", "Active", "Thread", "Resolved"]
       },
-      "attributes": {
-        "data-state": "State"
-      }
+      "attributes": { "data-mode": "Mode", "data-state": "State" }
     },
     {
-      "name": "Feedback Card / Annotation",
-      "figmaName": "Feedback Card / Annotation",
-      "nodeId": "16:157",
-      "variantNodes": {
-        "Compose": "6:83",
-        "Detail": "16:121"
-      },
+      "name": "Card / Annotation",
+      "figmaName": "Card / Annotation",
+      "nodeId": "190:1191",
       "type": "COMPONENT_SET",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=16-157",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=190-1191",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderAnnotationCard",
-        "selector": "[data-vc-component=\"Feedback Card / Annotation\"]",
-        "dataComponent": "Feedback Card / Annotation"
+        "selector": "[data-vc-component=\"Card / Annotation\"]",
+        "dataComponent": "Card / Annotation"
       },
       "variants": {
-        "State": ["Compose", "Detail"]
+        "Kind": ["Implement", "Warning", "Question"],
+        "Mode": ["Compose", "Detail"],
+        "State": ["Default", "Active", "Thread", "Resolved"]
       },
-      "attributes": {
-        "data-state": "State"
-      }
+      "attributes": { "data-card-type": "Kind", "data-mode": "Mode", "data-state": "State" }
     },
     {
-      "name": "Feedback Card / Wording",
-      "figmaName": "Feedback Card / Wording",
-      "nodeId": "16:249",
-      "variantNodes": {
-        "Compose": "6:102",
-        "Detail": "16:210"
-      },
+      "name": "Card / Wording",
+      "figmaName": "Card / Wording",
+      "nodeId": "196:1146",
       "type": "COMPONENT_SET",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=16-249",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=196-1146",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderWordingCard",
-        "selector": "[data-vc-component=\"Feedback Card / Wording\"]",
-        "dataComponent": "Feedback Card / Wording"
+        "selector": "[data-vc-component=\"Card / Wording\"]",
+        "dataComponent": "Card / Wording"
       },
       "variants": {
-        "State": ["Compose", "Detail"]
+        "Mode": ["Compose", "Detail"],
+        "Input": ["Default", "Focus First", "Focus Second", "Editing First", "Editing Both", "Error First", "Submitting", "Submit failed", "Read only"],
+        "Status": ["Draft", "Pending", "Applied"],
+        "Thread": ["Empty", "Replies"],
+        "Resolution": ["Open", "Resolved"]
       },
       "attributes": {
-        "data-state": "State"
+        "data-mode": "Mode",
+        "data-state": "Input",
+        "data-status": "Status",
+        "data-thread": "Thread",
+        "data-resolution": "Resolution"
       }
     },
     {
