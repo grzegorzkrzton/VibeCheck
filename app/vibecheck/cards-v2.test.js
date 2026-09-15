@@ -1,7 +1,10 @@
 import test from 'ava'
 import {
+  renderBadge,
   renderComboField,
   renderNoteCard,
+  renderPin,
+  renderTypeSelector,
   renderWordingCard,
 } from './components'
 import { migrateStore } from './storage'
@@ -56,6 +59,14 @@ test('ComboField sendability and failure remain first-field scoped', t => {
   t.regex(failed, /Because it is clearer/)
   t.regex(failed, /data-field="suggestedText"[^>]*aria-invalid="true"/)
   t.notRegex(failed, /data-field="rationale"[^>]*aria-invalid/)
+})
+
+test('status badges, disabled selector, and pins match final Figma contracts', t => {
+  t.regex(renderBadge('Pending'), /data-type="Pending"/)
+  t.regex(renderBadge('Applied'), /data-type="Applied"/)
+  t.notRegex(renderTypeSelector({ type: 'Wording', disabled: true }), /vc-icon/)
+  t.regex(renderPin({ number: 'S', recordKind: 'suggestion' }), />1<\/button>/)
+  t.regex(renderPin({ number: '12 comments', type: 'note' }), />12<\/button>/)
 })
 
 test('Apply Suggestion and Resolve remain independent repeatable actions', t => {

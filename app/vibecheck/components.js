@@ -109,7 +109,8 @@ export function renderChip({
 
 export function renderBadge(label = '') {
   if (!label) return ''
-  return `<span class="vc-badge" data-vc-component="Badge">${escapeHtml(label)}</span>`
+  const type = String(label).toLowerCase() === 'applied' ? 'Applied' : 'Pending'
+  return `<span class="vc-badge" data-vc-component="Badge" data-type="${type}">${escapeHtml(label)}</span>`
 }
 
 export function renderSend({
@@ -174,7 +175,7 @@ export function renderTypeSelector({
         'aria-expanded': disabled ? undefined : String(open),
         disabled,
       })}>
-        <span>${escapeHtml(type)}</span>${cardIcon('chevron')}
+        <span>${escapeHtml(type)}</span>${disabled ? '' : cardIcon('chevron')}
       </button>
       ${open && !disabled ? `
         <div class="vc-type-menu" role="menu" aria-label="Card type">
@@ -267,6 +268,7 @@ export function renderPin({
 } = {}) {
   const visualType = pinVisualType(recordKind, type, kind)
   const visualState = pinVisualState({ open, resolved })
+  const numericLabel = String(number ?? '').replace(/\D/g, '') || '1'
   return `<button type="button" class="vc-pin" ${attrs({
     'data-vc-component': 'Feedback Pin',
     'data-vc-type': visualType,
@@ -278,7 +280,7 @@ export function renderPin({
     'data-kind': kind || '',
     'data-resolved': Boolean(resolved),
     'data-open': Boolean(open),
-  })}>${escapeHtml(number)}</button>`
+  })}>${numericLabel}</button>`
 }
 
 export function renderKindSwitch(kind = 'implement') {
@@ -318,15 +320,17 @@ export function renderField({
   describedBy,
 } = {}) {
   const visualState = state || (value ? 'Filled' : 'Default')
+  const disabled = visualState === 'Disabled'
   const input = type === 'Textarea'
     ? `<textarea ${attrs({
       'data-field': field,
       placeholder,
       'aria-invalid': invalid ? 'true' : undefined,
       'aria-describedby': describedBy,
-      rows: compact ? '1' : '3',
+      rows: '1',
+      disabled,
     })}>${escapeHtml(value)}</textarea>`
-    : `<input type="text" ${attrs({ 'data-field': field, value, placeholder })}>`
+    : `<input type="text" ${attrs({ 'data-field': field, value, placeholder, disabled })}>`
   return `
     <div class="${classNames('vc-field', compact && 'vc-field-compact')}" ${attrs({
       'data-vc-component': 'Card / Field',
@@ -336,7 +340,7 @@ export function renderField({
     })}>
       ${input}
       ${showSend ? renderSend({
-        state: sendState || (value.trim() ? 'Active' : 'Default'),
+        state: sendState || (disabled ? 'Disabled' : value.trim() ? 'Active' : 'Default'),
         action: sendAction,
         cardType,
         ariaLabel: compact ? 'Send reply' : 'Send',
@@ -355,6 +359,7 @@ export function renderComboField({
 } = {}) {
   const sendable = Boolean(firstValue.trim())
   const submitting = state === 'Submitting'
+  const disabled = state === 'Disabled'
   const failed = state === 'Submit failed'
   const invalid = state === 'Error - First' || failed
   const visualState = state
@@ -372,16 +377,16 @@ export function renderComboField({
           'aria-required': 'true',
           'aria-invalid': invalid ? 'true' : undefined,
           'aria-describedby': messageId,
-          disabled: submitting,
+          disabled: submitting || disabled,
         })}>${escapeHtml(firstValue)}</textarea>
       </label>
       <label class="vc-combo-part vc-combo-second">
         <span class="vc-sr-only">Reasoning, optional</span>
         <textarea data-field="rationale" placeholder="Why this change? (optional)" rows="1" ${attrs({
-          disabled: submitting,
+          disabled: submitting || disabled,
         })}>${escapeHtml(secondValue)}</textarea>
         ${showSend ? renderSend({
-          state: submitting ? 'Disabled' : sendable ? 'Active' : 'Default',
+          state: submitting || disabled ? 'Disabled' : sendable ? 'Active' : 'Default',
           action: failed ? 'retry-send' : 'send',
           cardType: 'Wording',
           ariaLabel: failed ? 'Try sending again' : 'Send suggestion',
@@ -471,6 +476,7 @@ export function renderNoteCard({
       body: renderField({
         field: 'body',
         value: body,
+        state: body ? 'Active' : 'Default',
         placeholder: 'Write a comment…',
         showSend: true,
         sendState: submissionState === 'Submitting' ? 'Disabled' : body.trim() ? 'Active' : 'Default',
@@ -528,6 +534,7 @@ export function renderAnnotationCard({
         ${renderField({
           field: 'body',
           value: body,
+          state: body ? 'Active' : 'Default',
           placeholder: 'What should engineering know?',
           showSend: true,
           cardType: visualType,

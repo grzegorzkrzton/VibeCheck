@@ -114,7 +114,20 @@
     "spacing/2": "VariableID:229:5704",
     "radius/4": "VariableID:225:5230"
   },
+  "resolvedTokenValues": {
+    "bg/surface": { "Light": "#f0f2f4", "Dark": "#1f2937" },
+    "bg/subtle": { "Light": "#f0f2f4", "Dark": "#1f2937" },
+    "badge/pending - bg": { "Light": "#d4d7de", "Dark": "#4b5563" },
+    "badge/pending - text": { "Light": "#374151", "Dark": "#d4d7de" },
+    "badge/success - bg": { "Light": "#ecfccb", "Dark": "#ecfccb" },
+    "badge/success - text": { "Light": "#3f6212", "Dark": "#3f6212" },
+    "status/danger": { "Light": "#b91c1c", "Dark": "#f87171" }
+  },
   "families": {
+    "Badge": {
+      "nodeId": "254:8099",
+      "variants": { "Type": ["Pending", "Applied"] }
+    },
     "Card / Selected Item": { "nodeId": "176:1920" },
     "Card / Type Menu Item": { "nodeId": "177:1911" },
     "Card / Type Selector": { "nodeId": "178:2136" },

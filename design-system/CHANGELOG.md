@@ -2,6 +2,14 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-09-15 — Cards v2 parity audit
+
+- Synced the final Figma surface, subtle, danger, pending badge, and success badge values in Light and Dark.
+- Corrected Field and ComboField state geometry, 4px Send anchoring, focus/error treatment, multiline growth, and empty Wording compose behavior.
+- Updated runtime pins to the asymmetric Figma shape, numeric thread counters, 36px open state, and exact elevation.
+- Removed the disabled Type Selector chevron and raised cards/menus above panels without clipping dropdowns.
+- Added regression checks for status variants, token values, stacking, geometry, and independent Apply/Resolve behavior.
+
 ## 2026-09-15 — Cards v2 implementation
 
 - Shipped the final Comment, Annotation, Wording, ComboField, menu, quote, reply, Send, and Apply Suggestion renderers.

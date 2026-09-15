@@ -25,13 +25,13 @@ ${layerTokenCss}
 
 #vibecheck-layer .vc-pin {
   position: fixed;
-  z-index: 2147483644;
+  z-index: 2147483646;
   width: var(--vc-size-pin);
   height: var(--vc-size-pin);
   margin: 0;
   padding: 0;
   border: 2px solid var(--vc-action-on-primary);
-  border-radius: var(--vc-radius-full);
+  border-radius: var(--vc-radius-full) var(--vc-radius-full) var(--vc-radius-full) var(--vc-radius-6);
   color: var(--vc-action-on-primary);
   font: 700 12px/24px var(--vc-font-family);
   text-align: center;
@@ -50,18 +50,21 @@ ${layerTokenCss}
 #vibecheck-layer .vc-pin[data-vc-type="Question"] { background: var(--vc-pin-question); }
 #vibecheck-layer .vc-pin[data-type="annotation"] { background: var(--vc-pin-implement); }
 #vibecheck-layer .vc-pin[data-type="suggestion"],
-#vibecheck-layer .vc-pin[data-vc-type="Suggestion"] { background: var(--vc-pin-suggestion); }
+#vibecheck-layer .vc-pin[data-vc-type="Suggestion"] { background: var(--vc-action-primary); }
 #vibecheck-layer .vc-pin[data-resolved="true"],
 #vibecheck-layer .vc-pin[data-state="Resolved"] { opacity: var(--vc-opacity-resolved); }
 #vibecheck-layer .vc-pin[data-open="true"],
 #vibecheck-layer .vc-pin[data-state="Open"] {
+  width: 36px;
+  height: 36px;
   border-width: 3px;
   box-shadow: var(--vc-shadow-pin-open);
+  line-height: 30px;
 }
 
 #vibecheck-layer .vc-card {
   position: fixed;
-  z-index: 2147483645;
+  z-index: 2147483647;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -106,7 +109,7 @@ ${layerTokenCss}
   max-width: 100%;
   max-height: calc(100vh - 24px);
   padding: var(--vc-spacing-4);
-  overflow: auto;
+  overflow: visible;
   background: var(--vc-bg-surface);
   border-radius: 16px;
   box-shadow: var(--vc-shadow-card);
@@ -182,7 +185,7 @@ ${layerTokenCss}
 
 #vibecheck-layer .vc-type-selector {
   position: relative;
-  z-index: 2;
+  z-index: 10;
 }
 
 #vibecheck-layer .vc-type-trigger {
@@ -203,15 +206,15 @@ ${layerTokenCss}
 #vibecheck-layer .vc-type-trigger[aria-expanded="true"] .vc-icon { transform: rotate(180deg); }
 
 #vibecheck-layer .vc-type-trigger:disabled {
-  opacity: 0.5;
-  color: var(--vc-text-muted);
+  opacity: 1;
+  color: var(--vc-text-primary);
   cursor: default;
 }
 
 #vibecheck-layer .vc-type-menu,
 #vibecheck-layer .vc-overflow-menu {
   position: absolute;
-  z-index: 4;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: var(--vc-spacing-4);
@@ -262,23 +265,52 @@ ${layerTokenCss}
   display: flex;
   gap: var(--vc-spacing-8);
   width: 100%;
-  min-height: 40px;
-  align-items: flex-end;
-  padding: var(--vc-spacing-8) var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-12);
   background: var(--vc-bg-input);
-  border: 1.5px solid transparent;
+  border: 0;
+}
+
+#vibecheck-layer .vc-field {
+  height: 36px;
+  min-height: 36px;
+  align-items: center;
+  padding: var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-12);
   border-radius: var(--vc-radius-12);
+}
+
+#vibecheck-layer .vc-field[data-state="Active"] {
+  height: 96px;
+  align-items: flex-end;
+  padding-top: var(--vc-spacing-8);
+}
+
+#vibecheck-layer .vc-combo-part {
+  height: 40px;
+  min-height: 40px;
+  align-items: center;
+  padding: var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-12);
 }
 
 #vibecheck-layer .vc-field:focus-within,
 #vibecheck-layer .vc-combo-part:focus-within {
-  border-color: var(--vc-card-accent, var(--vc-pin-note));
+  box-shadow: inset 0 0 0 1.5px var(--vc-card-accent, var(--vc-pin-note));
 }
 
 #vibecheck-layer .vc-field[data-invalid="true"],
 #vibecheck-layer .vc-combo-part[data-invalid="true"] {
-  border-color: var(--vc-status-danger);
+  box-shadow: inset 0 0 0 1.5px var(--vc-status-danger);
 }
+
+#vibecheck-layer .vc-combo-part[data-invalid="true"] textarea,
+#vibecheck-layer .vc-combo-part[data-invalid="true"] textarea::placeholder {
+  color: var(--vc-status-danger);
+}
+
+#vibecheck-layer .vc-field[data-state="Error"] textarea,
+#vibecheck-layer .vc-field[data-state="Error"] textarea::placeholder {
+  color: var(--vc-status-danger);
+}
+
+#vibecheck-layer .vc-field[data-state="Disabled"] { opacity: var(--vc-opacity-resolved); }
 
 #vibecheck-layer .vc-field textarea,
 #vibecheck-layer .vc-combo-part textarea,
@@ -299,7 +331,14 @@ ${layerTokenCss}
   font: 13px/18px var(--vc-font-family);
 }
 
-#vibecheck-layer .vc-field:not(.vc-field-compact) { min-height: 96px; }
+#vibecheck-layer .vc-field[data-state="Active"] textarea {
+  height: 100%;
+}
+
+#vibecheck-layer .vc-combo-part textarea {
+  min-height: 16px;
+  line-height: 16px;
+}
 
 #vibecheck-layer .vc-field-compact {
   align-items: center;
@@ -357,24 +396,39 @@ ${layerTokenCss}
   gap: var(--vc-spacing-2);
   width: 100%;
   overflow: hidden;
-  border: 1.5px solid transparent;
   border-radius: var(--vc-radius-12);
 }
 
 #vibecheck-layer .vc-combo-first {
-  padding: var(--vc-spacing-12) var(--vc-spacing-12) var(--vc-spacing-16);
+  padding-right: var(--vc-spacing-12);
   border-radius: var(--vc-radius-12) var(--vc-radius-12) var(--vc-radius-4) var(--vc-radius-4);
 }
 
 #vibecheck-layer .vc-combo-second {
+  align-items: flex-end;
   border-radius: var(--vc-radius-4) var(--vc-radius-4) var(--vc-radius-12) var(--vc-radius-12);
 }
 
 #vibecheck-layer .vc-combo-field[data-state="Submit failed"] {
-  border-color: var(--vc-status-danger);
+  box-shadow: inset 0 0 0 1.5px var(--vc-status-danger);
+}
+
+#vibecheck-layer .vc-combo-field[data-state="Editing - First"] .vc-combo-first,
+#vibecheck-layer .vc-combo-field[data-state="Editing - Both"] .vc-combo-first,
+#vibecheck-layer .vc-combo-field[data-state="Submitting"] .vc-combo-first,
+#vibecheck-layer .vc-combo-field[data-state="Submit failed"] .vc-combo-first {
+  height: auto;
+  padding-top: var(--vc-spacing-12);
+  padding-bottom: var(--vc-spacing-16);
+}
+
+#vibecheck-layer .vc-combo-field[data-state="Editing - Both"] .vc-combo-second {
+  height: auto;
+  padding-top: var(--vc-spacing-12);
 }
 
 #vibecheck-layer .vc-combo-field[data-state="Submitting"] .vc-combo-part { opacity: 0.75; }
+#vibecheck-layer .vc-combo-field[data-state="Disabled"] { opacity: var(--vc-opacity-resolved); }
 
 #vibecheck-layer .vc-field-message {
   padding: var(--vc-spacing-4) var(--vc-spacing-12);
@@ -410,17 +464,23 @@ ${layerTokenCss}
 #vibecheck-layer .vc-badge {
   display: inline-block;
   margin-left: auto;
-  padding: 1px var(--vc-spacing-6);
+  padding: var(--vc-spacing-4) var(--vc-spacing-8);
   border-radius: var(--vc-radius-full);
-  background: var(--vc-badge-background);
-  color: var(--vc-badge-text);
-  font-size: 10px;
-  font-weight: 700;
+  background: var(--vc-badge-pending-background);
+  color: var(--vc-badge-pending-text);
+  font: 600 10px/1 var(--vc-font-family);
+}
+
+#vibecheck-layer .vc-badge[data-type="Applied"] {
+  background: var(--vc-badge-success-background);
+  color: var(--vc-badge-success-text);
 }
 
 #vibecheck-layer .vc-wording-content {
   display: flex;
   flex-direction: column;
+  max-height: min(360px, calc(100vh - 180px));
+  overflow: auto;
 }
 
 #vibecheck-layer .vc-quote {
@@ -470,6 +530,8 @@ ${layerTokenCss}
   flex-direction: column;
   gap: var(--vc-spacing-8);
   padding: var(--vc-spacing-12);
+  max-height: min(280px, calc(100vh - 180px));
+  overflow: auto;
 }
 
 #vibecheck-layer .vc-thread-divider {
@@ -528,7 +590,7 @@ ${layerTokenCss}
   position: fixed;
   top: var(--vc-spacing-16);
   left: calc(100vw - 296px);
-  z-index: 2147483645;
+  z-index: 2147483643;
   display: flex;
   flex-direction: column;
   width: var(--vc-size-panel);

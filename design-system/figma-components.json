@@ -299,16 +299,21 @@
     {
       "name": "Badge",
       "figmaName": "Badge",
-      "nodeId": "4:43",
-      "type": "COMPONENT",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-43",
+      "nodeId": "254:8099",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=254-8099",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderBadge",
         "selector": "[data-vc-component=\"Badge\"]",
         "dataComponent": "Badge"
       },
-      "variants": {},
+      "variants": {
+        "Type": [
+          "Pending",
+          "Applied"
+        ]
+      },
       "attributes": {}
     },
     {

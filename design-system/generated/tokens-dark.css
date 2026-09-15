@@ -1,8 +1,8 @@
 /* Generated from design-system/tokens.json. Do not edit. */
 :host {
   --vc-bg-page: #111827;
-  --vc-bg-surface: #111827;
-  --vc-bg-subtle: #111827;
+  --vc-bg-surface: #1f2937;
+  --vc-bg-subtle: #1f2937;
   --vc-bg-input: #111827;
   --vc-text-primary: #f9fafb;
   --vc-text-secondary: #9ca3af;
@@ -19,9 +19,13 @@
   --vc-pin-warning: #d97706;
   --vc-pin-question: #0f766e;
   --vc-pin-suggestion: #f9fafb;
-  --vc-status-danger: #b91c1c;
-  --vc-badge-background: #fef3c7;
-  --vc-badge-text: #92400e;
+  --vc-status-danger: #f87171;
+  --vc-badge-background: #4b5563;
+  --vc-badge-text: #d4d7de;
+  --vc-badge-pending-background: #4b5563;
+  --vc-badge-pending-text: #d4d7de;
+  --vc-badge-success-background: #ecfccb;
+  --vc-badge-success-text: #3f6212;
   --vc-selection-background: #111827;
   --vc-link-accent: #60a5fa;
   --vc-toolbar-tool-active-icon: #9ced2b;
@@ -106,6 +110,7 @@
   --vc-spacing-12: 12px;
   --vc-spacing-16: 16px;
   --vc-spacing-24: 24px;
+  --vc-radius-2: 2px;
   --vc-radius-4: 4px;
   --vc-radius-6: 6px;
   --vc-radius-8: 8px;

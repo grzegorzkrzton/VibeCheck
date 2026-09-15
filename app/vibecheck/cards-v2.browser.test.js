@@ -8,12 +8,17 @@ test('Wording supports keyboard compose, apply, reply, menus, and resolve', asyn
   await changeMode({ page, tool: 'content' })
   await page.click('h1')
   await page.waitForSelector('[data-vc-component="Card / ComboField"]')
+  const comboGeometry = await page.$eval('.vc-combo-field', element => ({
+    height: element.getBoundingClientRect().height,
+    parts: [...element.querySelectorAll('.vc-combo-part')].map(part => part.getBoundingClientRect().height),
+  }))
+  t.deepEqual(comboGeometry, { height: 82, parts: [40, 40] })
 
   await page.focus('[data-field="suggestedText"]')
   await page.keyboard.press('Tab')
-  t.is(await page.evaluate(() => document.activeElement?.dataset.field), 'rationale')
+  t.is(await page.evaluate(() => document.activeElement && document.activeElement.dataset.field), 'rationale')
   await page.keyboard.press('Tab')
-  t.is(await page.evaluate(() => document.activeElement?.dataset.action), 'send')
+  t.is(await page.evaluate(() => document.activeElement && document.activeElement.dataset.action), 'send')
 
   await page.focus('[data-field="suggestedText"]')
   await page.keyboard.down(await pptrMetaKey(page))
@@ -26,9 +31,13 @@ test('Wording supports keyboard compose, apply, reply, menus, and resolve', asyn
 
   await page.waitForSelector('[data-vc-component="Card / Wording"][data-mode="Detail"]')
   t.is(await page.$('[data-action="approve"], [data-action="reject"], [data-action="preview"]'), null)
+  t.is(await page.$eval('.vc-type-trigger', element => element.querySelector('svg')), null)
+  t.is(await page.$eval('.vc-type-trigger', element => getComputedStyle(element).opacity), '1')
+  t.is(await page.$eval('.vc-badge', element => element.dataset.type), 'Pending')
 
   await page.click('[data-action="apply-suggestion"]')
   t.is(await page.$eval('h1', element => element.innerText), 'A clearer title')
+  t.is(await page.$eval('.vc-badge', element => element.dataset.type), 'Applied')
   await page.click('[data-action="apply-suggestion"]')
   t.is(await page.$eval('h1', element => element.innerText), 'A clearer title')
 
@@ -44,6 +53,29 @@ test('Wording supports keyboard compose, apply, reply, menus, and resolve', asyn
   await page.click('[data-action="resolve"]')
   await page.waitForSelector('[data-vc-component="Card / Wording"][data-resolution="Resolved"]')
   t.truthy(await page.$('[aria-label="Reopen thread"]'))
+})
+
+test('Comment field, dropdown, disabled selector, and pin retain visual contracts', async t => {
+  const { page } = t.context
+  await changeMode({ page, tool: 'comments' })
+  await page.click('h1')
+  await page.waitForSelector('[data-vc-component="Card / Comment"]')
+
+  t.is(await page.$eval('.vc-field', element => element.getBoundingClientRect().height), 36)
+  await page.click('[data-action="toggle-type-menu"]')
+  await page.waitForSelector('.vc-type-menu')
+  t.is(await page.$eval('.vc-card-surface', element => getComputedStyle(element).overflow), 'visible')
+
+  await page.keyboard.press('Escape')
+  await page.type('[data-field="body"]', 'Measured comment')
+  t.is(await page.$eval('.vc-field', element => element.getBoundingClientRect().height), 96)
+  await page.click('[data-action="send"]')
+  await page.waitForSelector('[data-mode="Detail"]')
+  t.is(await page.$eval('.vc-type-trigger', element => element.querySelector('svg')), null)
+
+  await page.click('[data-action="close"]')
+  t.regex(await page.$eval('.vc-pin', element => element.textContent.trim()), /^\d+$/)
+  t.is(await page.$eval('.vc-pin', element => getComputedStyle(element).borderRadius), '999px 999px 999px 6px')
 })
 
 test.afterEach(teardownPptrTab)

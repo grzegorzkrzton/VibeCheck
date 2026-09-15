@@ -88,6 +88,8 @@ function ensureLayer() {
     document.documentElement.appendChild(layer)
     layer.addEventListener('click', onLayerClick)
     layer.addEventListener('input', onLayerInput)
+    layer.addEventListener('focusin', onLayerFocusIn)
+    layer.addEventListener('focusout', onLayerFocusOut)
     layer.addEventListener('keydown', onLayerKeyDown)
     layer.addEventListener('pointerdown', onDragStart)
   }
@@ -384,7 +386,7 @@ function renderPins() {
       recordKind: kind,
       type: kind === 'suggestion' ? 'suggestion' : (item.type || 'note'),
       kind: item.kind || '',
-      number: kind === 'suggestion' ? 'S' : commentNumber(item),
+      number: threadNumber(item),
       open: state.open?.id === item.id,
       resolved: Boolean(item.resolved),
     })
@@ -479,7 +481,7 @@ export function beginSuggestionDraft(el) {
     id: uid(),
     recordType: 'suggestion',
     originalText,
-    suggestedText: originalText,
+    suggestedText: '',
     rationale: '',
     status: 'pending',
     anchor: createAnchor(el),
@@ -810,7 +812,9 @@ async function onLayerClick(event) {
 
 function onLayerInput(event) {
   const field = event.target.dataset.field
-  if (event.target.matches('textarea')) {
+  const combo = event.target.closest('.vc-combo-field')
+  const standaloneField = event.target.closest('.vc-field')
+  if (event.target.matches('textarea') && (combo || standaloneField?.classList.contains('vc-field-compact'))) {
     event.target.style.height = 'auto'
     event.target.style.height = `${Math.min(event.target.scrollHeight, 180)}px`
   }
@@ -825,7 +829,9 @@ function onLayerInput(event) {
   }
   if (field === 'reply') {
     state.replyDraft = event.target.value
-    const send = event.target.closest('.vc-field')?.querySelector('.vc-send')
+    if (standaloneField)
+      standaloneField.dataset.state = event.target.value.trim() ? 'Filled' : 'Default'
+    const send = standaloneField?.querySelector('.vc-send')
     if (send) send.dataset.state = event.target.value.trim() ? 'Active' : 'Default'
     return
   }
@@ -833,10 +839,57 @@ function onLayerInput(event) {
   state.draft[field] = event.target.value
   state.submissionState = null
   state.submitError = ''
+  if (combo) syncComboVisualState(combo, field)
+  else if (standaloneField) {
+    const active = Boolean(event.target.value.trim())
+    standaloneField.dataset.state = active ? 'Active' : 'Focus'
+    event.target.style.height = active ? '100%' : ''
+    const card = standaloneField.closest('.vc-card')
+    if (card) card.dataset.state = active ? 'Active' : 'Default'
+  }
   if (field === 'body' || field === 'suggestedText') {
-    const send = event.target.closest('.vc-field, .vc-combo-field')?.querySelector('.vc-send')
+    const send = (standaloneField || combo)?.querySelector('.vc-send')
     if (send) send.dataset.state = event.target.value.trim() ? 'Active' : 'Default'
   }
+}
+
+function syncComboVisualState(combo, activeField) {
+  const first = combo.querySelector('[data-field="suggestedText"]')?.value.trim()
+  const second = combo.querySelector('[data-field="rationale"]')?.value.trim()
+  if (activeField === 'suggestedText')
+    combo.dataset.state = second ? 'Editing - Both' : first ? 'Editing - First' : 'Focus - First'
+  else if (activeField === 'rationale')
+    combo.dataset.state = second ? 'Editing - Both' : first ? 'Focus - Second (First filled)' : 'Focus - Second'
+}
+
+function onLayerFocusIn(event) {
+  const combo = event.target.closest('.vc-combo-field')
+  if (combo) {
+    syncComboVisualState(combo, event.target.dataset.field)
+    return
+  }
+  const field = event.target.closest('.vc-field')
+  if (!field) return
+  if (field.classList.contains('vc-field-compact'))
+    field.dataset.state = event.target.value.trim() ? 'Filled' : 'Focus'
+  else
+    field.dataset.state = event.target.value.trim() ? 'Active' : 'Focus'
+}
+
+function onLayerFocusOut(event) {
+  const combo = event.target.closest('.vc-combo-field')
+  const field = event.target.closest('.vc-field')
+  requestAnimationFrame(() => {
+    if (combo && !combo.contains(document.activeElement)) {
+      const first = combo.querySelector('[data-field="suggestedText"]')?.value.trim()
+      const second = combo.querySelector('[data-field="rationale"]')?.value.trim()
+      combo.dataset.state = first && second ? 'Filled - Both' : first ? 'Filled - First' : 'Default'
+    }
+    if (field && !field.contains(document.activeElement)) {
+      const value = field.querySelector('[data-field]')?.value.trim()
+      field.dataset.state = value ? 'Filled' : 'Default'
+    }
+  })
 }
 
 function onLayerKeyDown(event) {
