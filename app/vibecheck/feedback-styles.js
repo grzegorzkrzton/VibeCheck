@@ -101,10 +101,6 @@ ${layerTokenCss}
   white-space: nowrap;
 }
 
-#vibecheck-layer .vc-card[data-card-type="Suggestion"] .vc-selected-item {
-  color: var(--vc-button-primary-on);
-}
-
 #vibecheck-layer .vc-card-surface {
   position: relative;
   display: flex;
@@ -538,13 +534,13 @@ ${layerTokenCss}
   margin-left: auto;
   padding: var(--vc-spacing-4) var(--vc-spacing-8);
   border-radius: var(--vc-radius-full);
-  background: var(--vc-badge-pending-background);
+  background: var(--vc-badge-pending-bg);
   color: var(--vc-badge-pending-text);
   font: 600 10px/1 var(--vc-font-family);
 }
 
 #vibecheck-layer .vc-badge[data-type="Applied"] {
-  background: var(--vc-badge-success-background);
+  background: var(--vc-badge-success-bg);
   color: var(--vc-badge-success-text);
 }
 
@@ -673,8 +669,8 @@ ${layerTokenCss}
   max-height: calc(100vh - 80px);
   overflow: hidden;
   resize: both;
-  background-color: var(--vc-surface);
-  background-image: none;
+  background-color: var(--vc-surface) !important;
+  background-image: none !important;
   color: var(--vc-text);
   border-radius: var(--vc-radius-12);
   box-shadow: var(--vc-shadow-panel);
@@ -834,7 +830,7 @@ ${layerTokenCss}
 #vibecheck-layer .vc-item + .vc-item { margin-top: var(--vc-spacing-8); }
 #vibecheck-layer .vc-item[data-open="true"],
 #vibecheck-layer .vc-item[data-state="Open"] {
-  background: var(--vc-selection-background);
+  background: var(--vc-surface-subtle);
   border-radius: var(--vc-radius-8);
 }
 

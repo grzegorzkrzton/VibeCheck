@@ -3,7 +3,7 @@
 :host {
   --theme-bg: var(--vc-surface);
   --theme-bd: hsl(0 0% 100% / var(--theme-bd-opacity));
-  --theme-bd-2: hsl(0 0% 100% / var(--theme-bd-2-opacity));
+  --theme-bd-2: var(--vc-surface);
   --theme-color: hotpink;
   --theme-text_color: var(--vc-text);
   --theme-icon_color: var(--vc-text-gray-medium);

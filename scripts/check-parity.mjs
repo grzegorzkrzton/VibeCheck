@@ -267,10 +267,13 @@ check('token generator emits mapped CSS custom properties', () => {
   const css = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.css'), 'utf8')
   assert.equal(tokens.color.light.surface, '#f0f2f4')
   assert.equal(tokens.color.dark.surface, '#1f2937')
-  assert.equal(tokens.color.light['badge-pending-background'], '#d4d7de')
-  assert.equal(tokens.color.light['badge-success-background'], '#ecfccb')
+  assert.equal(tokens.color.light['badge-pending-bg'], '#d4d7de')
+  assert.equal(tokens.color.light['badge-success-bg'], '#ecfccb')
+  assert.equal(tokens.color.light['pin-suggestion'], '#16171f')
+  assert.equal(tokens.color.dark['pin-suggestion'], '#16171f')
+  assert.match(css, /--vc-pin-suggestion: #16171f/)
   assert.match(css, /--vc-surface: #f0f2f4/)
-  assert.match(css, /--vc-badge-success-background: #ecfccb/)
+  assert.match(css, /--vc-badge-success-bg: #ecfccb/)
   assert.match(css, /--vc-button-primary:/)
   assert.match(css, /--vc-text-inverse:/)
   assert.match(css, /--vc-icon-inverse:/)
@@ -367,6 +370,28 @@ check('mapping manifest references existing sources and renderers', () => {
     assert.ok(toolbarIcons.variants.Name.includes(name), `missing toolbar icon ${name}`)
 })
 
+check('pin tokens map to VibeCheck Colors collection IDs', () => {
+  const contract = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/cards-v2-contract.json'), 'utf8'))
+  const colorsCollectionPinIds = {
+    'pin/note': 'VariableID:3:29',
+    'pin/implement': 'VariableID:3:30',
+    'pin/warning': 'VariableID:3:31',
+    'pin/question': 'VariableID:3:32',
+    'pin/suggestion': 'VariableID:58:5',
+  }
+  const removedComponentPinIds = [
+    'VariableID:284:3',
+    'VariableID:284:4',
+    'VariableID:284:5',
+    'VariableID:284:6',
+    'VariableID:284:7',
+  ]
+  for (const [figmaName, expectedId] of Object.entries(colorsCollectionPinIds))
+    assert.equal(contract.tokens[figmaName], expectedId, `${figmaName} should stay on VibeCheck Colors`)
+  for (const id of removedComponentPinIds)
+    assert.equal(Object.values(contract.tokens).includes(id), false, `${id} must not remain in contract`)
+})
+
 check('feedback CSS matches Figma semantic treatments', () => {
   const css = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-styles.js'), 'utf8')
   const contract = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/cards-v2-contract.json'), 'utf8'))
@@ -376,13 +401,15 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-combo-second \{[\s\S]*align-items: flex-end/)
   assert.match(css, /\.vc-combo-part:focus-within[\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-card-accent/)
   assert.match(css, /\.vc-combo-part\[data-invalid="true"\][\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-text-critical\)/)
+  assert.match(css, /\.vc-selected-item \{[\s\S]*color: var\(--vc-text-inverse\)/)
+  assert.doesNotMatch(css, /\.vc-card\[data-card-type="Suggestion"\] \.vc-selected-item[\s\S]*--vc-button-primary-on/)
   assert.match(css, /\.vc-card\[data-card-type="Suggestion"\] \.vc-send\[data-state="Active"\][\s\S]*color: var\(--vc-button-primary-on\)/)
   assert.match(css, /\.vc-send \{[\s\S]*flex: 0 0 28px/)
   assert.match(css, /\.vc-combo-second \{[\s\S]*border-radius/)
   assert.match(css, /\.vc-panel \{\n  opacity: 1;\n  filter: none;\n  mix-blend-mode: normal;/)
   assert.match(css, /\.vc-card-surface \{[\s\S]*width: 240px/)
   assert.match(css, /\.vc-card-surface \{[\s\S]*overflow: visible/)
-  assert.match(css, /\.vc-badge\[data-type="Applied"\][\s\S]*--vc-badge-success-background/)
+  assert.match(css, /\.vc-badge\[data-type="Applied"\][\s\S]*--vc-badge-success-bg/)
   assert.match(css, /\.vc-overflow-menu button \{[\s\S]*padding: var\(--vc-spacing-8\) var\(--vc-spacing-10\)/)
   assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border\)/)
   assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)

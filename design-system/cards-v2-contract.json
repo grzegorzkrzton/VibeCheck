@@ -154,19 +154,19 @@
     "button/button-primary-on": "VariableID:3:28"
   },
   "resolvedTokenValues": {
-    "badge/pending - bg": {
+    "badge/badge-pending-bg": {
       "Light": "#d4d7de",
       "Dark": "#4b5563"
     },
-    "badge/pending - text": {
+    "badge/badge-pending-text": {
       "Light": "#374151",
       "Dark": "#d4d7de"
     },
-    "badge/success - bg": {
+    "badge/badge-success-bg": {
       "Light": "#ecfccb",
       "Dark": "#ecfccb"
     },
-    "badge/success - text": {
+    "badge/badge-success-text": {
       "Light": "#3f6212",
       "Dark": "#3f6212"
     },

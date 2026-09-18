@@ -7,7 +7,8 @@
 :host {
   --theme-bg: var(--vc-surface);
   --theme-bd: hsl(0 0% 100% / var(--theme-bd-opacity));
-  --theme-bd-2: hsl(0 0% 100% / var(--theme-bd-2-opacity));
+  /* Match Notes / cards: solid design-system surface (no glass tint mismatch). */
+  --theme-bd-2: var(--vc-surface);
   --theme-bd-opacity: 1;
   --theme-bd-2-opacity: 1;
   --theme-color: hotpink;
@@ -23,7 +24,7 @@
   --theme-icon_color: var(--vc-text-gray-medium);
   --theme-icon_hover-bg: var(--vc-button-secondary-hover);
   --theme-icon_active-bg: var(--vc-surface-subtle);
-  --theme-icon_active-color: var(--vc-toolbar-tool-active-icon);
+  --theme-icon_active-color: var(--vc-icon-accent);
 
   --layer-top: 2147483647;
   --layer-1: 2147483646;
@@ -41,22 +42,20 @@
   @media (prefers-color-scheme: dark) {
     --theme-bg: var(--vc-surface);
     --theme-bd: hsl(var(--gray-10-hsl) / var(--theme-bd-opacity));
-    --theme-bd-2: hsl(var(--gray-10-hsl) / var(--theme-bd-2-opacity));
+    --theme-bd-2: var(--vc-surface);
     --theme-color: hsl(330deg 65% 75%);
     --theme-text_color: var(--vc-text);
     --theme-icon_color: var(--vc-text-gray-medium);
     --theme-icon_hover-bg: var(--vc-button-secondary-hover);
     --theme-icon_active-bg: var(--vc-surface-subtle);
-    --theme-icon_active-color: var(--vc-toolbar-tool-active-icon);
+    --theme-icon_active-color: var(--vc-icon-accent);
   }
 
   @supports (backdrop-filter: blur(5px)) {
     --theme-bd-opacity: .8;
-    --theme-bd-2-opacity: .9;
   }
 
   @supports (-webkit-backdrop-filter: blur(5px)) {
     --theme-bd-opacity: .8;
-    --theme-bd-2-opacity: .9;
   }
 }
