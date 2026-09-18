@@ -2,6 +2,14 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-09-18 — 18thSepWeekend token and Figma cleanup
+
+- Synced Figma variable dump into `tokens.json`: `gray-200` → `#d2d5da`, `gray-700` → `#40454f`, cascaded `surface-subtle`, `border-gray-light`, `icon-subtle`, badge text, and added `icon-gray-light` / `icon-gray-medium`.
+- Fixed VibeCheck Colors WEB code syntax for border-gray-* and icon-subtle / icon-gray-* tokens.
+- Retired **VibeCheck Component Colors** collection (no live consumers; badge tokens live in VibeCheck Colors).
+- Updated Color System — VibeCheck primitive tile labels for gray-200 and gray-700; rebound Color Tokens — VibeCheck swatches to local semantic variables.
+- Removed legacy **Feedback Card / Note**, **Feedback Card / Annotation**, and **Feedback Card / Wording** component sets from Figma (Cards v2 replaces them in code).
+
 ## 2026-09-15 — Cards v2 parity audit
 
 - Synced the final Figma surface, subtle, danger, pending badge, and success badge values in Light and Dark.

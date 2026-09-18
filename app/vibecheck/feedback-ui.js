@@ -10,8 +10,10 @@ import {
   renderNoteCard,
   renderNotesPanel,
   renderNotesPanelItem,
+  renderOverflowMenu,
   renderPin,
   renderReply,
+  renderTypeMenuItem,
   renderWordingCard,
 } from './components'
 import {
@@ -56,6 +58,7 @@ const state = {
     collapsed: false,
   },
   drag: null,
+  motionCardId: null,
 }
 
 function ensureStyles() {
@@ -85,6 +88,7 @@ function ensureLayer() {
   if (!layer) {
     layer = document.createElement('div')
     layer.id = LAYER_ID
+    layer.setAttribute('popover', 'manual')
     applyScheme(layer)
     document.documentElement.appendChild(layer)
     layer.addEventListener('click', onLayerClick)
@@ -94,7 +98,19 @@ function ensureLayer() {
     layer.addEventListener('keydown', onLayerKeyDown)
     layer.addEventListener('pointerdown', onDragStart)
   }
+  promoteFeedbackLayer(layer)
   return layer
+}
+
+/** Keep comment UI above selection popovers in the browser top layer. */
+export function promoteFeedbackLayer(layer = document.getElementById(LAYER_ID)) {
+  if (!layer?.showPopover) return
+  try {
+    if (layer.matches?.(':popover-open'))
+      layer.hidePopover()
+    layer.showPopover()
+  }
+  catch { /* unsupported / already transitioning */ }
 }
 
 function loadPanelLayout() {
@@ -121,6 +137,53 @@ function savePanelLayout() {
     localStorage.setItem(PANEL_LAYOUT_KEY, JSON.stringify(state.panelLayout))
   }
   catch { /* quota / private mode */ }
+}
+
+function prefersReducedMotion() {
+  return typeof matchMedia === 'function'
+    && matchMedia('(prefers-reduced-motion: reduce)').matches
+}
+
+function motionMs(kind = 'base') {
+  if (prefersReducedMotion()) return 0
+  if (kind === 'fast') return 140
+  if (kind === 'panel') return 280
+  return 200
+}
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function leaveElements(selector) {
+  const layer = document.getElementById(LAYER_ID)
+  if (!layer) return
+  const elements = [...layer.querySelectorAll(selector)]
+  if (!elements.length) return
+  if (prefersReducedMotion()) return
+  elements.forEach(el => { el.dataset.leaving = 'true' })
+  await wait(motionMs('fast'))
+}
+
+function applyPanelCollapsedState(panel, collapsed) {
+  if (!panel) return
+  panel.dataset.collapsed = String(collapsed)
+  panel.dataset.state = collapsed ? 'Collapsed' : 'Expanded'
+  const slot = panel.querySelector('.vc-panel-collapse')
+  if (slot) {
+    if (collapsed) slot.setAttribute('aria-hidden', 'true')
+    else slot.removeAttribute('aria-hidden')
+  }
+  const btn = panel.querySelector('[data-action="toggle-panel"]')
+  if (btn) {
+    btn.textContent = collapsed ? '▣' : '−'
+    btn.setAttribute('aria-label', collapsed ? 'Expand notes panel' : 'Collapse notes panel')
+  }
+  const search = panel.querySelector('[data-field="panel-search"]')
+  if (search) {
+    if (collapsed) search.setAttribute('tabindex', '-1')
+    else search.removeAttribute('tabindex')
+  }
 }
 
 function rememberPointer(event) {
@@ -278,23 +341,100 @@ function placeAnchoredMenu(menu, anchor, {
 }
 
 function placeOpenMenus(layer) {
+  // Menus use position:fixed + viewport coords. Keep them as direct layer
+  // children so card transforms never become a fixed containing block.
   const typeMenu = layer.querySelector('.vc-type-menu')
   if (typeMenu) {
+    if (typeMenu.parentElement !== layer)
+      layer.appendChild(typeMenu)
     placeAnchoredMenu(
       typeMenu,
-      layer.querySelector('.vc-type-trigger') || typeMenu.previousElementSibling,
+      layer.querySelector('.vc-type-trigger'),
       { align: 'start' },
     )
   }
 
   const overflowMenu = layer.querySelector('.vc-overflow-menu')
   if (overflowMenu) {
+    if (overflowMenu.parentElement !== layer)
+      layer.appendChild(overflowMenu)
     placeAnchoredMenu(
       overflowMenu,
-      layer.querySelector('[data-action="toggle-overflow"]') || overflowMenu.previousElementSibling,
+      layer.querySelector('[data-action="toggle-overflow"]'),
       { align: 'end' },
     )
   }
+}
+
+function syncMenuTriggers(layer = document.getElementById(LAYER_ID)) {
+  if (!layer) return
+  const overflow = layer.querySelector('[data-action="toggle-overflow"]')
+  if (overflow)
+    overflow.setAttribute('aria-expanded', String(state.overflowOpen))
+  const type = layer.querySelector('.vc-type-trigger')
+  if (type && type.getAttribute('aria-expanded') != null)
+    type.setAttribute('aria-expanded', String(state.typeMenuOpen))
+}
+
+function mountLayerMenu(html) {
+  const layer = ensureLayer()
+  const template = document.createElement('template')
+  template.innerHTML = html.trim()
+  const menu = template.content.firstElementChild
+  if (!menu) return null
+  layer.appendChild(menu)
+  return menu
+}
+
+async function dismissLayerMenus({ focus } = {}) {
+  const layer = document.getElementById(LAYER_ID)
+  if (!layer) return
+  const hadMenu = Boolean(layer.querySelector('.vc-type-menu, .vc-overflow-menu'))
+  if (hadMenu)
+    await leaveElements('.vc-type-menu, .vc-overflow-menu')
+  layer.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+  state.typeMenuOpen = false
+  state.overflowOpen = false
+  syncMenuTriggers(layer)
+  if (focus)
+    requestAnimationFrame(() => layer.querySelector(focus)?.focus())
+}
+
+function openOverflowMenu() {
+  const layer = ensureLayer()
+  layer.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+  state.typeMenuOpen = false
+  state.overflowOpen = true
+  syncMenuTriggers(layer)
+  const menu = mountLayerMenu(renderOverflowMenu())
+  const anchor = layer.querySelector('[data-action="toggle-overflow"]')
+  placeAnchoredMenu(menu, anchor, { align: 'end' })
+  // Second pass after layout — first measure can run before paint.
+  requestAnimationFrame(() => {
+    placeAnchoredMenu(menu, anchor, { align: 'end' })
+    menu?.querySelector('[role="menuitem"]')?.focus()
+  })
+}
+
+function openTypeMenu() {
+  const layer = ensureLayer()
+  layer.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+  state.overflowOpen = false
+  state.typeMenuOpen = true
+  syncMenuTriggers(layer)
+  const trigger = layer.querySelector('.vc-type-trigger')
+  const current = trigger?.querySelector('span')?.textContent?.trim() || 'Comment'
+  const options = ['Comment', 'Annotation', 'Wording']
+  const menu = mountLayerMenu(`
+    <div class="vc-type-menu" role="menu" aria-label="Card type">
+      ${options.map(option => renderTypeMenuItem({ option, selected: option === current })).join('')}
+    </div>
+  `)
+  placeAnchoredMenu(menu, trigger, { align: 'start' })
+  requestAnimationFrame(() => {
+    placeAnchoredMenu(menu, trigger, { align: 'start' })
+    menu?.querySelector('[role^="menuitem"]')?.focus()
+  })
 }
 
 function placePanel(panel) {
@@ -489,7 +629,15 @@ export function layoutFeedback() {
 export function renderFeedback() {
   const layer = ensureLayer()
   const open = currentOpen()
+  const cardId = open?.item?.id || state.draft?.id || null
+  const skipMotion = Boolean(cardId && cardId === state.motionCardId)
+  state.motionCardId = cardId
+
   layer.innerHTML = `${renderPins()}${renderCard(open)}${renderPanel()}`
+  const card = layer.querySelector('.vc-card')
+  if (card && skipMotion)
+    card.dataset.motion = 'settled'
+
   layer.querySelectorAll('.vc-avatar img').forEach(image => {
     if (image.complete && !image.naturalWidth) {
       image.remove()
@@ -498,6 +646,7 @@ export function renderFeedback() {
     image.addEventListener('error', () => image.remove(), { once: true })
   })
   layoutFeedback()
+  promoteFeedbackLayer(layer)
   requestAnimationFrame(() => {
     layer.querySelectorAll('textarea').forEach(textarea => autosizeTextarea(textarea))
   })
@@ -619,10 +768,9 @@ function onDragStart(event) {
   if (kind === 'card' && (state.typeMenuOpen || state.overflowOpen)) {
     state.typeMenuOpen = false
     state.overflowOpen = false
-    element.querySelector('.vc-type-menu')?.remove()
-    element.querySelector('.vc-overflow-menu')?.remove()
-    const trigger = element.querySelector('.vc-type-trigger[aria-expanded="true"]')
-    trigger?.setAttribute('aria-expanded', 'false')
+    const layer = document.getElementById(LAYER_ID)
+    layer?.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+    syncMenuTriggers(layer)
   }
 
   const rect = element.getBoundingClientRect()
@@ -752,9 +900,7 @@ async function onLayerClick(event) {
   const actionEl = event.target.closest('[data-action]')
   if (!actionEl) {
     if (state.typeMenuOpen || state.overflowOpen) {
-      state.typeMenuOpen = false
-      state.overflowOpen = false
-      renderFeedback()
+      await dismissLayerMenus()
     }
     return
   }
@@ -774,11 +920,21 @@ async function onLayerClick(event) {
     state.panelLayout.left = null
     state.panelLayout.top = PANEL_EDGE_INSET
     savePanelLayout()
+    const panel = document.querySelector('#vibecheck-layer .vc-panel')
+    if (panel) {
+      applyPanelCollapsedState(panel, state.panelLayout.collapsed)
+      dockPanelTopRight(panel)
+      placePanel(panel)
+      return
+    }
   }
   else if (action === 'close' || action === 'cancel') {
+    await dismissLayerMenus()
+    await leaveElements('.vc-card')
     state.draft = null
     state.open = null
     state.cardPosition = null
+    state.motionCardId = null
     resetTransientCardState()
   }
   else if (action === 'open') {
@@ -799,14 +955,16 @@ async function onLayerClick(event) {
     }
   }
   else if (action === 'toggle-type-menu') {
-    state.typeMenuOpen = !state.typeMenuOpen
-    state.overflowOpen = false
-    renderAndFocus(state.typeMenuOpen ? '.vc-type-menu [role^="menuitem"]' : '.vc-type-trigger')
+    if (state.typeMenuOpen) {
+      await dismissLayerMenus({ focus: '.vc-type-trigger' })
+      return
+    }
+    openTypeMenu()
     return
   }
   else if (action === 'set-card-type' && state.draft) {
     state.draft = convertDraftType(state.draft, actionEl.dataset.cardType)
-    state.typeMenuOpen = false
+    await dismissLayerMenus()
     renderAndFocus('.vc-type-trigger')
     return
   }
@@ -823,12 +981,15 @@ async function onLayerClick(event) {
     if (!open) return
 
     if (action === 'toggle-overflow') {
-      state.overflowOpen = !state.overflowOpen
-      state.typeMenuOpen = false
-      renderAndFocus(state.overflowOpen ? '.vc-overflow-menu [role="menuitem"]' : '[data-action="toggle-overflow"]')
+      if (state.overflowOpen) {
+        await dismissLayerMenus({ focus: '[data-action="toggle-overflow"]' })
+        return
+      }
+      openOverflowMenu()
       return
     }
     if (action === 'delete') {
+      await leaveElements('.vc-card')
       if (open.kind === 'suggestion') await removeSuggestion(open.item.id)
       else await removeComment(open.item.id)
       state.open = null
@@ -878,7 +1039,7 @@ async function onLayerClick(event) {
       const update = { ...open.item, readAt: null }
       if (open.kind === 'suggestion') await upsertSuggestion(update)
       else await upsertComment(update)
-      state.overflowOpen = false
+      await dismissLayerMenus()
       await refreshFeedback()
       return
     }
@@ -886,15 +1047,14 @@ async function onLayerClick(event) {
       const url = new URL(location.href)
       url.hash = `vibecheck-thread=${encodeURIComponent(open.item.id)}`
       await navigator.clipboard?.writeText?.(url.href)
-      state.overflowOpen = false
-      renderAndFocus('[data-action="toggle-overflow"]')
+      await dismissLayerMenus({ focus: '[data-action="toggle-overflow"]' })
       return
     }
   }
   renderFeedback()
 }
 
-function autosizeTextarea(textarea, { max = 180 } = {}) {
+function autosizeTextarea(textarea, { max = 180, animate = false } = {}) {
   if (!textarea || textarea.tagName !== 'TEXTAREA') return
   const field = textarea.closest('.vc-field')
   const comboPart = textarea.closest('.vc-combo-part')
@@ -904,11 +1064,36 @@ function autosizeTextarea(textarea, { max = 180 } = {}) {
       ? 16
       : 28
 
+  const from = textarea.offsetHeight || minHeight
+  const prevTransition = textarea.style.transition
+  textarea.style.transition = 'none'
   textarea.style.height = 'auto'
   const raw = textarea.scrollHeight
   const next = Math.min(Math.max(raw, minHeight), max)
-  textarea.style.height = `${next}px`
   textarea.style.overflowY = raw > max ? 'auto' : 'hidden'
+
+  if (!animate || prefersReducedMotion() || Math.abs(from - next) < 1) {
+    textarea.style.height = `${next}px`
+    textarea.style.transition = prevTransition
+    return
+  }
+
+  textarea.style.height = `${from}px`
+  // Force layout so the browser registers the start height before easing.
+  void textarea.offsetHeight
+  textarea.style.transition = `height var(--vc-duration, 200ms) var(--vc-ease, cubic-bezier(0.32, 0.72, 0, 1))`
+  textarea.style.height = `${next}px`
+
+  const finish = () => {
+    textarea.style.transition = prevTransition
+    textarea.removeEventListener('transitionend', onEnd)
+  }
+  const onEnd = event => {
+    if (event.propertyName !== 'height') return
+    finish()
+  }
+  textarea.addEventListener('transitionend', onEnd)
+  setTimeout(finish, motionMs() + 40)
 }
 
 function onLayerInput(event) {
@@ -964,7 +1149,8 @@ function onLayerFocusIn(event) {
   const combo = event.target.closest('.vc-combo-field')
   if (combo) {
     syncComboVisualState(combo, event.target.dataset.field)
-    if (event.target.matches('textarea')) autosizeTextarea(event.target)
+    if (event.target.matches('textarea'))
+      requestAnimationFrame(() => autosizeTextarea(event.target, { animate: true }))
     return
   }
   const field = event.target.closest('.vc-field')
@@ -974,7 +1160,7 @@ function onLayerFocusIn(event) {
   else
     field.dataset.state = event.target.value.trim() ? 'Active' : 'Focus'
   if (event.target.matches('textarea'))
-    requestAnimationFrame(() => autosizeTextarea(event.target))
+    requestAnimationFrame(() => autosizeTextarea(event.target, { animate: true }))
 }
 
 function onLayerFocusOut(event) {
@@ -987,13 +1173,13 @@ function onLayerFocusOut(event) {
       const first = combo.querySelector('[data-field="suggestedText"]')?.value.trim()
       const second = combo.querySelector('[data-field="rationale"]')?.value.trim()
       combo.dataset.state = first && second ? 'Filled - Both' : first ? 'Filled - First' : 'Default'
-      combo.querySelectorAll('textarea').forEach(textarea => autosizeTextarea(textarea))
+      combo.querySelectorAll('textarea').forEach(textarea => autosizeTextarea(textarea, { animate: true }))
     }
     if (field && !field.contains(document.activeElement)) {
       const input = field.querySelector('[data-field]')
       const value = input?.value.trim()
       field.dataset.state = value ? 'Filled' : 'Default'
-      if (input?.matches?.('textarea')) autosizeTextarea(input)
+      if (input?.matches?.('textarea')) autosizeTextarea(input, { animate: true })
     }
   })
 }
@@ -1004,9 +1190,7 @@ function onLayerKeyDown(event) {
   if (event.key === 'Escape') {
     if (state.typeMenuOpen || state.overflowOpen) {
       const selector = state.typeMenuOpen ? '.vc-type-trigger' : '[data-action="toggle-overflow"]'
-      state.typeMenuOpen = false
-      state.overflowOpen = false
-      renderAndFocus(selector)
+      dismissLayerMenus({ focus: selector })
     }
     return
   }
@@ -1041,10 +1225,8 @@ function onLayerKeyDown(event) {
 
 function closeMenusOutside(event) {
   if (!state.typeMenuOpen && !state.overflowOpen) return
-  if (event.target.closest?.('.vc-type-selector, .vc-overflow-menu, [data-action="toggle-overflow"]')) return
-  state.typeMenuOpen = false
-  state.overflowOpen = false
-  renderFeedback()
+  if (event.target.closest?.('.vc-type-selector, .vc-type-menu, .vc-overflow-menu, [data-action="toggle-overflow"]')) return
+  dismissLayerMenus()
 }
 
 let installedFilter = false

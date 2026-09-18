@@ -11,6 +11,85 @@ ${layerTokenCss}
 
 #vibecheck-layer {
   font-family: var(--vc-font-family);
+  /* Subtle iOS / Revolut-like motion */
+  --vc-duration-fast: 140ms;
+  --vc-duration: 200ms;
+  --vc-duration-panel: 280ms;
+  --vc-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --vc-ease-soft: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #vibecheck-layer {
+    --vc-duration-fast: 0.01ms;
+    --vc-duration: 0.01ms;
+    --vc-duration-panel: 0.01ms;
+  }
+
+  #vibecheck-layer .vc-card,
+  #vibecheck-layer .vc-card-surface,
+  #vibecheck-layer .vc-type-menu,
+  #vibecheck-layer .vc-overflow-menu {
+    animation: none !important;
+  }
+}
+
+#vibecheck-layer .vc-card[data-motion="settled"],
+#vibecheck-layer .vc-card[data-motion="settled"] .vc-card-surface {
+  animation: none !important;
+}
+
+@keyframes vc-enter-card-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes vc-enter-card-surface {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes vc-enter-menu {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes vc-enter-menu-up {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Popover top-layer reset — keep cards above selection chrome. */
+#vibecheck-layer[popover] {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+  color-scheme: inherit;
 }
 
 /* Host page rules can still match these descendants, so restate the
@@ -21,28 +100,44 @@ ${layerTokenCss}
 #vibecheck-layer .vc-type-menu,
 #vibecheck-layer .vc-overflow-menu,
 #vibecheck-layer .vc-panel {
-  opacity: 1;
+  pointer-events: auto;
   filter: none;
   mix-blend-mode: normal;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
+#vibecheck-layer .vc-pin:not([data-leaving="true"]),
+#vibecheck-layer .vc-card:not([data-leaving="true"]),
+#vibecheck-layer .vc-card-surface,
+#vibecheck-layer .vc-type-menu:not([data-leaving="true"]),
+#vibecheck-layer .vc-overflow-menu:not([data-leaving="true"]),
+#vibecheck-layer .vc-panel {
+  opacity: 1;
+}
+
 #vibecheck-layer .vc-pin {
   position: fixed;
   z-index: 2147483646;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: var(--vc-size-pin);
   height: var(--vc-size-pin);
   margin: 0;
   padding: 0;
-  border: 2px solid var(--vc-button-primary-on);
+  border: 2px solid var(--vc-icon-inverse);
   border-radius: var(--vc-radius-full) var(--vc-radius-full) var(--vc-radius-full) var(--vc-radius-6);
-  color: var(--vc-button-primary-on);
-  font: 700 12px/24px var(--vc-font-family);
-  text-align: center;
+  color: var(--vc-icon-inverse);
+  font: 700 12px/14px var(--vc-font-family);
   cursor: pointer;
   box-shadow: var(--vc-shadow-pin);
   transform: translate(-50%, -50%);
+  transition:
+    border-width var(--vc-duration-fast) var(--vc-ease),
+    box-shadow var(--vc-duration) var(--vc-ease),
+    opacity var(--vc-duration) var(--vc-ease),
+    transform var(--vc-duration) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-pin[data-type="note"],
@@ -55,16 +150,13 @@ ${layerTokenCss}
 #vibecheck-layer .vc-pin[data-vc-type="Question"] { background: var(--vc-pin-question); }
 #vibecheck-layer .vc-pin[data-type="annotation"] { background: var(--vc-pin-implement); }
 #vibecheck-layer .vc-pin[data-type="suggestion"],
-#vibecheck-layer .vc-pin[data-vc-type="Suggestion"] { background: var(--vc-button-primary); }
+#vibecheck-layer .vc-pin[data-vc-type="Suggestion"] { background: var(--vc-pin-suggestion); }
 #vibecheck-layer .vc-pin[data-resolved="true"],
 #vibecheck-layer .vc-pin[data-state="Resolved"] { opacity: var(--vc-opacity-resolved); }
 #vibecheck-layer .vc-pin[data-open="true"],
 #vibecheck-layer .vc-pin[data-state="Open"] {
-  width: 36px;
-  height: 36px;
   border-width: 3px;
   box-shadow: var(--vc-shadow-pin-open);
-  line-height: 30px;
 }
 
 #vibecheck-layer .vc-card {
@@ -76,29 +168,10 @@ ${layerTokenCss}
   width: 240px;
   max-width: calc(100vw - 24px);
   color: var(--vc-text);
-}
-
-#vibecheck-layer .vc-card * { box-sizing: border-box; }
-
-#vibecheck-layer .vc-card[data-resolution="Resolved"] { opacity: var(--vc-opacity-resolved); }
-
-#vibecheck-layer .vc-selected-row {
-  display: flex;
-  width: 100%;
-  justify-content: flex-end;
-  padding: 0 var(--vc-spacing-12);
-}
-
-#vibecheck-layer .vc-selected-item {
-  max-width: 100%;
-  overflow: hidden;
-  padding: var(--vc-spacing-4) var(--vc-spacing-8);
-  border-radius: var(--vc-radius-8) var(--vc-radius-8) 0 0;
-  background: var(--vc-card-accent, var(--vc-pin-note));
-  color: var(--vc-text-inverse);
-  font: 600 11px/1.2 var(--vc-font-family);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* Keep this node transform-free: fixed menus live as layer children, but
+     any transform here still breaks hit-testing / drag geometry. */
+  animation: vc-enter-card-fade var(--vc-duration) var(--vc-ease) both;
+  transition: opacity var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-card-surface {
@@ -118,6 +191,48 @@ ${layerTokenCss}
   box-shadow: var(--vc-shadow-card);
   isolation: isolate;
   scrollbar-width: thin;
+  transform-origin: top right;
+  animation: vc-enter-card-surface var(--vc-duration) var(--vc-ease) both;
+  transition:
+    opacity var(--vc-duration-fast) var(--vc-ease),
+    transform var(--vc-duration) var(--vc-ease);
+}
+
+#vibecheck-layer .vc-card[data-side="left"] .vc-card-surface { transform-origin: top left; }
+
+#vibecheck-layer .vc-card[data-leaving="true"] {
+  opacity: 0;
+  pointer-events: none;
+  animation: none;
+}
+
+#vibecheck-layer .vc-card[data-leaving="true"] .vc-card-surface {
+  transform: translateY(4px) scale(0.98);
+  animation: none;
+}
+
+#vibecheck-layer .vc-card * { box-sizing: border-box; }
+
+#vibecheck-layer .vc-card[data-resolution="Resolved"] { opacity: var(--vc-opacity-resolved); }
+#vibecheck-layer .vc-card[data-resolution="Resolved"][data-leaving="true"] { opacity: 0; }
+
+#vibecheck-layer .vc-selected-row {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  padding: 0 var(--vc-spacing-12);
+}
+
+#vibecheck-layer .vc-selected-item {
+  max-width: 100%;
+  overflow: hidden;
+  padding: var(--vc-spacing-4) var(--vc-spacing-8);
+  border-radius: var(--vc-radius-8) var(--vc-radius-8) 0 0;
+  background: var(--vc-card-accent, var(--vc-pin-note));
+  color: var(--vc-text-inverse);
+  font: 600 11px/1.2 var(--vc-font-family);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #vibecheck-layer .vc-card-head {
@@ -167,6 +282,10 @@ ${layerTokenCss}
   place-items: center;
   border-radius: var(--vc-radius-full);
   color: var(--vc-text-gray-light);
+  transition:
+    background-color var(--vc-duration-fast) var(--vc-ease),
+    color var(--vc-duration-fast) var(--vc-ease),
+    transform var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-header-icon:hover,
@@ -175,6 +294,10 @@ ${layerTokenCss}
 #vibecheck-layer .vc-apply-suggestion:focus-visible {
   background: var(--vc-surface-subtle);
   color: var(--vc-text);
+}
+
+#vibecheck-layer .vc-header-icon:active {
+  transform: scale(0.92);
 }
 
 #vibecheck-layer .vc-header-icon[data-state="Active"] {
@@ -200,11 +323,16 @@ ${layerTokenCss}
   border-radius: var(--vc-radius-6);
   color: var(--vc-text);
   font: 600 11px/1.2 var(--vc-font-family);
+  transition: background-color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-type-trigger:hover,
 #vibecheck-layer .vc-type-trigger[aria-expanded="true"] {
   background: var(--vc-surface-subtle);
+}
+
+#vibecheck-layer .vc-type-trigger .vc-icon {
+  transition: transform var(--vc-duration) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-type-trigger[aria-expanded="true"] .vc-icon { transform: rotate(180deg); }
@@ -230,7 +358,26 @@ ${layerTokenCss}
   border-radius: var(--vc-radius-12);
   box-shadow: var(--vc-shadow-card);
   isolation: isolate;
-  opacity: 1 !important;
+  opacity: 1;
+  transform-origin: top center;
+  animation: vc-enter-menu var(--vc-duration-fast) var(--vc-ease) both;
+  transition:
+    opacity var(--vc-duration-fast) var(--vc-ease),
+    transform var(--vc-duration-fast) var(--vc-ease);
+}
+
+#vibecheck-layer .vc-type-menu[data-side="top"],
+#vibecheck-layer .vc-overflow-menu[data-side="top"] {
+  transform-origin: bottom center;
+  animation-name: vc-enter-menu-up;
+}
+
+#vibecheck-layer .vc-type-menu[data-leaving="true"],
+#vibecheck-layer .vc-overflow-menu[data-leaving="true"] {
+  opacity: 0;
+  transform: scale(0.96);
+  pointer-events: none;
+  animation: none;
 }
 
 #vibecheck-layer[data-scheme="light"] .vc-type-menu,
@@ -257,6 +404,7 @@ ${layerTokenCss}
   color: var(--vc-text);
   font: 400 12px/1.2 var(--vc-font-family);
   text-align: left;
+  transition: background-color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-overflow-menu button {
@@ -268,6 +416,7 @@ ${layerTokenCss}
   color: var(--vc-text);
   font: 400 12px/1.2 var(--vc-font-family);
   text-align: left;
+  transition: background-color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-type-menu-item:hover,
@@ -288,6 +437,10 @@ ${layerTokenCss}
   width: 100%;
   background: var(--vc-surface-input);
   border: 0;
+  transition:
+    padding var(--vc-duration) var(--vc-ease),
+    box-shadow var(--vc-duration-fast) var(--vc-ease),
+    background-color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-field {
@@ -310,15 +463,23 @@ ${layerTokenCss}
   padding: var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-12);
 }
 
-#vibecheck-layer .vc-field:focus-within {
-  box-shadow: inset 0 0 0 1.5px var(--vc-card-accent, var(--vc-pin-note));
+#vibecheck-layer .vc-field:focus-within:not([data-state="Error"]) {
+  box-shadow: inset 0 0 0 1px var(--vc-border-gray-medium);
+}
+
+#vibecheck-layer .vc-field[data-state="Error"],
+#vibecheck-layer .vc-field[data-invalid="true"] {
+  box-shadow: inset 0 0 0 1.5px var(--vc-text-critical);
 }
 
 #vibecheck-layer .vc-combo-part:focus-within {
+  box-shadow: inset 0 0 0 1px var(--vc-border-gray-medium);
+}
+
+#vibecheck-layer .vc-combo-field[data-state="Focus - Second (First filled)"] .vc-combo-second:focus-within {
   box-shadow: inset 0 0 0 1.5px var(--vc-pin-note);
 }
 
-#vibecheck-layer .vc-field[data-invalid="true"],
 #vibecheck-layer .vc-combo-part[data-invalid="true"] {
   box-shadow: inset 0 0 0 1.5px var(--vc-text-critical);
 }
@@ -439,6 +600,11 @@ ${layerTokenCss}
   border-radius: var(--vc-radius-full);
   background: var(--vc-surface-subtle);
   color: var(--vc-text-gray-light);
+  transition:
+    background-color var(--vc-duration-fast) var(--vc-ease),
+    color var(--vc-duration-fast) var(--vc-ease),
+    opacity var(--vc-duration-fast) var(--vc-ease),
+    transform var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-send[data-state="Active"] {
@@ -450,7 +616,14 @@ ${layerTokenCss}
   color: var(--vc-icon-inverse);
 }
 
-#vibecheck-layer .vc-send:hover:not(:disabled),
+#vibecheck-layer .vc-send:hover:not(:disabled):not([data-state="Active"]):not([data-state="Disabled"]) {
+  background: var(--vc-purple-100);
+}
+
+#vibecheck-layer .vc-send:active:not(:disabled):not([data-state="Disabled"]) {
+  transform: scale(0.92);
+}
+
 #vibecheck-layer .vc-send:focus-visible {
   filter: brightness(0.96);
 }
@@ -468,6 +641,9 @@ ${layerTokenCss}
   width: 100%;
   overflow: hidden;
   border-radius: var(--vc-radius-12);
+  transition:
+    box-shadow var(--vc-duration-fast) var(--vc-ease),
+    opacity var(--vc-duration) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-combo-first {
@@ -498,7 +674,10 @@ ${layerTokenCss}
   padding-top: var(--vc-spacing-12);
 }
 
-#vibecheck-layer .vc-combo-field[data-state="Submitting"] .vc-combo-part { opacity: 0.75; }
+#vibecheck-layer .vc-combo-field[data-state="Submitting"] .vc-combo-part {
+  opacity: 0.75;
+  transition: opacity var(--vc-duration) var(--vc-ease);
+}
 #vibecheck-layer .vc-combo-field[data-state="Disabled"] { opacity: var(--vc-opacity-resolved); }
 
 #vibecheck-layer .vc-field-message {
@@ -518,12 +697,26 @@ ${layerTokenCss}
 #vibecheck-layer .vc-kinds button {
   appearance: none;
   padding: var(--vc-spacing-4) var(--vc-spacing-8);
-  border: 1px solid var(--vc-border);
+  border: 1px solid var(--vc-border-gray-light);
   border-radius: var(--vc-radius-full);
   background: transparent;
   color: var(--vc-text-gray-medium);
   font: 600 11px/1.2 var(--vc-font-family);
   cursor: pointer;
+  transition:
+    background-color var(--vc-duration-fast) var(--vc-ease),
+    border-color var(--vc-duration-fast) var(--vc-ease),
+    color var(--vc-duration-fast) var(--vc-ease),
+    transform var(--vc-duration-fast) var(--vc-ease);
+}
+
+#vibecheck-layer .vc-kinds button:hover:not([data-state="Selected"]) {
+  border-color: transparent;
+  background: var(--vc-surface-subtle);
+}
+
+#vibecheck-layer .vc-kinds button:active {
+  transform: scale(0.96);
 }
 
 #vibecheck-layer .vc-kinds button[data-state="Selected"] {
@@ -537,13 +730,13 @@ ${layerTokenCss}
   margin-left: auto;
   padding: var(--vc-spacing-4) var(--vc-spacing-8);
   border-radius: var(--vc-radius-full);
-  background: var(--vc-badge-pending-bg);
+  background: var(--vc-badge-pending-background);
   color: var(--vc-badge-pending-text);
   font: 600 10px/1 var(--vc-font-family);
 }
 
 #vibecheck-layer .vc-badge[data-type="Applied"] {
-  background: var(--vc-badge-success-bg);
+  background: var(--vc-badge-success-background);
   color: var(--vc-badge-success-text);
 }
 
@@ -591,7 +784,7 @@ ${layerTokenCss}
   padding: var(--vc-spacing-4);
   place-items: center;
   border-radius: var(--vc-radius-6);
-  color: var(--vc-text-gray-light);
+  color: var(--vc-icon-subtle);
 }
 
 #vibecheck-layer .vc-apply-suggestion:active { color: var(--vc-text); }
@@ -608,7 +801,7 @@ ${layerTokenCss}
 #vibecheck-layer .vc-thread-divider {
   width: 100%;
   height: 1px;
-  background: var(--vc-border);
+  background: var(--vc-border-gray-light);
 }
 
 #vibecheck-layer .vc-reply {
@@ -678,6 +871,11 @@ ${layerTokenCss}
   border-radius: var(--vc-radius-12);
   box-shadow: var(--vc-shadow-panel);
   isolation: isolate;
+  transition:
+    width var(--vc-duration-panel) var(--vc-ease),
+    min-width var(--vc-duration-panel) var(--vc-ease),
+    min-height var(--vc-duration-panel) var(--vc-ease),
+    box-shadow var(--vc-duration) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-panel-head {
@@ -689,11 +887,31 @@ ${layerTokenCss}
   cursor: grab;
   touch-action: none;
   user-select: none;
+  transition: padding var(--vc-duration-panel) var(--vc-ease);
+}
+
+#vibecheck-layer .vc-panel-collapse {
+  display: grid;
+  grid-template-rows: 1fr;
+  min-height: 0;
+  transition: grid-template-rows var(--vc-duration-panel) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-panel-body {
   min-height: 0;
   overflow: auto;
+  opacity: 1;
+  transition: opacity var(--vc-duration-fast) var(--vc-ease);
+}
+
+#vibecheck-layer .vc-panel-collapse > .vc-panel-body {
+  overflow: auto;
+  min-height: 0;
+}
+
+#vibecheck-layer .vc-panel[data-collapsed="true"] .vc-panel-collapse > .vc-panel-body,
+#vibecheck-layer .vc-panel[data-state="Collapsed"] .vc-panel-collapse > .vc-panel-body {
+  overflow: hidden;
 }
 
 #vibecheck-layer .vc-panel[data-collapsed="true"],
@@ -703,6 +921,17 @@ ${layerTokenCss}
   min-height: 0;
   height: auto;
   resize: none;
+}
+
+#vibecheck-layer .vc-panel[data-collapsed="true"] .vc-panel-collapse,
+#vibecheck-layer .vc-panel[data-state="Collapsed"] .vc-panel-collapse {
+  grid-template-rows: 0fr;
+}
+
+#vibecheck-layer .vc-panel[data-collapsed="true"] .vc-panel-body,
+#vibecheck-layer .vc-panel[data-state="Collapsed"] .vc-panel-body {
+  opacity: 0;
+  pointer-events: none;
 }
 
 #vibecheck-layer .vc-panel[data-collapsed="true"] .vc-panel-head,
@@ -752,6 +981,9 @@ ${layerTokenCss}
   border-radius: var(--vc-radius-6);
   background: var(--vc-surface-input);
   color: var(--vc-text-gray-medium);
+  transition:
+    border-color var(--vc-duration-fast) var(--vc-ease),
+    box-shadow var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-panel-search > span {
@@ -799,6 +1031,7 @@ ${layerTokenCss}
   color: var(--vc-text-gray-medium);
   cursor: pointer;
   font: 700 15px/1 var(--vc-font-family);
+  transition: background-color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-panel-tool:hover { background: var(--vc-button-secondary-hover); }
@@ -816,6 +1049,10 @@ ${layerTokenCss}
   padding: var(--vc-spacing-4) var(--vc-spacing-8);
   border-radius: var(--vc-radius-full);
   border: 1px solid var(--vc-border);
+  transition:
+    background-color var(--vc-duration-fast) var(--vc-ease),
+    border-color var(--vc-duration-fast) var(--vc-ease),
+    color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-item {
@@ -828,6 +1065,8 @@ ${layerTokenCss}
   cursor: pointer;
   font: 12px/1.35 var(--vc-font-family);
   color: inherit;
+  border-radius: var(--vc-radius-8);
+  transition: background-color var(--vc-duration-fast) var(--vc-ease);
 }
 
 #vibecheck-layer .vc-item + .vc-item { margin-top: var(--vc-spacing-8); }

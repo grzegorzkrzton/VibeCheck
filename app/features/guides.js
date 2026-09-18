@@ -1,6 +1,7 @@
 import $ from 'blingblingjs'
 import { isOffBounds, deepElementFromPoint } from '../utilities/'
 import { clearMeasurements, takeMeasurementOwnership } from './measurements'
+import { promoteFeedbackLayer } from '../vibecheck/feedback-ui'
 
 const state = {
   gridlines:    null,
@@ -99,6 +100,7 @@ const showGridlines = node => {
 
     document.body.appendChild(state.gridlines)
   }
+  promoteFeedbackLayer()
 }
 
 const hideGridlines = () => {

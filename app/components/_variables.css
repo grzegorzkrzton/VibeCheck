@@ -21,9 +21,9 @@
   --neon-cyan:  color(display-p3 0 1 1);
 
   --theme-text_color: var(--vc-text);
-  --theme-icon_color: var(--vc-text-gray-medium);
+  --theme-icon_color: var(--vc-icon-subtle);
   --theme-icon_hover-bg: var(--vc-button-secondary-hover);
-  --theme-icon_active-bg: var(--vc-surface-subtle);
+  --theme-icon_active-bg: var(--vc-button-primary);
   --theme-icon_active-color: var(--vc-icon-accent);
 
   --layer-top: 2147483647;
@@ -45,9 +45,9 @@
     --theme-bd-2: var(--vc-surface);
     --theme-color: hsl(330deg 65% 75%);
     --theme-text_color: var(--vc-text);
-    --theme-icon_color: var(--vc-text-gray-medium);
+    --theme-icon_color: var(--vc-icon-subtle);
     --theme-icon_hover-bg: var(--vc-button-secondary-hover);
-    --theme-icon_active-bg: var(--vc-surface-subtle);
+    --theme-icon_active-bg: var(--vc-button-primary);
     --theme-icon_active-color: var(--vc-icon-accent);
   }
 

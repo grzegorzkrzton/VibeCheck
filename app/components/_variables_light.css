@@ -6,7 +6,7 @@
   --theme-bd-2: var(--vc-surface);
   --theme-color: hotpink;
   --theme-text_color: var(--vc-text);
-  --theme-icon_color: var(--vc-text-gray-medium);
+  --theme-icon_color: var(--vc-icon-subtle);
   --theme-icon_hover-bg: var(--vc-button-secondary-hover);
-  --theme-icon_active-bg: var(--vc-surface-subtle);
+  --theme-icon_active-bg: var(--vc-button-primary);
 }

@@ -11,6 +11,7 @@ import { createPaddingVisual } from './padding'
 
 import { showTip as showMetaTip, removeAll as removeAllMetaTips } from './metatip'
 import { showTip as showAccessibilityTip, removeAll as removeAllAccessibilityTips } from './accessibility'
+import { promoteFeedbackLayer } from '../vibecheck/feedback-ui'
 
 import {
   metaKey, htmlStringToDom, createClassname, camelToDash,
@@ -18,6 +19,14 @@ import {
   isSelectorValid, findNearestChildElement, findNearestParentElement,
   getTextShadowValues, isFixed, onRemove
 } from '../utilities/'
+
+function restackSelectionThenFeedback(handles = []) {
+  handles.forEach(handle => {
+    handle.hidePopover && handle.hidePopover()
+    handle.showPopover && handle.showPopover()
+  })
+  promoteFeedbackLayer()
+}
 
 export function Selectable(vibecheck) {
   const page              = document.body
@@ -423,13 +432,9 @@ export function Selectable(vibecheck) {
       clearMeasurements()
     }
 
-    // force promote into top layer
-    if (tool === 'guides') {
-      handles.forEach(handle => {
-        handle.hidePopover &&  handle.hidePopover()
-        handle.showPopover && handle.showPopover()
-      })
-    }
+    // force promote into top layer, then keep feedback cards above
+    if (tool === 'guides')
+      restackSelectionThenFeedback(handles)
   }
 
   const select = el => {
@@ -456,6 +461,7 @@ export function Selectable(vibecheck) {
       tip.hidePopover && tip.hidePopover()
       tip.showPopover && tip.showPopover()
     })
+    promoteFeedbackLayer()
 
     selected.unshift(el)
     tellWatchers()
@@ -593,11 +599,7 @@ export function Selectable(vibecheck) {
   const setLabel = (el, label) => {
     label.text = handleLabelText(el, vibecheck.activeTool)
     label.update = {boundingRect: el.getBoundingClientRect(), isFixed: isFixed(el)}
-
-    handles.forEach(handle => {
-      handle.hidePopover && handle.hidePopover()
-      handle.showPopover && handle.showPopover()
-    })
+    restackSelectionThenFeedback(handles)
   }
 
   const createLabel = ({el, id, template}) => {
@@ -633,11 +635,7 @@ export function Selectable(vibecheck) {
       })
 
       labels[labels.length] = label
-
-      handles.forEach(handle => {
-        handle.hidePopover && handle.hidePopover()
-        handle.showPopover && handle.showPopover()
-      })
+      restackSelectionThenFeedback(handles)
 
       return label
     }
@@ -652,6 +650,7 @@ export function Selectable(vibecheck) {
       document.body.appendChild(handle)
 
       handles[handles.length] = handle
+      promoteFeedbackLayer()
       return handle
     }
   }
@@ -664,6 +663,7 @@ export function Selectable(vibecheck) {
       hover_state.element = document.createElement('vibecheck-hover')
       document.body.appendChild(hover_state.element)
       hover_state.element.position = {el}
+      promoteFeedbackLayer()
 
       return hover_state.element
     }
@@ -684,7 +684,7 @@ export function Selectable(vibecheck) {
       }
 
       hover_state.label.style.setProperty(`--label-bg`, `hsl(267, 100%, 58%)`)
-
+      promoteFeedbackLayer()
 
       return hover_state.label
     }
@@ -698,6 +698,7 @@ export function Selectable(vibecheck) {
       hover_state.element = document.createElement('vibecheck-corners')
       document.body.appendChild(hover_state.element)
       hover_state.element.position = {el}
+      promoteFeedbackLayer()
 
       return hover_state.element
     }
