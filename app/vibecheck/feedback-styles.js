@@ -289,11 +289,15 @@ ${layerTokenCss}
 }
 
 #vibecheck-layer .vc-header-icon:hover,
-#vibecheck-layer .vc-header-icon:focus-visible,
-#vibecheck-layer .vc-apply-suggestion:hover,
-#vibecheck-layer .vc-apply-suggestion:focus-visible {
+#vibecheck-layer .vc-header-icon:focus-visible {
   background: var(--vc-surface-subtle);
   color: var(--vc-text);
+}
+
+#vibecheck-layer .vc-apply-suggestion:hover,
+#vibecheck-layer .vc-apply-suggestion:focus-visible {
+  background: var(--vc-button-secondary-hover);
+  color: var(--vc-text-gray-light);
 }
 
 #vibecheck-layer .vc-header-icon:active {
@@ -784,10 +788,14 @@ ${layerTokenCss}
   padding: var(--vc-spacing-4);
   place-items: center;
   border-radius: var(--vc-radius-6);
-  color: var(--vc-icon-subtle);
+  color: var(--vc-text-gray-light);
 }
 
-#vibecheck-layer .vc-apply-suggestion:active { color: var(--vc-text); }
+#vibecheck-layer .vc-apply-suggestion:active,
+#vibecheck-layer .vc-apply-suggestion[data-state="Active"] {
+  background: var(--vc-surface-subtle);
+  color: var(--vc-text-gray-medium);
+}
 
 #vibecheck-layer .vc-thread {
   display: flex;

@@ -2,6 +2,12 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-09-18 — 18thSepWeekend follow-up (toolbar + docs)
+
+- Pointed Main Toolbar and toolbar-tip hotkeys at `--vc-surface` (Figma `surface/surface`). Dark `surface-subtle` is now gray-700, so the old binding made the toolbar look washed out.
+- Matched Apply Suggestion to Figma: default/hover icon `--vc-text-gray-light`, hover fill `--vc-button-secondary-hover`, active fill `--vc-surface-subtle`.
+- Finished Color Tokens — VibeCheck rows (icon-subtle/critical/accent/gray-*, border-gray-*, Badge, Pin), corrected primitive HEX labels, swapped Toolbar Flows Cards v1 instances to v2, then deleted the v1 sets.
+
 ## 2026-09-18 — 18thSepWeekend token and Figma cleanup
 
 - Synced Figma variable dump into `tokens.json`: `gray-200` → `#d2d5da`, `gray-700` → `#40454f`, cascaded `surface-subtle`, `border-gray-light`, `icon-subtle`, badge text, and added `icon-gray-light` / `icon-gray-medium`.
