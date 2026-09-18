@@ -42,11 +42,8 @@
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
     background-color: var(--theme-bd-2);
-    max-height: calc(100vh - 3em);
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
+    height: fit-content;
+    overflow: visible;
 
     &:active {
       cursor: grabbing !important;
@@ -78,7 +75,7 @@
     margin: 0.4em auto;
     padding: 0;
     border-radius: 1px;
-    background: var(--vc-border-default);
+    background: var(--vc-border);
     pointer-events: none;
     box-shadow: none;
   }
@@ -144,7 +141,7 @@
         align-items: center;
 
         & u {
-          text-decoration-color: var(--vc-text-primary);
+          text-decoration-color: var(--vc-text);
         }
       }
 
@@ -174,8 +171,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--vc-border-default);
-      color: var(--vc-text-primary);
+      border: 1px solid var(--vc-border);
+      color: var(--vc-text);
       font-weight: 300;
       font-size: 0.5em;
       text-transform: uppercase;
@@ -222,12 +219,12 @@
 }
 
 :host [colors] > li.prompt-action {
-  --contextual_color: var(--vc-action-primary);
-  --icon_color: var(--vc-action-on-primary);
-  background: var(--vc-action-primary);
+  --contextual_color: var(--vc-button-primary);
+  --icon_color: var(--vc-button-primary-on);
+  background: var(--vc-button-primary);
   cursor: pointer;
   margin-bottom: 0.25em;
-  box-shadow: 0 0 0 2px var(--vc-action-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+  box-shadow: 0 0 0 2px var(--vc-button-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
   transition: background 0.15s ease, box-shadow 0.15s ease;
 
   & > svg {
@@ -237,17 +234,17 @@
   }
 
   &:hover {
-    --contextual_color: var(--vc-bg-surface);
-    --icon_color: var(--vc-action-primary);
-    background: var(--vc-bg-surface);
-    box-shadow: 0 0 0 2px var(--vc-action-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+    --contextual_color: var(--vc-surface);
+    --icon_color: var(--vc-button-primary);
+    background: var(--vc-surface);
+    box-shadow: 0 0 0 2px var(--vc-button-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
   }
 
   &:active {
-    --contextual_color: var(--vc-action-secondary-hover);
-    --icon_color: var(--vc-action-primary);
-    background: var(--vc-action-secondary-hover);
-    box-shadow: 0 0 0 2px var(--vc-action-primary), 0 0.15em 0.35em hsla(0,0%,0%,20%);
+    --contextual_color: var(--vc-button-secondary-hover);
+    --icon_color: var(--vc-button-primary);
+    background: var(--vc-button-secondary-hover);
+    box-shadow: 0 0 0 2px var(--vc-button-primary), 0 0.15em 0.35em hsla(0,0%,0%,20%);
   }
 }
 

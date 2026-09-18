@@ -265,15 +265,18 @@ check('generated token files match tokens.json', () => {
 check('token generator emits mapped CSS custom properties', () => {
   const tokens = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/tokens.json'), 'utf8'))
   const css = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.css'), 'utf8')
-  assert.equal(tokens.color.light['bg-surface'], '#f0f2f4')
-  assert.equal(tokens.color.dark['bg-surface'], '#1f2937')
+  assert.equal(tokens.color.light.surface, '#f0f2f4')
+  assert.equal(tokens.color.dark.surface, '#1f2937')
   assert.equal(tokens.color.light['badge-pending-background'], '#d4d7de')
   assert.equal(tokens.color.light['badge-success-background'], '#ecfccb')
-  assert.match(css, /--vc-bg-surface: #f0f2f4/)
+  assert.match(css, /--vc-surface: #f0f2f4/)
   assert.match(css, /--vc-badge-success-background: #ecfccb/)
-  assert.match(css, /--vc-action-primary/)
-  assert.match(css, /--vc-text-on-accent/)
-  assert.match(css, /--vc-icon-on-accent/)
+  assert.match(css, /--vc-button-primary:/)
+  assert.match(css, /--vc-text-inverse:/)
+  assert.match(css, /--vc-icon-inverse:/)
+  assert.doesNotMatch(css, /--vc-text-primary:/)
+  assert.doesNotMatch(css, /--vc-bg-surface:/)
+  assert.doesNotMatch(css, /--vc-action-primary:/)
   assert.match(css, /--vc-size-pin: 28px/)
   assert.match(css, /--vc-shadow-card/)
   assert.match(css, /prefers-color-scheme: dark/)
@@ -283,8 +286,8 @@ check('token generator emits mapped CSS custom properties', () => {
 
 check('feedback layer honours an explicit toolbar theme', () => {
   const generated = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.js'), 'utf8')
-  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-bg-surface: #f0f2f4/)
-  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-bg-surface: #1f2937/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-surface: #f0f2f4/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-surface: #1f2937/)
   const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
   assert.match(ui, /export function setFeedbackScheme/)
   const element = fs.readFileSync(path.join(ROOT, 'app/components/vis-bug/vis-bug.element.js'), 'utf8')
@@ -372,8 +375,8 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-pin \{[\s\S]*border-radius: var\(--vc-radius-full\) var\(--vc-radius-full\) var\(--vc-radius-full\) var\(--vc-radius-6\)/)
   assert.match(css, /\.vc-combo-second \{[\s\S]*align-items: flex-end/)
   assert.match(css, /\.vc-combo-part:focus-within[\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-card-accent/)
-  assert.match(css, /\.vc-combo-part\[data-invalid="true"\][\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-status-danger\)/)
-  assert.match(css, /\.vc-card\[data-card-type="Suggestion"\] \.vc-send\[data-state="Active"\][\s\S]*color: var\(--vc-action-on-primary\)/)
+  assert.match(css, /\.vc-combo-part\[data-invalid="true"\][\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-text-critical\)/)
+  assert.match(css, /\.vc-card\[data-card-type="Suggestion"\] \.vc-send\[data-state="Active"\][\s\S]*color: var\(--vc-button-primary-on\)/)
   assert.match(css, /\.vc-send \{[\s\S]*flex: 0 0 28px/)
   assert.match(css, /\.vc-combo-second \{[\s\S]*border-radius/)
   assert.match(css, /\.vc-panel \{\n  opacity: 1;\n  filter: none;\n  mix-blend-mode: normal;/)
@@ -381,7 +384,7 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.match(css, /\.vc-card-surface \{[\s\S]*overflow: visible/)
   assert.match(css, /\.vc-badge\[data-type="Applied"\][\s\S]*--vc-badge-success-background/)
   assert.match(css, /\.vc-overflow-menu button \{[\s\S]*padding: var\(--vc-spacing-8\) var\(--vc-spacing-10\)/)
-  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border-default\)/)
+  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border\)/)
   assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)
 })
 
@@ -392,6 +395,47 @@ check('Cards v2 lifecycle source excludes legacy actions', () => {
   assert.match(ui, /action === 'resolve'[\s\S]*resolved: !open\.item\.resolved/)
   assert.match(ui, /parentSuggestionId/)
   assert.match(ui, /metaKey \|\| event\.ctrlKey/)
+})
+
+check('consumers no longer reference legacy foundation CSS names', () => {
+  const legacyVars = [
+    '--vc-text-primary',
+    '--vc-text-secondary',
+    '--vc-text-muted',
+    '--vc-text-on-accent',
+    '--vc-bg-page',
+    '--vc-bg-surface',
+    '--vc-bg-subtle',
+    '--vc-bg-input',
+    '--vc-border-default',
+    '--vc-action-primary',
+    '--vc-action-on-primary',
+    '--vc-action-primary-hover',
+    '--vc-action-secondary-hover',
+    '--vc-status-danger',
+    '--vc-link-accent',
+    '--vc-icon-on-accent',
+  ]
+  const consumerFiles = [
+    'app/vibecheck/feedback-styles.js',
+    'app/components/vis-bug/vis-bug.element.css',
+    'app/components/vis-bug/vis-bug.element.js',
+    'app/components/_variables.css',
+    'app/components/_variables_light.css',
+    'app/components/_variables_dark.css',
+    'extension/popup/popup.css',
+    'extension/toolbar/bundle.min.js',
+  ]
+  const usagePattern = name => new RegExp(`var\\(${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([,)\\s])`)
+  const hits = []
+  for (const rel of consumerFiles) {
+    const contents = fs.readFileSync(path.join(ROOT, rel), 'utf8')
+    for (const name of legacyVars) {
+      if (usagePattern(name).test(contents) || contents.includes(`'${name}'`) || contents.includes(`"${name}"`))
+        hits.push(`${rel}: ${name}`)
+    }
+  }
+  assert.deepEqual(hits, [])
 })
 
 console.log('parity checks passed')

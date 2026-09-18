@@ -30,6 +30,7 @@ import {
 const LAYER_ID = 'vibecheck-layer'
 const STYLE_ID = 'vibecheck-feedback-styles'
 const PANEL_LAYOUT_KEY = 'vibecheck:panelLayout'
+const PANEL_EDGE_INSET = 40
 
 const state = {
   comments: [],
@@ -51,7 +52,7 @@ const state = {
   scheme: 'auto',
   panelLayout: {
     left: null,
-    top: 16,
+    top: PANEL_EDGE_INSET,
     collapsed: false,
   },
   drag: null,
@@ -102,11 +103,17 @@ function loadPanelLayout() {
     if (!saved || typeof saved !== 'object') return
     state.panelLayout = {
       left: Number.isFinite(saved.left) ? saved.left : null,
-      top: Number.isFinite(saved.top) ? saved.top : 16,
+      top: Number.isFinite(saved.top) ? saved.top : PANEL_EDGE_INSET,
       collapsed: Boolean(saved.collapsed),
     }
   }
   catch { /* use defaults */ }
+}
+
+function dockPanelTopRight(panel) {
+  const width = panel?.offsetWidth || (state.panelLayout.collapsed ? 150 : 280)
+  state.panelLayout.left = window.innerWidth - width - PANEL_EDGE_INSET
+  state.panelLayout.top = PANEL_EDGE_INSET
 }
 
 function savePanelLayout() {
@@ -233,14 +240,74 @@ function placeCard(card, el) {
   card.style.left = `${Math.round(position.left)}px`
 }
 
+function placeAnchoredMenu(menu, anchor, {
+  gap = 4,
+  padding = 8,
+  align = 'start',
+} = {}) {
+  if (!menu || !anchor) return
+
+  const anchorRect = anchor.getBoundingClientRect()
+  const width = menu.offsetWidth || 168
+  const height = menu.offsetHeight || 88
+  const spaceBelow = window.innerHeight - anchorRect.bottom - padding
+  const spaceAbove = anchorRect.top - padding
+  const placeBelow = spaceBelow >= height || spaceBelow >= spaceAbove
+
+  let left = align === 'end'
+    ? anchorRect.right - width
+    : anchorRect.left
+  left = Math.min(
+    Math.max(padding, left),
+    Math.max(padding, window.innerWidth - width - padding),
+  )
+
+  const top = placeBelow
+    ? anchorRect.bottom + gap
+    : anchorRect.top - height - gap
+
+  menu.dataset.side = placeBelow ? 'bottom' : 'top'
+  menu.style.position = 'fixed'
+  menu.style.top = `${Math.round(Math.min(
+    Math.max(padding, top),
+    Math.max(padding, window.innerHeight - height - padding),
+  ))}px`
+  menu.style.left = `${Math.round(left)}px`
+  menu.style.right = 'auto'
+  menu.style.bottom = 'auto'
+}
+
+function placeOpenMenus(layer) {
+  const typeMenu = layer.querySelector('.vc-type-menu')
+  if (typeMenu) {
+    placeAnchoredMenu(
+      typeMenu,
+      layer.querySelector('.vc-type-trigger') || typeMenu.previousElementSibling,
+      { align: 'start' },
+    )
+  }
+
+  const overflowMenu = layer.querySelector('.vc-overflow-menu')
+  if (overflowMenu) {
+    placeAnchoredMenu(
+      overflowMenu,
+      layer.querySelector('[data-action="toggle-overflow"]') || overflowMenu.previousElementSibling,
+      { align: 'end' },
+    )
+  }
+}
+
 function placePanel(panel) {
   if (!panel) return
-  const fallbackLeft = window.innerWidth - (panel.offsetWidth || 280) - 16
+  const width = panel.offsetWidth || 280
+  const height = panel.offsetHeight || 48
+  if (!Number.isFinite(state.panelLayout.left))
+    dockPanelTopRight(panel)
   const position = clampPosition(
-    state.panelLayout.left ?? fallbackLeft,
-    state.panelLayout.top,
-    panel.offsetWidth || 280,
-    panel.offsetHeight || 48,
+    state.panelLayout.left,
+    state.panelLayout.top ?? PANEL_EDGE_INSET,
+    width,
+    height,
   )
   state.panelLayout.left = position.left
   state.panelLayout.top = position.top
@@ -415,6 +482,8 @@ export function layoutFeedback() {
     }
     placePin(pin, el)
   })
+
+  placeOpenMenus(layer)
 }
 
 export function renderFeedback() {
@@ -429,6 +498,9 @@ export function renderFeedback() {
     image.addEventListener('error', () => image.remove(), { once: true })
   })
   layoutFeedback()
+  requestAnimationFrame(() => {
+    layer.querySelectorAll('textarea').forEach(textarea => autosizeTextarea(textarea))
+  })
 }
 
 export async function refreshFeedback() {
@@ -543,6 +615,15 @@ function onDragStart(event) {
     ? handle.closest('.vc-panel')
     : handle.closest('.vc-card')
   if (!element) return
+
+  if (kind === 'card' && (state.typeMenuOpen || state.overflowOpen)) {
+    state.typeMenuOpen = false
+    state.overflowOpen = false
+    element.querySelector('.vc-type-menu')?.remove()
+    element.querySelector('.vc-overflow-menu')?.remove()
+    const trigger = element.querySelector('.vc-type-trigger[aria-expanded="true"]')
+    trigger?.setAttribute('aria-expanded', 'false')
+  }
 
   const rect = element.getBoundingClientRect()
   state.drag = {
@@ -689,6 +770,9 @@ async function onLayerClick(event) {
   else if (action === 'toggle-resolved') state.hideResolved = !state.hideResolved
   else if (action === 'toggle-panel') {
     state.panelLayout.collapsed = !state.panelLayout.collapsed
+    // Re-dock so collapsed and expanded widths both sit top-right at 40px.
+    state.panelLayout.left = null
+    state.panelLayout.top = PANEL_EDGE_INSET
     savePanelLayout()
   }
   else if (action === 'close' || action === 'cancel') {
@@ -810,14 +894,29 @@ async function onLayerClick(event) {
   renderFeedback()
 }
 
+function autosizeTextarea(textarea, { max = 180 } = {}) {
+  if (!textarea || textarea.tagName !== 'TEXTAREA') return
+  const field = textarea.closest('.vc-field')
+  const comboPart = textarea.closest('.vc-combo-part')
+  const minHeight = field?.classList.contains('vc-field-compact')
+    ? 28
+    : comboPart
+      ? 16
+      : 28
+
+  textarea.style.height = 'auto'
+  const raw = textarea.scrollHeight
+  const next = Math.min(Math.max(raw, minHeight), max)
+  textarea.style.height = `${next}px`
+  textarea.style.overflowY = raw > max ? 'auto' : 'hidden'
+}
+
 function onLayerInput(event) {
   const field = event.target.dataset.field
   const combo = event.target.closest('.vc-combo-field')
   const standaloneField = event.target.closest('.vc-field')
-  if (event.target.matches('textarea') && (combo || standaloneField?.classList.contains('vc-field-compact'))) {
-    event.target.style.height = 'auto'
-    event.target.style.height = `${Math.min(event.target.scrollHeight, 180)}px`
-  }
+  if (event.target.matches('textarea'))
+    autosizeTextarea(event.target)
   if (field === 'panel-search') {
     state.search = event.target.value
     const cursor = event.target.selectionStart
@@ -843,7 +942,6 @@ function onLayerInput(event) {
   else if (standaloneField) {
     const active = Boolean(event.target.value.trim())
     standaloneField.dataset.state = active ? 'Active' : 'Focus'
-    event.target.style.height = active ? '100%' : ''
     const card = standaloneField.closest('.vc-card')
     if (card) card.dataset.state = active ? 'Active' : 'Default'
   }
@@ -866,6 +964,7 @@ function onLayerFocusIn(event) {
   const combo = event.target.closest('.vc-combo-field')
   if (combo) {
     syncComboVisualState(combo, event.target.dataset.field)
+    if (event.target.matches('textarea')) autosizeTextarea(event.target)
     return
   }
   const field = event.target.closest('.vc-field')
@@ -874,6 +973,8 @@ function onLayerFocusIn(event) {
     field.dataset.state = event.target.value.trim() ? 'Filled' : 'Focus'
   else
     field.dataset.state = event.target.value.trim() ? 'Active' : 'Focus'
+  if (event.target.matches('textarea'))
+    requestAnimationFrame(() => autosizeTextarea(event.target))
 }
 
 function onLayerFocusOut(event) {
@@ -884,10 +985,13 @@ function onLayerFocusOut(event) {
       const first = combo.querySelector('[data-field="suggestedText"]')?.value.trim()
       const second = combo.querySelector('[data-field="rationale"]')?.value.trim()
       combo.dataset.state = first && second ? 'Filled - Both' : first ? 'Filled - First' : 'Default'
+      combo.querySelectorAll('textarea').forEach(textarea => autosizeTextarea(textarea))
     }
     if (field && !field.contains(document.activeElement)) {
-      const value = field.querySelector('[data-field]')?.value.trim()
+      const input = field.querySelector('[data-field]')
+      const value = input?.value.trim()
       field.dataset.state = value ? 'Filled' : 'Default'
+      if (input?.matches?.('textarea')) autosizeTextarea(input)
     }
   })
 }
@@ -916,11 +1020,20 @@ function onLayerKeyDown(event) {
     items[index]?.focus()
     return
   }
-  if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
-    const combo = event.target.closest('.vc-combo-field')
-    if (!combo) return
+
+  const isEnter = event.key === 'Enter'
+  const sendWithModifier = isEnter && (event.metaKey || event.ctrlKey)
+  const sendWithEnter = isEnter && !event.shiftKey && !event.metaKey && !event.ctrlKey && !event.altKey
+  if ((sendWithEnter || sendWithModifier) && event.target.tagName === 'TEXTAREA') {
+    if (event.isComposing || event.target.dataset.field === 'panel-search') return
+    // Shift+Enter keeps the default newline insertion.
+    if (event.shiftKey) return
+
+    const host = event.target.closest('.vc-combo-field, .vc-field')
+    const send = host?.querySelector('[data-action="send"], [data-action="retry-send"], [data-action="reply"]')
+    if (!send || send.disabled || send.dataset.state === 'Disabled') return
     event.preventDefault()
-    combo.querySelector('[data-action="send"], [data-action="retry-send"]')?.click()
+    send.click()
   }
 }
 

@@ -34,23 +34,50 @@
       "property": "Timestamp",
       "location": "Card / Reply Message Meta",
       "buckets": [
-        { "range": "< 60 seconds", "copy": "Just now" },
-        { "range": "1–59 minutes", "copy": "X minutes ago", "singular": "1 minute ago" },
-        { "range": "1–23 hours", "copy": "X hours ago", "singular": "1 hour ago" },
-        { "range": "1–6 days", "copy": "X days ago", "singular": "1 day ago" },
-        { "range": "1–4 weeks", "copy": "X weeks ago", "singular": "1 week ago" },
-        { "range": "5+ weeks", "copy": "localized date", "example": "12 Mar 2026" }
+        {
+          "range": "< 60 seconds",
+          "copy": "Just now"
+        },
+        {
+          "range": "1–59 minutes",
+          "copy": "X minutes ago",
+          "singular": "1 minute ago"
+        },
+        {
+          "range": "1–23 hours",
+          "copy": "X hours ago",
+          "singular": "1 hour ago"
+        },
+        {
+          "range": "1–6 days",
+          "copy": "X days ago",
+          "singular": "1 day ago"
+        },
+        {
+          "range": "1–4 weeks",
+          "copy": "X weeks ago",
+          "singular": "1 week ago"
+        },
+        {
+          "range": "5+ weeks",
+          "copy": "localized date",
+          "example": "12 Mar 2026"
+        }
       ]
     },
     "send": {
       "empty": {
-        "states": ["Default", "Hover", "Disabled"],
-        "fill": "bg/subtle",
+        "states": [
+          "Default",
+          "Hover",
+          "Disabled"
+        ],
+        "fill": "surface/surface-subtle",
         "hoverNote": "Comment Hover may use purple/100 as a hint"
       },
       "sendable": {
         "state": "Active",
-        "icon": "icon/on-accent",
+        "icon": "icon/icon-inverse",
         "fillByCard": {
           "Comment": "pin/note",
           "Annotation/Implement": "pin/implement",
@@ -59,12 +86,20 @@
           "Wording": "pin/suggestion"
         },
         "composedOverrides": "Comment, Annotation, and Wording keep the shared Active variant and override its fill/icon tokens at the composed-component level.",
-        "wordingIcon": "action/on-primary"
+        "wordingIcon": "button/button-primary-on"
       }
     },
     "overflow": {
-      "header": ["More", "Resolve/Reopen", "Close"],
-      "menu": ["Mark unread", "Copy link", "Delete"],
+      "header": [
+        "More",
+        "Resolve/Reopen",
+        "Close"
+      ],
+      "menu": [
+        "Mark unread",
+        "Copy link",
+        "Delete"
+      ],
       "openMenu": "instance overlay, not a card-level variant"
     },
     "comboField": {
@@ -87,7 +122,11 @@
         "fieldMessages": "Submitting and failure messages live in dedicated auto-layout frames."
       },
       "keyboard": {
-        "tabOrder": ["First field", "Second field", "Send"],
+        "tabOrder": [
+          "First field",
+          "Second field",
+          "Send"
+        ],
         "enter": "Insert a line",
         "send": "Cmd/Ctrl+Enter"
       }
@@ -101,49 +140,94 @@
     }
   },
   "tokens": {
-    "text/on-accent": "VariableID:202:1178",
-    "icon/on-accent": "VariableID:202:1179",
     "pin/note": "VariableID:3:29",
     "pin/implement": "VariableID:3:30",
     "pin/warning": "VariableID:3:31",
     "pin/question": "VariableID:3:32",
     "pin/suggestion": "VariableID:58:5",
-    "action/on-primary": "VariableID:3:28",
-    "bg/subtle": "VariableID:3:23",
     "spacing/0": "VariableID:215:3103",
     "spacing/2": "VariableID:229:5704",
-    "radius/4": "VariableID:225:5230"
+    "radius/4": "VariableID:225:5230",
+    "text/text-inverse": "VariableID:202:1178",
+    "surface/surface-subtle": "VariableID:3:23",
+    "icon/icon-inverse": "VariableID:202:1179",
+    "button/button-primary-on": "VariableID:3:28"
   },
   "resolvedTokenValues": {
-    "bg/surface": { "Light": "#f0f2f4", "Dark": "#1f2937" },
-    "bg/subtle": { "Light": "#f0f2f4", "Dark": "#1f2937" },
-    "badge/pending - bg": { "Light": "#d4d7de", "Dark": "#4b5563" },
-    "badge/pending - text": { "Light": "#374151", "Dark": "#d4d7de" },
-    "badge/success - bg": { "Light": "#ecfccb", "Dark": "#ecfccb" },
-    "badge/success - text": { "Light": "#3f6212", "Dark": "#3f6212" },
-    "status/danger": { "Light": "#b91c1c", "Dark": "#f87171" }
+    "badge/pending - bg": {
+      "Light": "#d4d7de",
+      "Dark": "#4b5563"
+    },
+    "badge/pending - text": {
+      "Light": "#374151",
+      "Dark": "#d4d7de"
+    },
+    "badge/success - bg": {
+      "Light": "#ecfccb",
+      "Dark": "#ecfccb"
+    },
+    "badge/success - text": {
+      "Light": "#3f6212",
+      "Dark": "#3f6212"
+    },
+    "text/text-critical": {
+      "Light": "#b91c1c",
+      "Dark": "#f87171"
+    },
+    "surface/surface": {
+      "Light": "#f0f2f4",
+      "Dark": "#1f2937"
+    },
+    "surface/surface-subtle": {
+      "Light": "#f0f2f4",
+      "Dark": "#1f2937"
+    }
   },
   "families": {
     "Badge": {
       "nodeId": "254:8099",
-      "variants": { "Type": ["Pending", "Applied"] }
+      "variants": {
+        "Type": [
+          "Pending",
+          "Applied"
+        ]
+      }
     },
-    "Card / Selected Item": { "nodeId": "176:1920" },
-    "Card / Type Menu Item": { "nodeId": "177:1911" },
-    "Card / Type Selector": { "nodeId": "178:2136" },
+    "Card / Selected Item": {
+      "nodeId": "176:1920"
+    },
+    "Card / Type Menu Item": {
+      "nodeId": "177:1911"
+    },
+    "Card / Type Selector": {
+      "nodeId": "178:2136"
+    },
     "Card / Send": {
       "nodeId": "179:737",
-      "variants": { "State": ["Default", "Hover", "Active", "Disabled"] }
+      "variants": {
+        "State": [
+          "Default",
+          "Hover",
+          "Active",
+          "Disabled"
+        ]
+      }
     },
     "Card / Apply Suggestion": {
       "nodeId": "236:2946",
       "variants": {
-        "State": ["Default", "Hover", "Active"]
+        "State": [
+          "Default",
+          "Hover",
+          "Active"
+        ]
       },
       "behavior": "Repeatable: every click applies the current content to the selected element without resolving the discussion, then returns to Default.",
       "accessibleName": "Apply suggestion"
     },
-    "Card / Field": { "nodeId": "180:1977" },
+    "Card / Field": {
+      "nodeId": "180:1977"
+    },
     "Card / ComboField": {
       "nodeId": "229:5660",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=229-5660",
@@ -164,32 +248,69 @@
           "Submit failed"
         ]
       },
-      "textProperties": ["1st Field Value", "2nd Field Value"],
-      "booleanProperties": ["Show send"]
+      "textProperties": [
+        "1st Field Value",
+        "2nd Field Value"
+      ],
+      "booleanProperties": [
+        "Show send"
+      ]
     },
-    "Card / Kind Chip": { "nodeId": "181:761" },
-    "Card / Icon Button": { "nodeId": "182:736" },
+    "Card / Kind Chip": {
+      "nodeId": "181:761"
+    },
+    "Card / Icon Button": {
+      "nodeId": "182:736"
+    },
     "Card / Reply": {
       "nodeId": "184:755",
-      "variants": { "State": ["Default", "Hover"] },
-      "textProperties": ["Name", "Body", "Timestamp"]
+      "variants": {
+        "State": [
+          "Default",
+          "Hover"
+        ]
+      },
+      "textProperties": [
+        "Name",
+        "Body",
+        "Timestamp"
+      ]
     },
     "Card / Quote": {
       "nodeId": "191:949",
       "variants": {
-        "Role": ["Original", "Suggestion", "Reasoning"]
+        "Role": [
+          "Original",
+          "Suggestion",
+          "Reasoning"
+        ]
       },
       "behavior": "Suggestion nests Card / Apply Suggestion; Quote itself has no interaction-state axis."
     },
-    "Card / Header Icon": { "nodeId": "203:1208" },
-    "Card / Overflow Item": { "nodeId": "204:1198" },
-    "Card / Overflow Menu": { "nodeId": "204:1213" },
+    "Card / Header Icon": {
+      "nodeId": "203:1208"
+    },
+    "Card / Overflow Item": {
+      "nodeId": "204:1198"
+    },
+    "Card / Overflow Menu": {
+      "nodeId": "204:1213"
+    },
     "Card / Comment": {
       "nodeId": "187:955",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=187-955",
       "axes": {
-        "Mode": ["Compose", "Detail"],
-        "State": ["Default", "Hover", "Active", "Thread", "Resolved"]
+        "Mode": [
+          "Compose",
+          "Detail"
+        ],
+        "State": [
+          "Default",
+          "Hover",
+          "Active",
+          "Thread",
+          "Resolved"
+        ]
       },
       "variantNodes": {
         "Compose/Default": "185:1939",
@@ -204,9 +325,21 @@
       "nodeId": "190:1191",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=190-1191",
       "axes": {
-        "Kind": ["Implement", "Warning", "Question"],
-        "Mode": ["Compose", "Detail"],
-        "State": ["Default", "Active", "Thread", "Resolved"]
+        "Kind": [
+          "Implement",
+          "Warning",
+          "Question"
+        ],
+        "Mode": [
+          "Compose",
+          "Detail"
+        ],
+        "State": [
+          "Default",
+          "Active",
+          "Thread",
+          "Resolved"
+        ]
       },
       "variantNodes": {
         "Implement/Compose/Default": "188:870",
@@ -230,7 +363,10 @@
       "nodeId": "196:1146",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=196-1146",
       "axes": {
-        "Mode": ["Compose", "Detail"],
+        "Mode": [
+          "Compose",
+          "Detail"
+        ],
         "Input": [
           "Default",
           "Focus First",
@@ -242,9 +378,19 @@
           "Submit failed",
           "Read only"
         ],
-        "Status": ["Draft", "Pending", "Applied"],
-        "Thread": ["Empty", "Replies"],
-        "Resolution": ["Open", "Resolved"]
+        "Status": [
+          "Draft",
+          "Pending",
+          "Applied"
+        ],
+        "Thread": [
+          "Empty",
+          "Replies"
+        ],
+        "Resolution": [
+          "Open",
+          "Resolved"
+        ]
       },
       "variantNodes": {
         "Compose/Default": "192:990",

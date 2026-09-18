@@ -3,13 +3,13 @@
 body {
   margin: 0;
   font: 13px/1.45 var(--vc-font-family);
-  color: var(--vc-text-primary);
-  background: var(--vc-bg-page);
+  color: var(--vc-text);
+  background: var(--vc-bg);
   min-width: var(--vc-size-popup);
 }
 
 body[data-vc-component="Account & Inbox Popup"] {
-  background: var(--vc-bg-page);
+  background: var(--vc-bg);
 }
 
 main { padding: var(--vc-spacing-16); }
@@ -18,32 +18,32 @@ h2 {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--vc-text-muted);
+  color: var(--vc-text-gray-light);
   margin: 18px 0 var(--vc-spacing-8);
 }
-.lede { margin: 0 0 var(--vc-spacing-12); color: var(--vc-text-secondary); }
+.lede { margin: 0 0 var(--vc-spacing-12); color: var(--vc-text-gray-medium); }
 
 label {
   display: grid;
   gap: var(--vc-spacing-4);
   margin-bottom: var(--vc-spacing-8);
-  color: var(--vc-text-secondary);
+  color: var(--vc-text-gray-medium);
 }
 input {
-  border: 1px solid var(--vc-border-default);
+  border: 1px solid var(--vc-border);
   border-radius: var(--vc-radius-8);
   padding: var(--vc-spacing-8);
   font: inherit;
-  background: var(--vc-bg-input);
-  color: var(--vc-text-primary);
+  background: var(--vc-surface-input);
+  color: var(--vc-text);
 }
 
 button,
 [data-vc-component="Button"] {
   appearance: none;
   border: 0;
-  background: var(--vc-action-primary);
-  color: var(--vc-action-on-primary);
+  background: var(--vc-button-primary);
+  color: var(--vc-button-primary-on);
   border-radius: var(--vc-radius-8);
   padding: var(--vc-spacing-8) var(--vc-spacing-10);
   font: 600 12px var(--vc-font-family);
@@ -51,20 +51,20 @@ button,
 }
 
 button[data-style="Secondary"] {
-  background: var(--vc-bg-subtle);
-  color: var(--vc-text-primary);
+  background: var(--vc-surface-subtle);
+  color: var(--vc-text);
 }
 
 .row { display: flex; flex-wrap: wrap; gap: var(--vc-spacing-8); }
-#signout { background: var(--vc-text-muted); }
+#signout { background: var(--vc-text-gray-light); }
 
 #inbox { list-style: none; margin: 0; padding: 0; }
 #inbox li,
 [data-vc-component="Inbox Item"] {
-  background: var(--vc-bg-surface);
-  border: 1px solid var(--vc-border-default);
+  background: var(--vc-surface);
+  border: 1px solid var(--vc-border);
   border-radius: var(--vc-radius-8);
   padding: var(--vc-spacing-8);
   margin-bottom: var(--vc-spacing-6);
 }
-#inbox li span { display: block; color: var(--vc-text-muted); font-size: 11px; }
+#inbox li span { display: block; color: var(--vc-text-gray-light); font-size: 11px; }

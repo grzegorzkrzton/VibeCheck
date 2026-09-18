@@ -1,25 +1,10 @@
 /* Generated from design-system/tokens.json. Do not edit. */
 :root, :host {
-  --vc-bg-page: #f9fafb;
-  --vc-bg-surface: #f0f2f4;
-  --vc-bg-subtle: #f0f2f4;
-  --vc-bg-input: #f9fafb;
-  --vc-text-primary: #111827;
-  --vc-text-secondary: #4b5563;
-  --vc-text-muted: #6b7280;
-  --vc-text-on-accent: #f9fafb;
-  --vc-icon-on-accent: #f9fafb;
-  --vc-border-default: #d4d7de;
-  --vc-action-primary: #111827;
-  --vc-action-on-primary: #f9fafb;
-  --vc-action-primary-hover: #4b5563;
-  --vc-action-secondary-hover: #f3f4f6;
   --vc-pin-note: #7c3aed;
   --vc-pin-implement: #2563eb;
   --vc-pin-warning: #d97706;
   --vc-pin-question: #0f766e;
   --vc-pin-suggestion: #111827;
-  --vc-status-danger: #b91c1c;
   --vc-badge-background: #d4d7de;
   --vc-badge-text: #374151;
   --vc-badge-pending-background: #d4d7de;
@@ -27,12 +12,28 @@
   --vc-badge-success-background: #ecfccb;
   --vc-badge-success-text: #3f6212;
   --vc-selection-background: #f5f3ff;
-  --vc-link-accent: #2563eb;
   --vc-toolbar-tool-active-icon: #9ced2b;
+  --vc-text-critical: #b91c1c;
+  --vc-text: #111827;
+  --vc-text-gray-medium: #4b5563;
+  --vc-text-gray-light: #6b7280;
+  --vc-text-inverse: #f9fafb;
+  --vc-bg: #f9fafb;
+  --vc-surface-input: #f9fafb;
+  --vc-surface: #f0f2f4;
+  --vc-surface-subtle: #f0f2f4;
+  --vc-border: #d4d7de;
+  --vc-link: #2563eb;
+  --vc-icon-inverse: #f9fafb;
+  --vc-icon: #111827;
+  --vc-button-primary: #111827;
+  --vc-button-primary-on: #f9fafb;
+  --vc-button-primary-hover: #4b5563;
+  --vc-button-secondary-hover: #f0f2f4;
   --vc-white: #f4f4f6;
   --vc-black: #16171f;
   --vc-gray-50: #f9fafb;
-  --vc-gray-100: #f3f4f6;
+  --vc-gray-100: #f0f2f4;
   --vc-gray-200: #e2e4e9;
   --vc-gray-300: #d4d7de;
   --vc-gray-400: #9ca3af;
@@ -131,26 +132,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root, :host {
-  --vc-bg-page: #111827;
-  --vc-bg-surface: #1f2937;
-  --vc-bg-subtle: #1f2937;
-  --vc-bg-input: #111827;
-  --vc-text-primary: #f9fafb;
-  --vc-text-secondary: #9ca3af;
-  --vc-text-muted: #9ca3af;
-  --vc-text-on-accent: #f9fafb;
-  --vc-icon-on-accent: #f9fafb;
-  --vc-border-default: #374151;
-  --vc-action-primary: #1f2937;
-  --vc-action-on-primary: #111827;
-  --vc-action-primary-hover: #9ca3af;
-  --vc-action-secondary-hover: #4b5563;
   --vc-pin-note: #7c3aed;
   --vc-pin-implement: #2563eb;
   --vc-pin-warning: #d97706;
   --vc-pin-question: #0f766e;
   --vc-pin-suggestion: #f9fafb;
-  --vc-status-danger: #f87171;
   --vc-badge-background: #4b5563;
   --vc-badge-text: #d4d7de;
   --vc-badge-pending-background: #4b5563;
@@ -158,7 +144,23 @@
   --vc-badge-success-background: #ecfccb;
   --vc-badge-success-text: #3f6212;
   --vc-selection-background: #111827;
-  --vc-link-accent: #60a5fa;
   --vc-toolbar-tool-active-icon: #9ced2b;
+  --vc-text-critical: #f87171;
+  --vc-text: #f9fafb;
+  --vc-text-gray-medium: #9ca3af;
+  --vc-text-gray-light: #9ca3af;
+  --vc-text-inverse: #f9fafb;
+  --vc-bg: #111827;
+  --vc-surface-input: #111827;
+  --vc-surface: #1f2937;
+  --vc-surface-subtle: #1f2937;
+  --vc-border: #374151;
+  --vc-link: #60a5fa;
+  --vc-icon-inverse: #f9fafb;
+  --vc-icon: #f9fafb;
+  --vc-button-primary: #1f2937;
+  --vc-button-primary-on: #111827;
+  --vc-button-primary-hover: #9ca3af;
+  --vc-button-secondary-hover: #4b5563;
   }
 }
