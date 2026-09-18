@@ -155,12 +155,12 @@
   },
   "resolvedTokenValues": {
     "badge/badge-pending-bg": {
-      "Light": "#d4d7de",
-      "Dark": "#4b5563"
+      "Light": "#abb0ba",
+      "Dark": "#5c6370"
     },
     "badge/badge-pending-text": {
-      "Light": "#374151",
-      "Dark": "#d4d7de"
+      "Light": "#454a54",
+      "Dark": "#abb0ba"
     },
     "badge/badge-success-bg": {
       "Light": "#ecfccb",
@@ -175,12 +175,16 @@
       "Dark": "#f87171"
     },
     "surface/surface": {
-      "Light": "#f0f2f4",
-      "Dark": "#1f2937"
+      "Light": "#eeeff1",
+      "Dark": "#2e3138"
     },
     "surface/surface-subtle": {
-      "Light": "#f0f2f4",
-      "Dark": "#1f2937"
+      "Light": "#eeeff1",
+      "Dark": "#2e3138"
+    },
+    "pin/suggestion": {
+      "Light": "#be185d",
+      "Dark": "#be185d"
     }
   },
   "families": {
