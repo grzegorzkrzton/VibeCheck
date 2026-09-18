@@ -620,7 +620,7 @@ export function renderWordingCard({
         ${renderQuote({ role: 'Suggestion', body: suggestedText, user: author, apply: true })}
         ${rationale ? renderQuote({ role: 'Reasoning', body: rationale }) : ''}
       </div>
-      ${repliesHtml ? `<div class="vc-thread-divider"></div><div class="vc-thread">${repliesHtml}</div>` : ''}
+      ${repliesHtml ? `<div class="vc-thread-divider" data-vc-component="Toolbar Divider" aria-hidden="true"></div><div class="vc-thread">${repliesHtml}</div>` : ''}
       ${renderField({ field: 'reply', value: reply, placeholder: 'Reply…', compact: true, showSend: true, sendAction: 'reply', cardType: 'Wording' })}
     `,
   })
@@ -735,14 +735,16 @@ export function renderNotesPanel({
           })}
         </div>
       </div>
-      ${collapsed ? '' : `
+      <div class="vc-panel-collapse" ${attrs({
+        'aria-hidden': collapsed ? 'true' : undefined,
+      })}>
         <div class="vc-panel-body">
           <div class="vc-panel-tools">
             <label class="vc-panel-search">
               <span aria-hidden="true">
                 <svg viewBox="0 0 14 14" width="14" height="14"><path d="M6 10C8.20914 10 10 8.20914 10 6C10 3.79086 8.20914 2 6 2C3.79086 2 2 3.79086 2 6C2 8.20914 3.79086 10 6 10Z"></path><path d="M9 9L12.5 12.5"></path></svg>
               </span>
-              <input type="search" data-field="panel-search" value="${escapeHtml(search)}" placeholder="Search" aria-label="Search notes">
+              <input type="search" data-field="panel-search" value="${escapeHtml(search)}" placeholder="Search" aria-label="Search notes" ${collapsed ? 'tabindex="-1"' : ''}>
             </label>
             ${renderButton({
               style: 'Secondary',
@@ -771,7 +773,7 @@ export function renderNotesPanel({
           </div>
           ${itemsHtml}
         </div>
-      `}
+      </div>
     </aside>
   `
 }

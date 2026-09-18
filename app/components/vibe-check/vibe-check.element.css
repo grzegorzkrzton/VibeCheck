@@ -36,17 +36,15 @@
   border-radius: 2em;
 
   &:first-of-type {
-    box-shadow: 0 0.25em 0.5em hsla(0,0%,0%,10%);
-    background-color: var(--theme-bd-2);
+    gap: 1px;
+    padding: var(--vc-spacing-4);
+    box-shadow: var(--vc-shadow-panel);
+    background-color: var(--vc-surface-subtle);
     height: fit-content;
     overflow: visible;
 
     &:active {
       cursor: grabbing !important;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      box-shadow: 0 0.25em 0.5em hsla(0,0%,0%,50%);
     }
   }
 }
@@ -71,7 +69,7 @@
     margin: 0.4em auto;
     padding: 0;
     border-radius: 1px;
-    background: var(--vc-border);
+    background: var(--vc-border-gray-light);
     pointer-events: none;
     box-shadow: none;
   }
@@ -81,15 +79,14 @@
       cursor: pointer;
       background-color: var(--theme-icon_hover-bg);
     }
-    &:active {
-      background-color: var(--theme-icon_active-bg);
+    :not([data-active=true])&:active {
+      background-color: var(--vc-surface-subtle);
     }
   }
 
   &[data-active=true],
   &[data-state="Active"] {
     background-color: var(--theme-icon_active-bg);
-    box-shadow: var(--shadow-2);
 
     & > .icon-cursor {
       stroke: var(--theme-icon_active-color);
@@ -161,13 +158,14 @@
     }
 
     & [hotkey] {
-      border-radius: .25em;
+      border-radius: var(--vc-radius-6);
       height: 1.5em;
       width: 1.5em;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid var(--vc-border);
+      background: var(--vc-surface-subtle);
+      border: 1px solid var(--vc-border-gray-medium);
       color: var(--vc-text);
       font-weight: 300;
       font-size: 0.5em;
@@ -216,11 +214,12 @@
 
 :host [colors] > li.prompt-action {
   --contextual_color: var(--vc-button-primary);
-  --icon_color: var(--vc-button-primary-on);
+  --icon_color: var(--vc-text-inverse);
   background: var(--vc-button-primary);
+  border: 2px solid var(--vc-button-primary);
   cursor: pointer;
   margin-bottom: 0.25em;
-  box-shadow: 0 0 0 2px var(--vc-button-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+  box-shadow: var(--vc-shadow-pin);
   transition: background 0.15s ease, box-shadow 0.15s ease;
 
   & > svg {
@@ -233,14 +232,14 @@
     --contextual_color: var(--vc-surface);
     --icon_color: var(--vc-button-primary);
     background: var(--vc-surface);
-    box-shadow: 0 0 0 2px var(--vc-button-primary), 0 0.25em 0.5em hsla(0,0%,0%,25%);
+    box-shadow: var(--vc-shadow-pin);
   }
 
   &:active {
-    --contextual_color: var(--vc-button-secondary-hover);
+    --contextual_color: var(--vc-surface-subtle);
     --icon_color: var(--vc-button-primary);
-    background: var(--vc-button-secondary-hover);
-    box-shadow: 0 0 0 2px var(--vc-button-primary), 0 0.15em 0.35em hsla(0,0%,0%,20%);
+    background: var(--vc-surface-subtle);
+    box-shadow: var(--vc-shadow-pin);
   }
 }
 

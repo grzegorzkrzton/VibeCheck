@@ -154,7 +154,7 @@
     "button/button-primary-on": "VariableID:3:28"
   },
   "resolvedTokenValues": {
-    "badge/badge-pending-bg": {
+    "badge/badge-pending-background": {
       "Light": "#abb0ba",
       "Dark": "#5c6370"
     },
@@ -162,7 +162,7 @@
       "Light": "#454a54",
       "Dark": "#abb0ba"
     },
-    "badge/badge-success-bg": {
+    "badge/badge-success-background": {
       "Light": "#ecfccb",
       "Dark": "#ecfccb"
     },

@@ -272,13 +272,14 @@ export default class VibeCheck extends HTMLElement {
           justify-content: space-between;
         }
         #vibecheck-toolbar-tip [hotkey] {
-          border-radius: .25em;
+          border-radius: var(--vc-radius-6, 6px);
           height: 1.5em;
           width: 1.5em;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          border: 1px solid var(--vc-border, #d4d7de);
+          background: var(--vc-surface-subtle, #eeeff1);
+          border: 1px solid var(--vc-border-gray-medium, #8f96a3);
           color: var(--vc-text, #111827);
           font-weight: 300;
           font-size: 0.5em;
@@ -307,7 +308,7 @@ export default class VibeCheck extends HTMLElement {
     this._tipHost.style.color = asideStyle.color
     this._tipHost.style.boxShadow = asideStyle.boxShadow
     const hostStyles = getComputedStyle(this)
-    for (const name of ['--vc-text', '--vc-border', '--vc-text-gray-medium']) {
+    for (const name of ['--vc-text', '--vc-border-gray-medium', '--vc-text-gray-medium']) {
       const value = hostStyles.getPropertyValue(name).trim()
       if (value) this._tipHost.style.setProperty(name, value)
     }
