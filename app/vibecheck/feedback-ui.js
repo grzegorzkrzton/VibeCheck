@@ -743,7 +743,7 @@ async function submitDraft() {
   }
   catch (error) {
     state.submissionState = 'Submit failed'
-    state.submitError = error?.message || 'Could not send. Your text is still here.'
+    state.submitError = error?.message || 'Couldn\u2019t send. Try again.'
     renderAndFocus('[data-action="retry-send"]')
   }
 }
@@ -982,6 +982,8 @@ function onLayerFocusOut(event) {
   const field = event.target.closest('.vc-field')
   requestAnimationFrame(() => {
     if (combo && !combo.contains(document.activeElement)) {
+      if (combo.getAttribute('aria-busy') === 'true' || combo.querySelector('[role="alert"].vc-field-message'))
+        return
       const first = combo.querySelector('[data-field="suggestedText"]')?.value.trim()
       const second = combo.querySelector('[data-field="rationale"]')?.value.trim()
       combo.dataset.state = first && second ? 'Filled - Both' : first ? 'Filled - First' : 'Default'

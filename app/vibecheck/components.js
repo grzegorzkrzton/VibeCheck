@@ -361,7 +361,7 @@ export function renderComboField({
   const submitting = state === 'Submitting'
   const disabled = state === 'Disabled'
   const failed = state === 'Submit failed'
-  const invalid = state === 'Error - First' || failed
+  const invalid = state === 'Error - First'
   const visualState = state
     || (firstValue && secondValue ? 'Filled - Both' : firstValue ? 'Filled - First' : 'Default')
   const messageId = message || error ? 'vc-combo-message' : undefined
@@ -375,7 +375,7 @@ export function renderComboField({
         <span class="vc-sr-only">Suggested copy</span>
         <textarea data-field="suggestedText" placeholder="Suggested copy" rows="1" ${attrs({
           'aria-required': 'true',
-          'aria-invalid': invalid ? 'true' : undefined,
+          'aria-invalid': invalid || failed ? 'true' : undefined,
           'aria-describedby': messageId,
           disabled: submitting || disabled,
         })}>${escapeHtml(firstValue)}</textarea>

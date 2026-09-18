@@ -310,9 +310,12 @@ ${layerTokenCss}
   padding: var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-4) var(--vc-spacing-12);
 }
 
-#vibecheck-layer .vc-field:focus-within,
-#vibecheck-layer .vc-combo-part:focus-within {
+#vibecheck-layer .vc-field:focus-within {
   box-shadow: inset 0 0 0 1.5px var(--vc-card-accent, var(--vc-pin-note));
+}
+
+#vibecheck-layer .vc-combo-part:focus-within {
+  box-shadow: inset 0 0 0 1.5px var(--vc-pin-note);
 }
 
 #vibecheck-layer .vc-field[data-invalid="true"],
@@ -444,7 +447,7 @@ ${layerTokenCss}
 }
 
 #vibecheck-layer .vc-card[data-card-type="Suggestion"] .vc-send[data-state="Active"] {
-  color: var(--vc-button-primary-on);
+  color: var(--vc-icon-inverse);
 }
 
 #vibecheck-layer .vc-send:hover:not(:disabled),
