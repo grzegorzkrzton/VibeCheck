@@ -1,6 +1,15 @@
 # VibeCheck design contract
 
-Figma is the visual source of truth. The codebase is the behavioral source of truth. Shared names, variants, dimensions, and color tokens keep the two in lockstep.
+Figma is the visual source of truth. The codebase is the behavioral source of truth for **shipped** UI. Shared names, variants, dimensions, and color tokens keep the two in lockstep.
+
+Cards v2 (Comment / Annotation / Wording redesign) is implemented. Keep these four layers in lockstep whenever that work moves:
+
+| Layer | Where | Owns |
+| --- | --- | --- |
+| **1. Figma components** | Cards v2 on the Design page (`175:688`) | Visual contract: layout, tokens, variant axes |
+| **2. Behavior Contract** | Figma frame `07 · Behavior Contract` (`222:1720`) | Filtering, timestamps, submission, Wording apply/resolve/thread behavior, and overflow |
+| **3. Machine-readable manifest** | `figma-components.json` (shipped) + `cards-v2-contract.json` (v2 IDs, axes, behavior) | Node IDs, variant maps, token IDs for implementation |
+| **4. Changelog** | Figma `08 · Changelog` (`222:2234`) + `design-system/CHANGELOG.md` | Decisions and deltas |
 
 ## Who owns what
 
@@ -9,7 +18,8 @@ Figma is the visual source of truth. The codebase is the behavioral source of tr
 | **Figma** (`VibeCheck` file, Design page) | Visuals, layout, spacing, typography, elevation, and presentational states (Default / Hover / Active / Open / Resolved / Compose / Detail) |
 | **Code** | Storage, events, security, authentication, and data behavior |
 | **`design-system/tokens.json`** | Canonical light/dark token values consumed by both surfaces after generation |
-| **`design-system/figma-components.json`** | Component mapping contract: Figma node → renderer → CSS selector → `data-vc-component` |
+| **`design-system/figma-components.json`** | Shipped mapping: Figma node → renderer → CSS selector → `data-vc-component` |
+| **`design-system/cards-v2-contract.json`** | Cards v2 node IDs, axes, implementation status, and behavior notes |
 
 Do not restyle a mapped component in CSS or markup without updating the matching Figma node (or tokens). Do not delete runtime fields, event IDs, or security controls to match an incomplete mock.
 

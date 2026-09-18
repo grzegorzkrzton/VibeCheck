@@ -1,0 +1,434 @@
+{
+  "status": "implemented",
+  "codeImplementation": "Cards v2 runtime renderers, behavior, persistence migration, and parity coverage are implemented.",
+  "fileKey": "3UduCyltV7tmRYSnDqTEfA",
+  "designPageNodeId": "1:3",
+  "section": {
+    "name": "06 · Components · Cards v2",
+    "nodeId": "175:688",
+    "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=175-688"
+  },
+  "layers": {
+    "visual": "Figma component sets in Cards v2",
+    "behavior": {
+      "name": "07 · Behavior Contract",
+      "nodeId": "222:1720",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=222-1720"
+    },
+    "manifest": [
+      "design-system/figma-components.json",
+      "design-system/cards-v2-contract.json"
+    ],
+    "changelog": [
+      "08 · Changelog (Figma 222:2234)",
+      "design-system/CHANGELOG.md"
+    ]
+  },
+  "behavior": {
+    "resolvedComments": {
+      "default": "Resolving a comment or annotation filters it out of the Notes list.",
+      "showResolvedSetting": "When Notes settings enable Show resolved comments (Figma-like), filtered items reappear.",
+      "variantWhenShown": "Mode=Detail, State=Resolved — presentational (dimmed chrome, Resolve → Reopen). Do not delete this variant."
+    },
+    "timestamps": {
+      "property": "Timestamp",
+      "location": "Card / Reply Message Meta",
+      "buckets": [
+        {
+          "range": "< 60 seconds",
+          "copy": "Just now"
+        },
+        {
+          "range": "1–59 minutes",
+          "copy": "X minutes ago",
+          "singular": "1 minute ago"
+        },
+        {
+          "range": "1–23 hours",
+          "copy": "X hours ago",
+          "singular": "1 hour ago"
+        },
+        {
+          "range": "1–6 days",
+          "copy": "X days ago",
+          "singular": "1 day ago"
+        },
+        {
+          "range": "1–4 weeks",
+          "copy": "X weeks ago",
+          "singular": "1 week ago"
+        },
+        {
+          "range": "5+ weeks",
+          "copy": "localized date",
+          "example": "12 Mar 2026"
+        }
+      ]
+    },
+    "send": {
+      "empty": {
+        "states": [
+          "Default",
+          "Hover",
+          "Disabled"
+        ],
+        "fill": "surface/surface-subtle",
+        "hoverNote": "Comment Hover may use purple/100 as a hint"
+      },
+      "sendable": {
+        "state": "Active",
+        "icon": "icon/icon-inverse",
+        "fillByCard": {
+          "Comment": "pin/note",
+          "Annotation/Implement": "pin/implement",
+          "Annotation/Warning": "pin/warning",
+          "Annotation/Question": "pin/question",
+          "Wording": "pin/suggestion"
+        },
+        "composedOverrides": "Comment, Annotation, and Wording keep the shared Active variant and override its fill/icon tokens at the composed-component level.",
+        "wordingIcon": "button/button-primary-on"
+      }
+    },
+    "overflow": {
+      "header": [
+        "More",
+        "Resolve/Reopen",
+        "Close"
+      ],
+      "menu": [
+        "Mark unread",
+        "Copy link",
+        "Delete"
+      ],
+      "openMenu": "instance overlay, not a card-level variant"
+    },
+    "comboField": {
+      "firstField": {
+        "purpose": "suggested copy",
+        "required": true
+      },
+      "secondField": {
+        "purpose": "reasoning",
+        "required": false
+      },
+      "sendableWhen": "First field is non-empty; second field never gates submission.",
+      "focus": "Scoped to the actual field; group hover does not hover Send.",
+      "submission": {
+        "submitting": "Disable Send while preserving both values.",
+        "failed": "Preserve both values and expose retry; do not mark the optional field invalid."
+      },
+      "layout": {
+        "sendAlignment": "Send stays anchored to the second field's bottom padding for both short and multiline content.",
+        "fieldMessages": "Submitting and failure messages live in dedicated auto-layout frames."
+      },
+      "keyboard": {
+        "tabOrder": [
+          "First field",
+          "Second field",
+          "Send"
+        ],
+        "enter": "Insert a line",
+        "send": "Cmd/Ctrl+Enter"
+      }
+    },
+    "wording": {
+      "applySuggestion": "Repeatable action. Every click inserts the current proposed copy into the selected element and may change Status from Pending to Applied. It does not resolve the card.",
+      "resolve": "Separate, user-controlled Open/Resolved action. Resolution controls filtering only and does not change Applied status.",
+      "thread": "Empty/Replies is independent from status and resolution. Badges, reasoning, and replies persist across Apply and Resolve.",
+      "optionalReasoning": "Omit the Reasoning block in Detail when the optional field is empty.",
+      "resolvedVisibility": "Resolved Wording cards follow the same Show resolved comments rule as Comment and Annotation."
+    }
+  },
+  "tokens": {
+    "pin/note": "VariableID:3:29",
+    "pin/implement": "VariableID:3:30",
+    "pin/warning": "VariableID:3:31",
+    "pin/question": "VariableID:3:32",
+    "pin/suggestion": "VariableID:58:5",
+    "spacing/0": "VariableID:215:3103",
+    "spacing/2": "VariableID:229:5704",
+    "radius/4": "VariableID:225:5230",
+    "text/text-inverse": "VariableID:202:1178",
+    "surface/surface-subtle": "VariableID:3:23",
+    "icon/icon-inverse": "VariableID:202:1179",
+    "button/button-primary-on": "VariableID:3:28"
+  },
+  "resolvedTokenValues": {
+    "badge/pending - bg": {
+      "Light": "#d4d7de",
+      "Dark": "#4b5563"
+    },
+    "badge/pending - text": {
+      "Light": "#374151",
+      "Dark": "#d4d7de"
+    },
+    "badge/success - bg": {
+      "Light": "#ecfccb",
+      "Dark": "#ecfccb"
+    },
+    "badge/success - text": {
+      "Light": "#3f6212",
+      "Dark": "#3f6212"
+    },
+    "text/text-critical": {
+      "Light": "#b91c1c",
+      "Dark": "#f87171"
+    },
+    "surface/surface": {
+      "Light": "#f0f2f4",
+      "Dark": "#1f2937"
+    },
+    "surface/surface-subtle": {
+      "Light": "#f0f2f4",
+      "Dark": "#1f2937"
+    }
+  },
+  "families": {
+    "Badge": {
+      "nodeId": "254:8099",
+      "variants": {
+        "Type": [
+          "Pending",
+          "Applied"
+        ]
+      }
+    },
+    "Card / Selected Item": {
+      "nodeId": "176:1920"
+    },
+    "Card / Type Menu Item": {
+      "nodeId": "177:1911"
+    },
+    "Card / Type Selector": {
+      "nodeId": "178:2136"
+    },
+    "Card / Send": {
+      "nodeId": "179:737",
+      "variants": {
+        "State": [
+          "Default",
+          "Hover",
+          "Active",
+          "Disabled"
+        ]
+      }
+    },
+    "Card / Apply Suggestion": {
+      "nodeId": "236:2946",
+      "variants": {
+        "State": [
+          "Default",
+          "Hover",
+          "Active"
+        ]
+      },
+      "behavior": "Repeatable: every click applies the current content to the selected element without resolving the discussion, then returns to Default.",
+      "accessibleName": "Apply suggestion"
+    },
+    "Card / Field": {
+      "nodeId": "180:1977"
+    },
+    "Card / ComboField": {
+      "nodeId": "229:5660",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=229-5660",
+      "variants": {
+        "State": [
+          "Default",
+          "Hover",
+          "Focus - First",
+          "Focus - Second",
+          "Focus - Second (First filled)",
+          "Filled - First",
+          "Filled - Both",
+          "Editing - First",
+          "Editing - Both",
+          "Disabled",
+          "Error - First",
+          "Submitting",
+          "Submit failed"
+        ]
+      },
+      "textProperties": [
+        "1st Field Value",
+        "2nd Field Value"
+      ],
+      "booleanProperties": [
+        "Show send"
+      ]
+    },
+    "Card / Kind Chip": {
+      "nodeId": "181:761"
+    },
+    "Card / Icon Button": {
+      "nodeId": "182:736"
+    },
+    "Card / Reply": {
+      "nodeId": "184:755",
+      "variants": {
+        "State": [
+          "Default",
+          "Hover"
+        ]
+      },
+      "textProperties": [
+        "Name",
+        "Body",
+        "Timestamp"
+      ]
+    },
+    "Card / Quote": {
+      "nodeId": "191:949",
+      "variants": {
+        "Role": [
+          "Original",
+          "Suggestion",
+          "Reasoning"
+        ]
+      },
+      "behavior": "Suggestion nests Card / Apply Suggestion; Quote itself has no interaction-state axis."
+    },
+    "Card / Header Icon": {
+      "nodeId": "203:1208"
+    },
+    "Card / Overflow Item": {
+      "nodeId": "204:1198"
+    },
+    "Card / Overflow Menu": {
+      "nodeId": "204:1213"
+    },
+    "Card / Comment": {
+      "nodeId": "187:955",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=187-955",
+      "axes": {
+        "Mode": [
+          "Compose",
+          "Detail"
+        ],
+        "State": [
+          "Default",
+          "Hover",
+          "Active",
+          "Thread",
+          "Resolved"
+        ]
+      },
+      "variantNodes": {
+        "Compose/Default": "185:1939",
+        "Compose/Hover": "187:738",
+        "Compose/Active": "187:795",
+        "Detail/Default": "187:828",
+        "Detail/Thread": "187:875",
+        "Detail/Resolved": "187:913"
+      }
+    },
+    "Card / Annotation": {
+      "nodeId": "190:1191",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=190-1191",
+      "axes": {
+        "Kind": [
+          "Implement",
+          "Warning",
+          "Question"
+        ],
+        "Mode": [
+          "Compose",
+          "Detail"
+        ],
+        "State": [
+          "Default",
+          "Active",
+          "Thread",
+          "Resolved"
+        ]
+      },
+      "variantNodes": {
+        "Implement/Compose/Default": "188:870",
+        "Implement/Compose/Active": "190:822",
+        "Warning/Compose/Default": "190:862",
+        "Warning/Compose/Active": "221:1666",
+        "Question/Compose/Default": "190:898",
+        "Question/Compose/Active": "221:2919",
+        "Implement/Detail/Default": "190:934",
+        "Implement/Detail/Thread": "190:998",
+        "Implement/Detail/Resolved": "190:1043",
+        "Warning/Detail/Default": "190:1093",
+        "Warning/Detail/Thread": "221:2963",
+        "Warning/Detail/Resolved": "221:3071",
+        "Question/Detail/Default": "190:1142",
+        "Question/Detail/Thread": "221:3017",
+        "Question/Detail/Resolved": "221:3119"
+      }
+    },
+    "Card / Wording": {
+      "nodeId": "196:1146",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=196-1146",
+      "axes": {
+        "Mode": [
+          "Compose",
+          "Detail"
+        ],
+        "Input": [
+          "Default",
+          "Focus First",
+          "Focus Second",
+          "Editing First",
+          "Editing Both",
+          "Error First",
+          "Submitting",
+          "Submit failed",
+          "Read only"
+        ],
+        "Status": [
+          "Draft",
+          "Pending",
+          "Applied"
+        ],
+        "Thread": [
+          "Empty",
+          "Replies"
+        ],
+        "Resolution": [
+          "Open",
+          "Resolved"
+        ]
+      },
+      "variantNodes": {
+        "Compose/Default": "192:990",
+        "Compose/Focus First": "240:4222",
+        "Compose/Focus Second": "240:4244",
+        "Compose/Editing First": "196:962",
+        "Compose/Editing Both": "240:4266",
+        "Compose/Error First": "240:4288",
+        "Compose/Submitting": "240:4310",
+        "Compose/Submit failed": "240:4332",
+        "Detail/Pending/Empty/Open": "196:999",
+        "Detail/Pending/Replies/Open": "229:6123",
+        "Detail/Applied/Empty/Open": "240:4782",
+        "Detail/Applied/Replies/Open": "240:4506",
+        "Detail/Pending/Empty/Resolved": "240:4808",
+        "Detail/Pending/Replies/Resolved": "240:4536",
+        "Detail/Applied/Empty/Resolved": "240:4566",
+        "Detail/Applied/Replies/Resolved": "240:4592"
+      },
+      "booleanProperties": {
+        "Show reasoning": {
+          "figmaProperty": "Show reasoning#243:0",
+          "default": true,
+          "behavior": "Set false when the optional ComboField reasoning value is empty."
+        }
+      },
+      "implementationStatus": "Implemented in app/vibecheck/components.js and app/vibecheck/feedback-ui.js."
+    }
+  },
+  "docsFrames": {
+    "01 · Atoms": "175:691",
+    "02 · Comment": "185:727",
+    "03 · Annotation": "188:820",
+    "04 · Wording": "192:940",
+    "05 · Dark": "196:2358",
+    "Dark board": "196:2361",
+    "06 · Structure notes": "197:1178",
+    "07 · Behavior Contract": "222:1720",
+    "08 · Changelog": "222:2234"
+  }
+}

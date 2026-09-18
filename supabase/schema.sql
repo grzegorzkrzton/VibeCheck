@@ -27,6 +27,7 @@ create table if not exists public.comments (
   type text not null default 'note' check (type in ('note', 'annotation')),
   kind text,
   resolved boolean not null default false,
+  read_at timestamptz,
   parent_id uuid references public.comments(id) on delete cascade,
   anchor jsonb not null default '{}'::jsonb,
   created_at timestamptz default now(),
@@ -41,11 +42,17 @@ create table if not exists public.content_suggestions (
   original_text text,
   suggested_text text,
   rationale text,
-  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  status text not null default 'pending' check (status in ('pending', 'applied')),
+  resolved boolean not null default false,
+  read_at timestamptz,
   anchor jsonb not null default '{}'::jsonb,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
+alter table public.comments
+  add column if not exists parent_suggestion_id uuid
+  references public.content_suggestions(id) on delete cascade;
 
 create table if not exists public.notifications (
   id uuid primary key default gen_random_uuid(),

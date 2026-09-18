@@ -1,6 +1,6 @@
-import { normalizePrototypeUrl } from './url'
+import { normalizePrototypeUrl } from './url.js'
 
-export const STORE_VERSION = 1
+export const STORE_VERSION = 2
 const STORE_PREFIX = 'vibecheck:store:'
 const AUTHOR_KEY = 'vibecheck:authorName'
 const CHANNEL = 'vibecheck-store'
@@ -11,6 +11,38 @@ export function createEmptyState() {
     comments: [],
     suggestions: [],
     notifications: [],
+  }
+}
+
+export function migrateStore(input = {}) {
+  const state = {
+    ...createEmptyState(),
+    ...input,
+    comments: Array.isArray(input.comments) ? input.comments : [],
+    suggestions: Array.isArray(input.suggestions) ? input.suggestions : [],
+    notifications: Array.isArray(input.notifications) ? input.notifications : [],
+  }
+  return {
+    ...state,
+    version: STORE_VERSION,
+    comments: state.comments.map(comment => ({
+      ...comment,
+      parentSuggestionId: comment.parentSuggestionId || null,
+      resolved: Boolean(comment.resolved),
+    })),
+    suggestions: state.suggestions.map(suggestion => {
+      if (suggestion.status === 'approved') {
+        return { ...suggestion, status: 'applied', resolved: true }
+      }
+      if (suggestion.status === 'rejected') {
+        return { ...suggestion, status: 'pending', resolved: true }
+      }
+      return {
+        ...suggestion,
+        status: suggestion.status === 'applied' ? 'applied' : 'pending',
+        resolved: Boolean(suggestion.resolved),
+      }
+    }),
   }
 }
 
@@ -46,13 +78,7 @@ function readLocal(url) {
     const raw = localStorage.getItem(storeKey(url))
     if (!raw) return createEmptyState()
     const parsed = JSON.parse(raw)
-    return {
-      ...createEmptyState(),
-      ...parsed,
-      comments: Array.isArray(parsed.comments) ? parsed.comments : [],
-      suggestions: Array.isArray(parsed.suggestions) ? parsed.suggestions : [],
-      notifications: Array.isArray(parsed.notifications) ? parsed.notifications : [],
-    }
+    return migrateStore(parsed)
   }
   catch {
     return createEmptyState()
@@ -81,7 +107,7 @@ function mirrorToExtension(state, url) {
     const current = data[key] || {}
     current[normalizePrototypeUrl(url)] = {
       notifications: state.notifications || [],
-      commentCount: (state.comments || []).filter(item => !item.parentId).length,
+      commentCount: (state.comments || []).filter(item => !item.parentId && !item.parentSuggestionId).length,
       suggestionCount: (state.suggestions || []).length,
       updatedAt: new Date().toISOString(),
     }
@@ -111,7 +137,7 @@ async function remoteCall(method, payload = {}) {
 
 export async function loadStore(url = location.href) {
   const remote = await remoteCall('load', { url })
-  if (remote) return { ...createEmptyState(), ...remote, source: 'remote' }
+  if (remote) return { ...migrateStore(remote), source: 'remote' }
   return { ...readLocal(url), source: 'local' }
 }
 
@@ -151,6 +177,7 @@ export async function upsertSuggestion(suggestion, url) {
 export async function removeSuggestion(id, url) {
   const state = await loadStore(url)
   state.suggestions = state.suggestions.filter(item => item.id !== id)
+  state.comments = state.comments.filter(item => item.parentSuggestionId !== id)
   await saveStore(state, url)
 }
 

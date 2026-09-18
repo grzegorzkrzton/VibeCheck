@@ -1,12 +1,12 @@
 @import "../../design-system/generated/tokens-light.css";
 
 :host {
-  --theme-bg: var(--vc-bg-surface);
+  --theme-bg: var(--vc-surface);
   --theme-bd: hsl(0 0% 100% / var(--theme-bd-opacity));
   --theme-bd-2: hsl(0 0% 100% / var(--theme-bd-2-opacity));
   --theme-color: hotpink;
-  --theme-text_color: var(--vc-text-primary);
-  --theme-icon_color: var(--vc-text-secondary);
-  --theme-icon_hover-bg: var(--vc-action-secondary-hover);
-  --theme-icon_active-bg: var(--vc-bg-subtle);
+  --theme-text_color: var(--vc-text);
+  --theme-icon_color: var(--vc-text-gray-medium);
+  --theme-icon_hover-bg: var(--vc-button-secondary-hover);
+  --theme-icon_active-bg: var(--vc-surface-subtle);
 }

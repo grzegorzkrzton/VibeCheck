@@ -9,15 +9,23 @@ import {
   pinVisualState,
   pinVisualType,
   renderAnnotationCard,
+  renderApplySuggestion,
   renderAvatar,
   renderBadge,
   renderButton,
   renderChip,
   renderField,
+  renderComboField,
+  renderHeaderIcon,
+  renderOverflowMenu,
   renderNoteCard,
   renderNotesPanel,
   renderNotesPanelItem,
   renderPin,
+  renderQuote,
+  renderReply,
+  renderSend,
+  renderTypeSelector,
   renderWordingCard,
 } from '../app/vibecheck/components.js'
 
@@ -53,10 +61,19 @@ check('Chip selected state matches Figma Selected', () => {
 check('Field textarea and input use Figma Type names', () => {
   const input = renderField({ type: 'Input', field: 'authorName', value: 'Ada', placeholder: 'Your name' })
   const area = renderField({ type: 'Textarea', field: 'body', value: 'Hello', placeholder: 'Write a note…' })
-  assert.match(input, /data-vc-component="Field"/)
+  assert.match(input, /data-vc-component="Card \/ Field"/)
   assert.match(input, /data-type="Input"/)
   assert.match(area, /data-type="Textarea"/)
   assert.match(area, /Hello/)
+})
+
+check('Field state follows Figma Default, Filled, and Focus variants', () => {
+  const empty = renderField({ type: 'Input', field: 'authorName', placeholder: 'Your name' })
+  const filled = renderField({ type: 'Textarea', field: 'body', value: 'Hello', placeholder: 'Write a note…' })
+  const focused = renderField({ type: 'Input', field: 'authorName', value: 'Ada', state: 'Focus' })
+  assert.match(empty, /data-state="Default"/)
+  assert.match(filled, /data-state="Filled"/)
+  assert.match(focused, /data-state="Focus"/)
 })
 
 check('Badge, pin, and panel item emit stable data-vc-component names', () => {
@@ -115,29 +132,31 @@ check('Figma pin and card variant translation', () => {
   assert.equal(pinVisualState({ open: true }), 'Open')
   assert.equal(pinVisualState({ resolved: true }), 'Resolved')
   assert.equal(pinVisualState({}), 'Default')
-  assert.equal(cardFamily({ kind: 'draft', item: { type: 'note' } }), 'Feedback Card / Note')
-  assert.equal(cardFamily({ kind: 'comment', item: { type: 'annotation' } }), 'Feedback Card / Annotation')
-  assert.equal(cardFamily({ kind: 'suggestion', item: {} }), 'Feedback Card / Wording')
+  assert.equal(cardFamily({ kind: 'draft', item: { type: 'note' } }), 'Card / Comment')
+  assert.equal(cardFamily({ kind: 'comment', item: { type: 'annotation' } }), 'Card / Annotation')
+  assert.equal(cardFamily({ kind: 'suggestion', item: {} }), 'Card / Wording')
   assert.equal(cardState('draft', {}), 'Compose')
   assert.equal(cardState('comment', {}), 'Detail')
 })
 
-check('Note compose and detail cards use mapped family names', () => {
+check('Comment compose and detail cards expose Cards v2 axes', () => {
   const compose = renderNoteCard({ id: 'n1', state: 'Compose', body: 'Hi', author: 'Ada', context: '.hero' })
-  assert.match(compose, /data-vc-component="Feedback Card \/ Note"/)
-  assert.match(compose, /data-state="Compose"/)
-  assert.match(compose, /data-action="set-type"/)
+  assert.match(compose, /data-vc-component="Card \/ Comment"/)
+  assert.match(compose, /data-mode="Compose"/)
+  assert.match(compose, /data-state="Active"/)
+  assert.match(compose, /data-action="toggle-type-menu"/)
   const detail = renderNoteCard({ id: 'n1', state: 'Detail', body: 'Hi', meta: 'Ada', resolved: true })
-  assert.match(detail, /data-state="Detail"/)
-  assert.match(detail, /Reopen/)
+  assert.match(detail, /data-mode="Detail"/)
+  assert.match(detail, /data-state="Resolved"/)
+  assert.match(detail, /aria-label="Reopen thread"/)
   assert.match(detail, /data-action="reply"/)
 })
 
-check('Annotation and wording cards keep delegated actions', () => {
+check('Annotation and Wording cards expose final variants and actions', () => {
   const annotation = renderAnnotationCard({ id: 'a1', state: 'Compose', kind: 'question' })
-  assert.match(annotation, /data-vc-component="Feedback Card \/ Annotation"/)
+  assert.match(annotation, /data-vc-component="Card \/ Annotation"/)
   assert.match(annotation, /data-annotation-kind="question"/)
-  assert.match(annotation, /data-kind="Annotation"/)
+  assert.match(annotation, /data-vc-component="Card \/ Kind Chip"/)
   const wording = renderWordingCard({
     id: 'w1',
     state: 'Detail',
@@ -145,30 +164,38 @@ check('Annotation and wording cards keep delegated actions', () => {
     suggestedText: 'To',
     status: 'pending',
   })
-  assert.match(wording, /data-vc-component="Feedback Card \/ Wording"/)
-  assert.match(wording, /data-action="approve"/)
-  assert.match(wording, /<b>From<\/b>/)
+  assert.match(wording, /data-vc-component="Card \/ Wording"/)
+  assert.match(wording, /data-action="apply-suggestion"/)
+  assert.match(wording, /data-role="Original"/)
+  assert.doesNotMatch(wording, /Approve|Reject|Preview/)
 })
 
-check('card action rows keep the Figma button order and alignment', () => {
-  // Figma puts the destructive/secondary action on the left and groups the rest right.
+check('Cards v2 header and input actions follow Figma order', () => {
   const detail = renderNoteCard({ id: 'n1', state: 'Detail', body: 'Hi' })
-  assert.match(detail, /class="vc-actions" data-align="between"/)
   assert.match(
     detail,
-    /data-action="delete"[\s\S]*vc-actions-group[\s\S]*data-action="resolve"[\s\S]*data-action="reply"/,
+    /data-action="toggle-overflow"[\s\S]*data-action="resolve"[\s\S]*data-action="close"[\s\S]*data-action="reply"/,
   )
-
   const compose = renderWordingCard({ id: 'w1', state: 'Compose' })
-  assert.match(compose, /class="vc-actions" data-align="between"/)
   assert.match(
     compose,
-    /data-action="preview"[\s\S]*vc-actions-group[\s\S]*data-action="cancel"[\s\S]*data-action="save"/,
+    /data-field="suggestedText"[\s\S]*data-field="rationale"[\s\S]*data-action="send"/,
   )
+})
 
-  const noteCompose = renderNoteCard({ id: 'n2', state: 'Compose' })
-  assert.match(noteCompose, /class="vc-actions">[\s\S]*data-action="cancel"[\s\S]*data-action="save"/)
-  assert.equal(noteCompose.includes('data-align="between"'), false)
+check('Cards v2 shared atoms expose exact contracts', () => {
+  assert.match(renderSend({ state: 'Active' }), /data-vc-component="Card \/ Send"/)
+  assert.match(renderApplySuggestion(), /aria-label="Apply suggestion"/)
+  assert.match(renderHeaderIcon({ action: 'resolve', label: 'Resolve' }), /data-vc-component="Card \/ Header Icon"/)
+  assert.match(renderTypeSelector({ open: true }), /role="menu"/)
+  assert.doesNotMatch(renderTypeSelector({ disabled: true }), /class="vc-icon"/)
+  assert.match(renderPin({ recordKind: 'suggestion', number: 'S' }), />1<\/button>/)
+  assert.match(renderOverflowMenu(), /mark-unread[\s\S]*copy-link[\s\S]*delete/)
+  assert.match(renderReply({ body: 'Reply' }), /data-vc-component="Card \/ Reply"/)
+  assert.match(renderQuote({ role: 'Suggestion', apply: true }), /data-role="Suggestion"/)
+  const combo = renderComboField({ firstValue: 'Ready', secondValue: 'Reason' })
+  assert.match(combo, /data-state="Filled - Both"/)
+  assert.match(combo, /data-state="Active" data-card-type="Wording"/)
 })
 
 check('toolbar icons carry the synced Figma geometry', () => {
@@ -238,9 +265,18 @@ check('generated token files match tokens.json', () => {
 check('token generator emits mapped CSS custom properties', () => {
   const tokens = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/tokens.json'), 'utf8'))
   const css = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.css'), 'utf8')
-  assert.equal(tokens.color.light['bg-surface'], '#f9fafb')
-  assert.match(css, /--vc-bg-surface: #f9fafb/)
-  assert.match(css, /--vc-action-primary/)
+  assert.equal(tokens.color.light.surface, '#f0f2f4')
+  assert.equal(tokens.color.dark.surface, '#1f2937')
+  assert.equal(tokens.color.light['badge-pending-background'], '#d4d7de')
+  assert.equal(tokens.color.light['badge-success-background'], '#ecfccb')
+  assert.match(css, /--vc-surface: #f0f2f4/)
+  assert.match(css, /--vc-badge-success-background: #ecfccb/)
+  assert.match(css, /--vc-button-primary:/)
+  assert.match(css, /--vc-text-inverse:/)
+  assert.match(css, /--vc-icon-inverse:/)
+  assert.doesNotMatch(css, /--vc-text-primary:/)
+  assert.doesNotMatch(css, /--vc-bg-surface:/)
+  assert.doesNotMatch(css, /--vc-action-primary:/)
   assert.match(css, /--vc-size-pin: 28px/)
   assert.match(css, /--vc-shadow-card/)
   assert.match(css, /prefers-color-scheme: dark/)
@@ -250,8 +286,8 @@ check('token generator emits mapped CSS custom properties', () => {
 
 check('feedback layer honours an explicit toolbar theme', () => {
   const generated = fs.readFileSync(path.join(ROOT, 'design-system/generated/tokens.js'), 'utf8')
-  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-bg-surface: #f9fafb/)
-  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-bg-surface: #111827/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"light\\"\][\s\S]*?--vc-surface: #f0f2f4/)
+  assert.match(generated, /#vibecheck-layer\[data-scheme=\\"dark\\"\][\s\S]*?--vc-surface: #1f2937/)
   const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
   assert.match(ui, /export function setFeedbackScheme/)
   const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
@@ -267,15 +303,22 @@ check('mapping manifest references existing sources and renderers', () => {
   for (const name of [
     'Button',
     'Chip',
-    'Field',
+    'Card / Field',
+    'Card / ComboField',
+    'Card / Send',
+    'Card / Apply Suggestion',
+    'Card / Quote',
+    'Card / Type Selector',
+    'Card / Overflow Menu',
     'Badge',
     'Feedback Pin',
     'Toolbar Search Popout',
     'Main Toolbar',
     'Color & AI Toolbar',
-    'Feedback Card / Note',
-    'Feedback Card / Annotation',
-    'Feedback Card / Wording',
+    'Toolbar Tip',
+    'Card / Comment',
+    'Card / Annotation',
+    'Card / Wording',
     'Avatar',
     'Notes Panel',
     'Account & Inbox Popup',
@@ -286,6 +329,18 @@ check('mapping manifest references existing sources and renderers', () => {
     'renderButton',
     'renderChip',
     'renderField',
+    'renderComboField',
+    'renderSend',
+    'renderApplySuggestion',
+    'renderQuote',
+    'renderTypeSelector',
+    'renderTypeMenuItem',
+    'renderOverflowMenu',
+    'renderOverflowItem',
+    'renderReply',
+    'renderHeaderIcon',
+    'renderSelectedItem',
+    'renderKindChip',
     'renderBadge',
     'renderPin',
     'renderNoteCard',
@@ -314,13 +369,22 @@ check('mapping manifest references existing sources and renderers', () => {
 
 check('feedback CSS matches Figma semantic treatments', () => {
   const css = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-styles.js'), 'utf8')
+  const contract = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/cards-v2-contract.json'), 'utf8'))
+  assert.deepEqual(contract.behavior.overflow.menu, ['Mark unread', 'Copy link', 'Delete'])
   assert.match(css, /\.vc-pin\[data-state="Open"\][\s\S]*border-width: 3px/)
-  assert.match(css, /\.vc-actions \[data-style="Danger"\][\s\S]*background: var\(--vc-status-danger\)/)
-  assert.match(css, /\.vc-actions button[\s\S]*border: 1px solid var\(--vc-border-default\)/)
-  assert.match(css, /textarea::placeholder[\s\S]*color: var\(--vc-text-secondary\)/)
+  assert.match(css, /\.vc-pin \{[\s\S]*border-radius: var\(--vc-radius-full\) var\(--vc-radius-full\) var\(--vc-radius-full\) var\(--vc-radius-6\)/)
+  assert.match(css, /\.vc-combo-second \{[\s\S]*align-items: flex-end/)
+  assert.match(css, /\.vc-combo-part:focus-within[\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-card-accent/)
+  assert.match(css, /\.vc-combo-part\[data-invalid="true"\][\s\S]*box-shadow: inset 0 0 0 1\.5px var\(--vc-text-critical\)/)
+  assert.match(css, /\.vc-card\[data-card-type="Suggestion"\] \.vc-send\[data-state="Active"\][\s\S]*color: var\(--vc-button-primary-on\)/)
+  assert.match(css, /\.vc-send \{[\s\S]*flex: 0 0 28px/)
+  assert.match(css, /\.vc-combo-second \{[\s\S]*border-radius/)
   assert.match(css, /\.vc-panel \{\n  opacity: 1;\n  filter: none;\n  mix-blend-mode: normal;/)
-  assert.match(css, /\.vc-card-head \{[\s\S]*min-height: 32px;\n  font: 700 13px var\(--vc-font-family\)/)
-  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border-default\)/)
+  assert.match(css, /\.vc-card-surface \{[\s\S]*width: 240px/)
+  assert.match(css, /\.vc-card-surface \{[\s\S]*overflow: visible/)
+  assert.match(css, /\.vc-badge\[data-type="Applied"\][\s\S]*--vc-badge-success-background/)
+  assert.match(css, /\.vc-overflow-menu button \{[\s\S]*padding: var\(--vc-spacing-8\) var\(--vc-spacing-10\)/)
+  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border\)/)
   assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)
 })
 
@@ -346,6 +410,56 @@ check('active product code and paths use the VibeCheck name', () => {
     if (contents.includes(0)) return
     assert.doesNotMatch(contents.toString('utf8'), legacyName, `legacy product name in ${file}`)
   })
+})
+
+check('Cards v2 lifecycle source excludes legacy actions', () => {
+  const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
+  assert.doesNotMatch(ui, /action === 'approve'|action === 'reject'|action === 'preview'/)
+  assert.match(ui, /action === 'apply-suggestion'[\s\S]*status: 'applied'/)
+  assert.match(ui, /action === 'resolve'[\s\S]*resolved: !open\.item\.resolved/)
+  assert.match(ui, /parentSuggestionId/)
+  assert.match(ui, /metaKey \|\| event\.ctrlKey/)
+})
+
+check('consumers no longer reference legacy foundation CSS names', () => {
+  const legacyVars = [
+    '--vc-text-primary',
+    '--vc-text-secondary',
+    '--vc-text-muted',
+    '--vc-text-on-accent',
+    '--vc-bg-page',
+    '--vc-bg-surface',
+    '--vc-bg-subtle',
+    '--vc-bg-input',
+    '--vc-border-default',
+    '--vc-action-primary',
+    '--vc-action-on-primary',
+    '--vc-action-primary-hover',
+    '--vc-action-secondary-hover',
+    '--vc-status-danger',
+    '--vc-link-accent',
+    '--vc-icon-on-accent',
+  ]
+  const consumerFiles = [
+    'app/vibecheck/feedback-styles.js',
+    'app/components/vibe-check/vibe-check.element.css',
+    'app/components/vibe-check/vibe-check.element.js',
+    'app/components/_variables.css',
+    'app/components/_variables_light.css',
+    'app/components/_variables_dark.css',
+    'extension/popup/popup.css',
+    'extension/toolbar/bundle.min.js',
+  ]
+  const usagePattern = name => new RegExp(`var\\(${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([,)\\s])`)
+  const hits = []
+  for (const rel of consumerFiles) {
+    const contents = fs.readFileSync(path.join(ROOT, rel), 'utf8')
+    for (const name of legacyVars) {
+      if (usagePattern(name).test(contents) || contents.includes(`'${name}'`) || contents.includes(`"${name}"`))
+        hits.push(`${rel}: ${name}`)
+    }
+  }
+  assert.deepEqual(hits, [])
 })
 
 console.log('parity checks passed')
