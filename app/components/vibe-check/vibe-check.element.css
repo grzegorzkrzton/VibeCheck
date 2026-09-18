@@ -39,7 +39,7 @@
     gap: 1px;
     padding: var(--vc-spacing-4);
     box-shadow: var(--vc-shadow-panel);
-    background-color: var(--vc-surface-subtle);
+    background-color: var(--vc-surface);
     height: fit-content;
     overflow: visible;
 
@@ -80,7 +80,7 @@
       background-color: var(--theme-icon_hover-bg);
     }
     :not([data-active=true])&:active {
-      background-color: var(--vc-surface-subtle);
+      background-color: var(--vc-button-secondary-hover);
     }
   }
 
@@ -164,7 +164,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: var(--vc-surface-subtle);
+      background: var(--vc-surface);
       border: 1px solid var(--vc-border-gray-medium);
       color: var(--vc-text);
       font-weight: 300;

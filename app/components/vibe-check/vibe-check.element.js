@@ -278,7 +278,7 @@ export default class VibeCheck extends HTMLElement {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background: var(--vc-surface-subtle, #eeeff1);
+          background: var(--vc-surface, #eeeff1);
           border: 1px solid var(--vc-border-gray-medium, #8f96a3);
           color: var(--vc-text, #111827);
           font-weight: 300;
@@ -308,7 +308,7 @@ export default class VibeCheck extends HTMLElement {
     this._tipHost.style.color = asideStyle.color
     this._tipHost.style.boxShadow = asideStyle.boxShadow
     const hostStyles = getComputedStyle(this)
-    for (const name of ['--vc-text', '--vc-border-gray-medium', '--vc-text-gray-medium']) {
+    for (const name of ['--vc-text', '--vc-surface', '--vc-border-gray-medium', '--vc-text-gray-medium']) {
       const value = hostStyles.getPropertyValue(name).trim()
       if (value) this._tipHost.style.setProperty(name, value)
     }
