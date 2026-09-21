@@ -32,6 +32,13 @@ import {
   renderTypeSelector,
   renderWordingCard,
 } from '../app/vibecheck/components.js'
+import {
+  PIN_ORIGIN_INSET,
+  PIN_SPACING,
+  groupPinsByElement,
+  pinRowOrigin,
+  pinRowPositions,
+} from '../app/vibecheck/pin-layout.js'
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -625,6 +632,35 @@ check('Cards v2 lifecycle source excludes legacy actions', () => {
   assert.match(ui, /action === 'resolve'[\s\S]*resolved: !open\.item\.resolved/)
   assert.match(ui, /parentSuggestionId/)
   assert.match(ui, /metaKey \|\| event\.ctrlKey/)
+})
+
+check('pins sharing an element spread into a 32px horizontal row', () => {
+  const hero = { tag: 'hero' }
+  const rect = { left: 40, top: 200 }
+  const group = groupPinsByElement([
+    { pin: 'b', el: hero, record: { id: 'b', createdAt: '2026-01-02T00:00:00Z' } },
+    { pin: 'a', el: hero, record: { id: 'a', createdAt: '2026-01-01T00:00:00Z' } },
+    { pin: 'c', el: hero, record: { id: 'c', createdAt: '2026-01-03T00:00:00Z' } },
+  ]).get(hero)
+  // Oldest first, id as tie-break, so panel sort order never reshuffles the row.
+  assert.deepEqual(group.map(entry => entry.pin), ['a', 'b', 'c'])
+
+  const origin = pinRowOrigin(rect)
+  assert.deepEqual(origin, { left: rect.left + PIN_ORIGIN_INSET, top: rect.top + PIN_ORIGIN_INSET })
+  const lefts = pinRowPositions(group.length, { origin: origin.left, viewportWidth: 1280 })
+  assert.deepEqual(lefts, [48, 80, 112])
+  assert.deepEqual(lefts.slice(1).map((left, i) => left - lefts[i]), [PIN_SPACING, PIN_SPACING])
+
+  // Rows fold back onto their own origin rather than clamping to the viewport.
+  assert.deepEqual(pinRowPositions(3, { origin: 1272, viewportWidth: 1280 }), [1208, 1240, 1272])
+  assert.deepEqual(pinRowPositions(1, { origin: 4000, viewportWidth: 1280 }), [4000])
+  assert.deepEqual(pinRowPositions(2, { origin: -500, viewportWidth: 1280 }), [-500, -468])
+
+  const ui = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-ui.js'), 'utf8')
+  assert.match(ui, /groupPinsByElement/)
+  assert.match(ui, /placePinRows\(pinEntries\)/)
+  const css = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-styles.js'), 'utf8')
+  assert.match(css, /\.vc-pin \{[\s\S]*transform: translate\(-50%, -50%\)/)
 })
 
 check('consumers no longer reference legacy foundation CSS names', () => {

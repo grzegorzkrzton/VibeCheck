@@ -20,6 +20,7 @@ import {
   renderWordingCard,
 } from './components'
 import { cardIcon } from './card-icons.js'
+import { groupPinsByElement, pinRowOrigin, pinRowPositions } from './pin-layout'
 import {
   addNotification,
   getAuthorName,
@@ -344,10 +345,24 @@ function pinTarget(item) {
   return resolveAnchor(item.anchor)
 }
 
-function placePin(node, el) {
-  const rect = el.getBoundingClientRect()
-  node.style.top = `${Math.round(rect.top + 8)}px`
-  node.style.left = `${Math.round(rect.left + 8)}px`
+function placePin(node, left, top) {
+  node.style.top = `${Math.round(top)}px`
+  node.style.left = `${Math.round(left)}px`
+}
+
+/** Spread every pin sharing an element into a horizontal row from its origin. */
+function placePinRows(entries) {
+  for (const [el, group] of groupPinsByElement(entries)) {
+    const origin = pinRowOrigin(el.getBoundingClientRect())
+    const lefts = pinRowPositions(group.length, {
+      origin: origin.left,
+      viewportWidth: window.innerWidth,
+    })
+    group.forEach((entry, index) => {
+      entry.pin.dataset.rowIndex = String(index)
+      placePin(entry.pin, lefts[index], origin.top)
+    })
+  }
 }
 
 function clampPosition(left, top, width, height) {
@@ -714,6 +729,7 @@ export function layoutFeedback() {
     placeCard(card, resolved.el)
   }
 
+  const pinEntries = []
   layer.querySelectorAll('.vc-pin[data-id]').forEach(pin => {
     const id = pin.dataset.id
     const record = state.comments.find(item => item.id === id) || state.suggestions.find(item => item.id === id)
@@ -723,8 +739,9 @@ export function layoutFeedback() {
       pin.remove()
       return
     }
-    placePin(pin, el)
+    pinEntries.push({ pin, record, el })
   })
+  placePinRows(pinEntries)
 
   placeOpenMenus(layer)
 }
