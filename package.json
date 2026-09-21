@@ -27,7 +27,7 @@
     "extension:release": "npm run test:ci && npm run bump && npm run extension:build && npm run extension:zip",
     "extension:js": "npm run bundle:prod",
     "extension:css": "postcss app/extension.css -o extension/toolbar/bundle.css",
-    "extension:copy": "cp app/bundle.min.js extension/toolbar/ && cp -R app/tuts/ extension/tuts && mkdir -p extension/fonts && cp -R design-system/fonts/figtree extension/fonts/figtree",
+    "extension:copy": "cp app/bundle.min.js extension/toolbar/ && cp -R app/tuts/ extension/tuts && rm -rf extension/fonts/figtree && mkdir -p extension/fonts && cp -R design-system/fonts/figtree extension/fonts/figtree",
     "extension:zip": "npm run extension:build && mkdir -p extension/build && rm -f extension/build/vibecheck.zip && cd extension && zip -r build/vibecheck.zip . -x \"build/*\"",
     "extension:firefox": "npm run dev:extension && cd extension && web-ext run",
     "extension:firefox-build": "npm run extension:build && cd extension && web-ext build",
