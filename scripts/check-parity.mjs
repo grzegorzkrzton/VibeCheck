@@ -213,7 +213,7 @@ check('toolbar icons carry the synced Figma geometry', () => {
     inspector: 'M11.9996 2C17.5225 2 21.9992 6.47794',
     comments: 'M19.0004 2C20.6572 2 22.0004 3.34312',
     annotation: 'M9.46293 6.65721C9.75579 6.36435',
-    content: 'M10.4147 3.58566C10.9666 3.58586',
+    content: 'M13 3.00019C13 2.4478 12.5522 1.99999',
     hueshift: 'M12.333 2.91699C17.528 2.91702',
     font: 'M20.0004 3C20.5524 3.00021',
     text: 'M13.8274 5.10679C15.3034 3.63107',
@@ -318,6 +318,38 @@ check('Main toolbar PM Only model exposes inspect, comment, annotation, wording,
   assert.match(element, /TOOLBAR_ROLE_STORAGE_KEY/)
   assert.match(model, /n: VibeCheckModel\.n/)
   assert.match(element, /annotations\(\)/)
+})
+
+check('Main Toolbar tool order matches Figma Role=Full and Role=PM Only', () => {
+  const modelPath = path.join(ROOT, 'app/components/vibe-check/model.js')
+  const modelSrc = fs.readFileSync(modelPath, 'utf8')
+  const fullOrder = ['i', 'c', 'n', 'w', 'g', 'm', 'p', 'a', 'v', 'x', 'h', 'd', 'f', 'e', 's']
+  const pmOrder = ['i', 'c', 'n', 'w', 's']
+  const fullDividers = ['i', 'w', 'v', 'x']
+  const pmDividers = ['i', 'w']
+
+  const fullKeys = [...modelSrc.matchAll(/^\s{2}([a-z]):\s*\{/gm)].map(m => m[1])
+  const pmBlock = modelSrc.match(/export const VibeCheckModelPMOnly = \{([\s\S]*?)\n\}/)
+  assert.ok(pmBlock, 'VibeCheckModelPMOnly block missing')
+  const pmKeys = [...pmBlock[1].matchAll(/^\s{2}([a-z]):\s/gm)].map(m => m[1])
+
+  assert.deepEqual(fullKeys, fullOrder, 'Full toolbar key order drifted from Figma 352:9729')
+  assert.deepEqual(pmKeys, pmOrder, 'PM Only toolbar key order drifted from Figma 352:9729')
+
+  for (const key of fullDividers)
+    assert.match(modelSrc, new RegExp(`^\\s{2}${key}:\\s*\\{[\\s\\S]*?dividerAfter: true`, 'm'), `missing dividerAfter on ${key}`)
+  for (const key of pmDividers)
+    assert.match(modelSrc, new RegExp(`^\\s{2}${key}:\\s*\\{[\\s\\S]*?dividerAfter: true`, 'm'), `PM Only inherits dividerAfter on ${key}`)
+})
+
+check('page cursor uses a follower for Comment, Annotation, and Wording', () => {
+  const cursor = fs.readFileSync(path.join(ROOT, 'app/utilities/page-cursor.js'), 'utf8')
+  const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
+  assert.match(cursor, /FOLLOWER_TOOLS = new Set\(\['comments', 'annotations', 'content'\]\)/)
+  assert.match(cursor, /cursor: none/)
+  assert.match(cursor, /data:image\/svg\+xml/)
+  assert.match(element, /setPageCursor\(\{ tool, icon: entry\.icon \}\)/)
+  assert.match(element, /clearPageCursor\(\)/)
 })
 
 check('generated token files match tokens.json', () => {

@@ -37,7 +37,9 @@ import {
   metaKey,
   isPolyfilledCE,
   constructibleStylesheetSupport,
-  schemeRule
+  schemeRule,
+  setPageCursor,
+  clearPageCursor,
 } from '../../utilities/'
 
 export default class VibeCheck extends HTMLElement {
@@ -79,6 +81,7 @@ export default class VibeCheck extends HTMLElement {
 
   disconnectedCallback() {
     this.deactivate_feature()
+    clearPageCursor()
     this.stopChangeTracker?.()
     this.stopFeedbackLayer?.()
     this.teardownToolbarTips()
@@ -132,6 +135,7 @@ export default class VibeCheck extends HTMLElement {
   setToolbarRole(role = 'Full') {
     const previousTool = this.active_tool?.dataset?.tool
     this.deactivate_feature()
+    clearPageCursor()
     this.unbindToolbarHotkeys()
     this.teardownToolbarTips()
     this.applyToolbarRole(role)
@@ -264,6 +268,17 @@ export default class VibeCheck extends HTMLElement {
     el.attr('data-state', 'Active')
     this.active_tool = el
     this[el.dataset.tool]()
+    this.syncPageCursor()
+  }
+
+  syncPageCursor() {
+    const tool = this.active_tool?.dataset?.tool
+    const entry = Object.values(this.toolbar_model).find(item => item.tool === tool)
+    if (!tool || !entry?.icon) {
+      clearPageCursor()
+      return
+    }
+    setPageCursor({ tool, icon: entry.icon })
   }
 
   setupToolbarTips(root) {

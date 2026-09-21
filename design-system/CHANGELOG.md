@@ -2,10 +2,19 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-09-21 — Tool page cursors
+
+- Comment, Annotation, and Wording use a floating SVG follower (page cursor hidden; icon tracks the pointer).
+- Remaining Main Toolbar tools use `cursor: url(...)` from the same toolbar glyphs. Toolbar, Notes panel, and other VibeCheck chrome keep the native pointer.
+
 ## 2026-09-21 — Notes Panel Resolve header icon removed
 
 - Removed **Card / Header Icon Button** Resolve instance from Notes Panel header (`302:14767`); resolved visibility stays in filter List Menu (**Show resolved comments**).
 - Notes Panel header actions are now Filter and More only; card detail headers still use Resolve/Reopen thread.
+
+## 2026-09-21 — Wording toolbar icon
+
+- **Wording** toolbar icon (`5:15`) updated to speech-bubble + pencil glyph; synced to `Icons.content` on Main Toolbar.
 
 ## 2026-09-21 — Main Toolbar tool order
 
