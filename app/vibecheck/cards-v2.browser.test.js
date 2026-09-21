@@ -46,7 +46,7 @@ test('Wording supports keyboard compose, apply, reply, menus, and resolve', asyn
   await page.click('[data-action="toggle-overflow"]')
   await page.waitForSelector('[role="menu"]')
   await page.keyboard.press('Escape')
-  t.is(await page.$('.vc-overflow-menu'), null)
+  t.is(await page.$('.vc-list-menu[data-menu="overflow"]'), null)
 
   await page.click('[data-action="resolve"]')
   await page.waitForSelector('[data-vc-component="Card / Wording"][data-resolution="Resolved"]')
@@ -61,7 +61,7 @@ test('Comment field, dropdown, disabled selector, and pin retain visual contract
 
   t.is(await page.$eval('.vc-field', element => element.getBoundingClientRect().height), 36)
   await page.click('[data-action="toggle-type-menu"]')
-  await page.waitForSelector('.vc-type-menu')
+  await page.waitForSelector('.vc-list-menu[data-menu="type"]')
   t.is(await page.$eval('.vc-card-surface', element => getComputedStyle(element).overflow), 'visible')
 
   await page.keyboard.press('Escape')

@@ -33,9 +33,13 @@ Official Figma Code Connect is currently unavailable: the library has no publish
 2. Run `npm run design:sync` to emit:
    - `design-system/generated/tokens.css` — `:root, :host` custom properties for the popup and default toolbar theme
    - `design-system/generated/tokens-light.css` / `tokens-dark.css` — `:host` properties for the toolbar theme sheets
-   - `design-system/generated/tokens.js` — injected into the feedback overlay (page layer)
-   - `extension/popup/tokens.css` — copy inside the extension package
+   - `design-system/generated/tokens.js` — injected into the feedback overlay (page layer), including `figtreeFontFaceCss()`
+   - `extension/popup/tokens.css` — copy inside the extension package (includes Figtree `@font-face`)
+   - Syncs `design-system/fonts/figtree/` → `extension/fonts/figtree/`
 3. Run `npm run design:check` (also `npm run test:parity`) before review. It fails when generated files drift, mapped renderers are missing, or helper markup does not emit `data-vc-component`.
+4. For a full Figma ↔ code **token-value** alignment audit (variables, styles, usage, final report), ask the agent to run the **figma-code-alignment** skill (`.cursor/skills/figma-code-alignment/`).
+
+Typography primitives + semantic text styles live under `tokens.json` → `font`. See [docs/typography-figma-code-map.md](../docs/typography-figma-code-map.md) for the full Figma ↔ code map.
 
 Never edit generated files by hand.
 

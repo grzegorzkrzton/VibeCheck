@@ -97,7 +97,6 @@
       ],
       "menu": [
         "Mark unread",
-        "Copy link",
         "Delete"
       ],
       "openMenu": "instance overlay, not a card-level variant"

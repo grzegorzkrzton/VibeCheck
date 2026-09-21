@@ -16,8 +16,12 @@ import {
   renderChip,
   renderField,
   renderComboField,
+  renderFilterMenu,
   renderHeaderIcon,
+  renderListMenuItem,
   renderOverflowMenu,
+  renderPanelMoreMenu,
+  renderTypeMenu,
   renderNoteCard,
   renderNotesPanel,
   renderNotesPanelItem,
@@ -92,6 +96,8 @@ check('Badge, pin, and panel item emit stable data-vc-component names', () => {
   assert.match(pin, /data-state="Open"/)
   assert.match(pin, /data-type="annotation"/)
   assert.match(pin, /data-kind="warning"/)
+  assert.match(pin, /<\/button>$/)
+  assert.doesNotMatch(pin, />2<\/button>/)
   const item = renderNotesPanelItem({
     id: 'c1',
     kind: 'comment',
@@ -190,7 +196,10 @@ check('Cards v2 shared atoms expose exact contracts', () => {
   assert.match(renderTypeSelector({ open: true }), /role="menu"/)
   assert.doesNotMatch(renderTypeSelector({ disabled: true }), /class="vc-icon"/)
   assert.match(renderPin({ recordKind: 'suggestion', number: 'S' }), />1<\/button>/)
-  assert.match(renderOverflowMenu(), /mark-unread[\s\S]*copy-link[\s\S]*delete/)
+  assert.match(renderOverflowMenu(), /mark-unread[\s\S]*delete/)
+  assert.doesNotMatch(renderOverflowMenu(), /copy-link/)
+  assert.match(renderTypeMenu({ type: 'Annotation' }), /data-menu="type"/)
+  assert.match(renderTypeMenu({ type: 'Annotation' }), /aria-checked="true"[\s\S]*Annotation/)
   assert.match(renderReply({ body: 'Reply' }), /data-vc-component="Card \/ Reply"/)
   assert.match(renderQuote({ role: 'Suggestion', apply: true }), /data-role="Suggestion"/)
   const combo = renderComboField({ firstValue: 'Ready', secondValue: 'Reason' })
@@ -238,20 +247,74 @@ check('Position stays dormant and is excluded from the production toolbar', () =
   assert.match(dormant, /export function activateDormantPosition/)
 })
 
-check('Notes panel uses Notes title and Wording filter', () => {
+check('Notes panel uses Search Field, header actions, and Writing filter', () => {
   const html = renderNotesPanel({ collapsed: false, hideResolved: true, filter: 'content', itemsHtml: '<div></div>' })
   assert.match(html, /data-vc-component="Notes Panel"/)
   assert.match(html, /data-state="Expanded"/)
   assert.match(html, />Notes</)
-  assert.match(html, /Show resolved/)
+  assert.match(html, /data-vc-component="Search Field"/)
   assert.match(html, /placeholder="Search"/)
-  assert.match(html, /<svg viewBox="0 0 14 14" width="14" height="14">/)
-  assert.match(html, /M9 9L12\.5 12\.5/)
+  assert.match(html, /vc-panel-search-leading[\s\S]*viewBox="0 0 24 24" width="16" height="16"/)
+  assert.match(html, /M10\.9992 3\.28571/)
   assert.match(html, /data-field="panel-search"/)
-  assert.match(html, /data-action="cycle-filter"/)
-  assert.match(html, /Wording/)
+  assert.match(html, /data-action="toggle-filter-menu"/)
+  assert.match(html, /data-action="resolve-notes"/)
+  assert.match(html, /data-action="panel-more"/)
+  assert.match(html, /Comments/)
+  assert.match(html, /Writing/)
   assert.match(html, /data-filter="content"/)
+  assert.match(html, /data-vc-component="Card \/ Icon Button"/)
+  assert.match(html, /data-action="toggle-panel"/)
+  assert.match(html, /M13\.9714 2\.02859/)
+  const collapsed = renderNotesPanel({ collapsed: true, itemsHtml: '' })
+  assert.match(collapsed, /M8\.66667 2\.66667/)
   assert.equal(html.includes('data-action="close"'), false)
+})
+
+check('Header icon filter action maps to funnel glyph', () => {
+  const html = renderHeaderIcon({ action: 'toggle-filter-menu', label: 'Filter and sort notes' })
+  assert.match(html, /data-vc-component="Card \/ Header Icon"/)
+  assert.match(html, /data-action="toggle-filter-menu"/)
+  assert.match(html, /M18 3C19\.6569 3/)
+})
+
+check('Filter menu renders sort options, divider, and resolved toggle', () => {
+  const html = renderFilterMenu({ sortBy: 'date', showResolvedComments: false })
+  assert.match(html, /data-vc-component="List Menu"/)
+  assert.match(html, /data-menu="filter"/)
+  assert.match(html, /data-action="set-sort-date"/)
+  assert.match(html, /data-action="set-sort-unread"/)
+  assert.match(html, /data-action="toggle-show-resolved"/)
+  assert.match(html, /Sort by date/)
+  assert.match(html, /Sort by unread/)
+  assert.match(html, /Show resolved comments/)
+  assert.match(html, /data-vc-component="Menu Divider"/)
+  assert.match(html, /role="menuitemradio"[\s\S]*Sort by date/)
+  assert.match(html, /role="menuitemcheckbox"[\s\S]*Show resolved comments/)
+  const selected = renderListMenuItem({ label: 'Sort by date', action: 'set-sort-date', selected: true })
+  assert.match(selected, /aria-checked="true"/)
+  assert.match(selected, /Sort by date[\s\S]*vc-list-menu-check/)
+})
+
+check('Panel more menu renders toggles and mark-all-read', () => {
+  const html = renderPanelMoreMenu({ hideComments: true, mentionsOnly: false })
+  assert.match(html, /data-menu="panel-more"/)
+  assert.match(html, /Hide comments/)
+  assert.match(html, /Just mentions and replies/)
+  assert.match(html, /Mark all as read/)
+  assert.match(html, /data-action="toggle-hide-comments"/)
+  assert.match(html, /data-action="toggle-mentions-only"/)
+  assert.match(html, /data-action="mark-all-read"/)
+})
+
+check('Main toolbar PM Only model exposes inspect, comment, wording, and search', () => {
+  const model = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/model.js'), 'utf8')
+  const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
+  assert.match(model, /export const VibeCheckModelPMOnly/)
+  assert.match(model, /export function toolbarModelForRole/)
+  assert.match(element, /data-role="\$\{this\.toolbar_role\}"/)
+  assert.match(element, /default_tool_key = this\.toolbar_role === 'PM Only' \? 'i' : 'g'/)
+  assert.match(element, /TOOLBAR_ROLE_STORAGE_KEY/)
 })
 
 check('generated token files match tokens.json', () => {
@@ -332,6 +395,8 @@ check('mapping manifest references existing sources and renderers', () => {
   for (const name of [
     'Button',
     'Chip',
+    'Field',
+    'Search Field',
     'Card / Field',
     'Card / ComboField',
     'Card / Send',
@@ -339,6 +404,8 @@ check('mapping manifest references existing sources and renderers', () => {
     'Card / Quote',
     'Card / Type Selector',
     'Card / Overflow Menu',
+    'Menu List',
+    'Menu item',
     'Badge',
     'Feedback Pin',
     'Toolbar Search Popout',
@@ -364,8 +431,13 @@ check('mapping manifest references existing sources and renderers', () => {
     'renderQuote',
     'renderTypeSelector',
     'renderTypeMenuItem',
+    'renderTypeMenu',
     'renderOverflowMenu',
     'renderOverflowItem',
+    'renderFilterMenu',
+    'renderPanelMoreMenu',
+    'renderListMenuItem',
+    'renderListMenuDivider',
     'renderReply',
     'renderHeaderIcon',
     'renderSelectedItem',
@@ -421,8 +493,10 @@ check('pin tokens map to VibeCheck Colors collection IDs', () => {
 check('feedback CSS matches Figma semantic treatments', () => {
   const css = fs.readFileSync(path.join(ROOT, 'app/vibecheck/feedback-styles.js'), 'utf8')
   const contract = JSON.parse(fs.readFileSync(path.join(ROOT, 'design-system/cards-v2-contract.json'), 'utf8'))
-  assert.deepEqual(contract.behavior.overflow.menu, ['Mark unread', 'Copy link', 'Delete'])
-  assert.match(css, /\.vc-pin\[data-state="Open"\][\s\S]*border-width: 3px/)
+  assert.deepEqual(contract.behavior.overflow.menu, ['Mark unread', 'Delete'])
+  assert.match(css, /\.vc-pin\[data-state="Open"\][\s\S]*background: var\(--vc-surface\)/)
+  assert.match(css, /\.vc-pin\[data-state="Open"\][\s\S]*border-width: 2px/)
+  assert.match(css, /\.vc-pin\[data-state="Open"\]\[data-vc-type="Note"\][\s\S]*border-color: var\(--vc-pin-note\)/)
   assert.match(css, /\.vc-pin \{[\s\S]*border: 2px solid var\(--vc-icon-inverse\)/)
   assert.match(css, /\.vc-pin \{[\s\S]*color: var\(--vc-icon-inverse\)/)
   assert.match(css, /\.vc-pin\[data-vc-type="Suggestion"\] \{ background: var\(--vc-pin-suggestion\); \}/)
@@ -441,13 +515,34 @@ check('feedback CSS matches Figma semantic treatments', () => {
   assert.doesNotMatch(css, /\.vc-card\[data-card-type="Suggestion"\] \.vc-selected-item[\s\S]*--vc-button-primary-on/)
   assert.match(css, /\.vc-send \{[\s\S]*flex: 0 0 28px/)
   assert.match(css, /\.vc-combo-second \{[\s\S]*border-radius/)
+  assert.match(css, /\.vc-panel-search \{[\s\S]*gap: var\(--vc-spacing-4\)/)
+  assert.match(css, /\.vc-panel-search \{[\s\S]*padding: var\(--vc-spacing-6\) var\(--vc-spacing-4\) var\(--vc-spacing-6\) var\(--vc-spacing-8\)/)
+  assert.match(css, /\.vc-panel-tools \{[\s\S]*height: 40px/)
+  assert.match(css, /\.vc-panel-head \{[\s\S]*height: 43px/)
+  assert.match(css, /\.vc-filters \{[\s\S]*flex-wrap: nowrap/)
+  assert.match(css, /\.vc-filters \{[\s\S]*overflow-x: auto/)
+  assert.match(css, /\.vc-filters::-webkit-scrollbar \{[\s\S]*display: none/)
+  assert.match(css, /\.vc-filters \{[\s\S]*min-width: 0/)
+  assert.match(css, /\.vc-filters \{[\s\S]*width: 100%/)
+  assert.match(css, /\.vc-filters \{[\s\S]*padding: var\(--vc-spacing-8\) var\(--vc-spacing-12\)/)
+  assert.match(css, /\.vc-panel-body \{[\s\S]*overflow-x: hidden/)
+  assert.match(css, /\.vc-panel-body \{[\s\S]*overflow-y: auto/)
   assert.match(css, /#vibecheck-layer \.vc-panel \{[\s\S]*filter: none;[\s\S]*mix-blend-mode: normal;/)
   assert.match(css, /#vibecheck-layer \.vc-panel \{[\s\S]*opacity: 1;/)
   assert.match(css, /\.vc-card-surface \{[\s\S]*width: 240px/)
   assert.match(css, /\.vc-card-surface \{[\s\S]*overflow: visible/)
   assert.match(css, /\.vc-badge\[data-type="Applied"\][\s\S]*--vc-badge-success-background/)
-  assert.match(css, /\.vc-overflow-menu button \{[\s\S]*padding: var\(--vc-spacing-8\) var\(--vc-spacing-10\)/)
-  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1px solid var\(--vc-border\)/)
+  assert.match(css, /\.vc-list-menu \{[\s\S]*background-color: var\(--vc-bg/)
+  assert.match(css, /\.vc-list-menu \{[\s\S]*min-width: 167px/)
+  assert.match(css, /\.vc-list-menu-item \{[\s\S]*padding: var\(--vc-spacing-6\) var\(--vc-spacing-10\)/)
+  assert.match(css, /\.vc-list-menu-item \{[\s\S]*gap: var\(--vc-spacing-8\)/)
+  assert.match(css, /\.vc-list-menu-item:hover[\s\S]*background: var\(--vc-surface\)/)
+  assert.match(css, /\.vc-list-menu-item-selected[\s\S]*background: var\(--vc-surface\)/)
+  assert.match(css, /\.vc-list-menu-check \{[\s\S]*width: 16px/)
+  assert.match(css, /\.vc-list-menu-divider \{[\s\S]*background: var\(--vc-border-gray-light\)/)
+  assert.match(css, /\.vc-list-menu-item-critical[\s\S]*--vc-text-critical/)
+  assert.match(css, /\.vc-avatar \{[\s\S]*border: 1\.5px solid var\(--vc-surface\)/)
+  assert.match(css, /\.vc-avatar \{[\s\S]*color: var\(--vc-text-inverse\)/)
   assert.match(css, /\.vc-avatar \+ \.vc-avatar \{ margin-left: -5px; \}/)
 })
 

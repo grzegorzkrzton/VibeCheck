@@ -339,6 +339,22 @@ export const VibeCheckModel = {
   },
 }
 
+export const VibeCheckModelPMOnly = {
+  i: VibeCheckModel.i,
+  c: VibeCheckModel.c,
+  w: {
+    ...VibeCheckModel.w,
+    dividerAfter: true,
+  },
+  s: VibeCheckModel.s,
+}
+
+export const TOOLBAR_ROLE_STORAGE_KEY = 'vibecheck:toolbarRole'
+
+export function toolbarModelForRole(role = 'Full') {
+  return role === 'PM Only' ? VibeCheckModelPMOnly : VibeCheckModel
+}
+
 export const VibeCheckPromptTool = {
   tool:         'prompt',
   icon:         Icons.prompt,

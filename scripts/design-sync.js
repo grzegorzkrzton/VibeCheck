@@ -8,6 +8,8 @@ const ROOT = path.resolve(__dirname, '..')
 const TOKENS_PATH = path.join(ROOT, 'design-system', 'tokens.json')
 const GENERATED_DIR = path.join(ROOT, 'design-system', 'generated')
 const POPUP_TOKENS_PATH = path.join(ROOT, 'extension', 'popup', 'tokens.css')
+const FONTS_SRC = path.join(ROOT, 'design-system', 'fonts', 'figtree')
+const FONTS_EXT = path.join(ROOT, 'extension', 'fonts', 'figtree')
 
 function loadTokens(root = ROOT) {
   return JSON.parse(fs.readFileSync(path.join(root, 'design-system', 'tokens.json'), 'utf8'))
@@ -27,12 +29,48 @@ function colorDecls(tokens, mode) {
   return declsFor(tokens.color[mode], tokens.cssPrefix)
 }
 
+function fontPrimitiveDecls(tokens) {
+  const prefix = tokens.cssPrefix
+  const font = tokens.font
+  const lines = [
+    `  ${prefix}-font-family: ${font.family};`,
+    `  ${prefix}-font-feature-settings: ${font.featureSettings || '"ss01" 1'};`,
+  ]
+
+  Object.entries(font.size || {}).forEach(([key, value]) => {
+    lines.push(`  ${prefix}-font-size-${key}: ${value};`)
+  })
+  Object.entries(font.weight || {}).forEach(([key, value]) => {
+    lines.push(`  ${prefix}-font-weight-${key}: ${value};`)
+  })
+  Object.entries(font.lineHeight || {}).forEach(([key, value]) => {
+    lines.push(`  ${prefix}-line-height-${key}: ${value};`)
+  })
+  Object.entries(font.letterSpacing || {}).forEach(([key, value]) => {
+    lines.push(`  ${prefix}-letter-spacing-${key}: ${value};`)
+  })
+
+  Object.entries(font.text || {}).forEach(([name, recipe]) => {
+    const weight = font.weight[recipe.weight]
+    const size = font.size[recipe.size]
+    const lineHeight = font.lineHeight[recipe.lineHeight]
+    lines.push(
+      `  ${prefix}-text-${name}: ${weight} ${size}/${lineHeight} var(${prefix}-font-family);`,
+    )
+    lines.push(
+      `  ${prefix}-text-${name}-letter-spacing: var(${prefix}-letter-spacing-${recipe.letterSpacing});`,
+    )
+  })
+
+  return lines.join('\n')
+}
+
 function sharedDecls(tokens) {
   return [
     declsFor(tokens.primitives, tokens.cssPrefix),
     declsFor(tokens.dimension, tokens.cssPrefix),
     declsFor(tokens.effect, tokens.cssPrefix),
-    `  ${tokens.cssPrefix}-font-family: ${tokens.font.family};`,
+    fontPrimitiveDecls(tokens),
   ].join('\n')
 }
 
@@ -40,10 +78,32 @@ function banner() {
   return '/* Generated from design-system/tokens.json. Do not edit. */'
 }
 
+/** @param {string} urlForFile - function body not used; pass absolute or relative URL builder result per file */
+function figtreeFontFaceCss(urlForFile) {
+  const faces = [
+    [400, 'figtree-400.woff2'],
+    [500, 'figtree-500.woff2'],
+    [600, 'figtree-600.woff2'],
+    [700, 'figtree-700.woff2'],
+  ]
+  return faces.map(([weight, file]) => `@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: ${weight};
+  font-display: swap;
+  src: url('${urlForFile(file)}') format('woff2');
+}`).join('\n\n')
+}
+
+function popupFontFaceCss() {
+  return figtreeFontFaceCss((file) => `../fonts/figtree/${file}`)
+}
+
 function generateOutputs(tokens) {
   const lightColors = colorDecls(tokens, 'light')
   const darkColors = colorDecls(tokens, 'dark')
   const shared = sharedDecls(tokens)
+  const popupFonts = popupFontFaceCss()
 
   const tokensCss = `${banner()}
 :root, :host {
@@ -93,11 +153,42 @@ ${darkColors}
 }
 `
 
+  const popupTokensCss = `${banner()}
+${popupFonts}
+
+:root, :host {
+${lightColors}
+${shared}
+}
+
+@media (prefers-color-scheme: dark) {
+  :root, :host {
+${darkColors}
+  }
+}
+`
+
   const tokensJs = `${banner().replace('/* ', '// ').replace(' */', '')}
 export const tokenCss = ${JSON.stringify(tokensCss)};
 export const layerTokenCss = ${JSON.stringify(layerTokenCss)};
 export const hostLightCss = ${JSON.stringify(tokensLightCss)};
 export const hostDarkCss = ${JSON.stringify(tokensDarkCss)};
+
+export function figtreeFontFaceCss(urlForFile) {
+  const faces = [
+    [400, 'figtree-400.woff2'],
+    [500, 'figtree-500.woff2'],
+    [600, 'figtree-600.woff2'],
+    [700, 'figtree-700.woff2'],
+  ];
+  return faces.map(([weight, file]) => \`@font-face {
+  font-family: 'Figtree';
+  font-style: normal;
+  font-weight: \${weight};
+  font-display: swap;
+  src: url('\${urlForFile(file)}') format('woff2');
+}\`).join('\\n\\n');
+}
 `
 
   return {
@@ -105,12 +196,23 @@ export const hostDarkCss = ${JSON.stringify(tokensDarkCss)};
     'design-system/generated/tokens-light.css': tokensLightCss,
     'design-system/generated/tokens-dark.css': tokensDarkCss,
     'design-system/generated/tokens.js': tokensJs,
-    'extension/popup/tokens.css': tokensCss,
+    'extension/popup/tokens.css': popupTokensCss,
+  }
+}
+
+function syncFontFiles(root = ROOT) {
+  const src = path.join(root, 'design-system', 'fonts', 'figtree')
+  const dest = path.join(root, 'extension', 'fonts', 'figtree')
+  if (!fs.existsSync(src)) return
+  fs.mkdirSync(dest, { recursive: true })
+  for (const file of fs.readdirSync(src)) {
+    fs.copyFileSync(path.join(src, file), path.join(dest, file))
   }
 }
 
 function writeOutputs(root = ROOT, files = generateOutputs(loadTokens(root))) {
   fs.mkdirSync(path.join(root, 'design-system', 'generated'), { recursive: true })
+  syncFontFiles(root)
   Object.entries(files).forEach(([rel, contents]) => {
     const abs = path.join(root, rel)
     fs.mkdirSync(path.dirname(abs), { recursive: true })
@@ -157,8 +259,12 @@ module.exports = {
   TOKENS_PATH,
   GENERATED_DIR,
   POPUP_TOKENS_PATH,
+  FONTS_SRC,
+  FONTS_EXT,
   loadTokens,
   generateOutputs,
   writeOutputs,
+  syncFontFiles,
+  figtreeFontFaceCss,
   check,
 }

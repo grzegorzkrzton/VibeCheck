@@ -21,6 +21,9 @@ async function refresh() {
   const storedAuthor = await chrome.storage.local.get('vibecheck:authorName')
   $('author').value = storedAuthor['vibecheck:authorName'] || 'You'
 
+  const storedRole = await chrome.storage.local.get('vibecheck:toolbarRole')
+  $('toolbar-role').value = storedRole['vibecheck:toolbarRole'] || 'Full'
+
   if (session?.user) {
     $('status').textContent = `Signed in as ${session.user.email}`
     $('signin').hidden = true
@@ -59,6 +62,11 @@ function escapeHtml(value = '') {
 $('save-author').addEventListener('click', async () => {
   const name = $('author').value.trim() || 'You'
   await chrome.storage.local.set({ 'vibecheck:authorName': name })
+})
+
+$('toolbar-role').addEventListener('change', async () => {
+  const role = $('toolbar-role').value === 'PM Only' ? 'PM Only' : 'Full'
+  await chrome.storage.local.set({ 'vibecheck:toolbarRole': role })
 })
 
 $('save-config').addEventListener('click', async () => {

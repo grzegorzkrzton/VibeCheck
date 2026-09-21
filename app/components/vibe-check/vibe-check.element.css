@@ -27,7 +27,8 @@
   all: initial;
   cursor: inherit;
   font-size: 16px;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+  font-family: var(--vc-font-family);
+  font-feature-settings: var(--vc-font-feature-settings);
   display: flex;
   flex-direction: column;
   margin: 1em 0 0.5em 1em;
@@ -108,6 +109,8 @@
     text-align: left;
     background: var(--theme-bg);
     color: var(--theme-text_color);
+    font-family: var(--vc-font-family);
+    font-feature-settings: var(--vc-font-feature-settings);
     box-shadow: 0 0.1em 4.5em hsla(0,0%,0%,15%);
     border-radius: 1em;
 
@@ -123,24 +126,25 @@
 
       & > :is(h2,p) {
         margin: 0;
+        color: inherit;
       }
 
       & > h2 {
-        font-size: 1.5em;
-        line-height: 1.1;
+        font: var(--vc-text-heading-xl);
+        letter-spacing: var(--vc-text-heading-xl-letter-spacing);
         display: grid;
         grid-auto-flow: column;
         justify-content: space-between;
         align-items: center;
 
         & u {
-          text-decoration-color: var(--vc-text);
+          text-decoration-color: currentColor;
         }
       }
 
       & > p {
-        font-size: 1em;
-        line-height: 1.5;
+        font: var(--vc-text-body-md);
+        letter-spacing: var(--vc-text-body-md-letter-spacing);
         color: var(--theme-icon_color);
       }
 

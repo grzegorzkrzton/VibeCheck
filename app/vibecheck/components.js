@@ -131,24 +131,45 @@ export function renderSend({
   })}>${cardIcon('send', 20)}</button>`
 }
 
+function headerIconName(action) {
+  if (action === 'toggle-overflow' || action === 'panel-more') return 'more'
+  if (action === 'resolve' || action === 'resolve-notes') return 'checkCircle'
+  if (action === 'toggle-filter-menu' || action === 'cycle-filter') return 'funnel'
+  if (action === 'close' || action === 'toggle-panel') return 'close'
+  return 'close'
+}
+
 export function renderHeaderIcon({
   action,
   label,
   active = false,
   expanded,
+  disabled = false,
+  extraClass = '',
 } = {}) {
-  const icon = action === 'toggle-overflow'
-    ? 'more'
-    : action === 'resolve'
-      ? 'resolve'
-      : 'close'
-  return `<button type="button" class="vc-header-icon" ${attrs({
+  return `<button type="button" class="vc-header-icon ${extraClass}" ${attrs({
     'data-vc-component': 'Card / Header Icon',
     'data-action': action,
     'data-state': active ? 'Active' : 'Default',
     'aria-label': label,
     'aria-expanded': expanded,
-  })}>${cardIcon(icon)}</button>`
+    'aria-disabled': disabled ? 'true' : undefined,
+    disabled: disabled || undefined,
+  })}>${cardIcon(headerIconName(action))}</button>`
+}
+
+export function renderIconButton({
+  icon,
+  action,
+  ariaLabel,
+  extraClass = '',
+} = {}) {
+  return `<button type="button" class="vc-icon-button ${extraClass}" ${attrs({
+    'data-vc-component': 'Card / Icon Button',
+    'data-action': action,
+    'data-state': 'Default',
+    'aria-label': ariaLabel,
+  })}>${cardIcon(icon, 16)}</button>`
 }
 
 export function renderSelectedItem(label = '', type = 'Note') {
@@ -163,7 +184,6 @@ export function renderTypeSelector({
   disabled = false,
   open = false,
 } = {}) {
-  const options = ['Comment', 'Annotation', 'Wording']
   return `
     <div class="vc-type-selector" ${attrs({
       'data-vc-component': 'Card / Type Selector',
@@ -177,40 +197,175 @@ export function renderTypeSelector({
       })}>
         <span>${escapeHtml(type)}</span>${disabled ? '' : cardIcon('chevron')}
       </button>
-      ${open && !disabled ? `
-        <div class="vc-type-menu" role="menu" aria-label="Card type">
-          ${options.map(option => renderTypeMenuItem({ option, selected: option === type })).join('')}
-        </div>
-      ` : ''}
+      ${open && !disabled ? renderTypeMenu({ type }) : ''}
+    </div>
+  `
+}
+
+export function renderListMenuDivider() {
+  return `<div class="vc-list-menu-divider" data-vc-component="Menu Divider" role="separator"></div>`
+}
+
+export function renderListMenuItem({
+  label = '',
+  action,
+  selected = false,
+  role = 'menuitemradio',
+  tone = 'default',
+  dataComponent = 'Menu item',
+  dataCardType,
+} = {}) {
+  const checked = role === 'menuitemcheckbox' || role === 'menuitemradio'
+  const classes = [
+    'vc-list-menu-item',
+    selected ? 'vc-list-menu-item-selected' : '',
+    tone === 'critical' ? 'vc-list-menu-item-critical' : '',
+  ].filter(Boolean).join(' ')
+  return `
+    <button type="button" role="${role}" class="${classes}" ${attrs({
+      'data-vc-component': dataComponent,
+      'data-action': action,
+      'data-card-type': dataCardType,
+      'aria-checked': checked ? String(selected) : undefined,
+    })}>
+      <span class="vc-list-menu-label">${escapeHtml(label)}</span>
+      ${selected ? `<span class="vc-list-menu-check" aria-hidden="true">${cardIcon('check', 16)}</span>` : ''}
+    </button>
+  `
+}
+
+export function renderListMenu({
+  label = '',
+  dataComponent = 'Menu List',
+  menuId,
+  items = [],
+} = {}) {
+  const body = items.map(item => {
+    if (item.type === 'divider') return renderListMenuDivider()
+    return renderListMenuItem({
+      label: item.label,
+      action: item.action,
+      selected: item.selected,
+      role: item.role,
+      tone: item.tone,
+      dataComponent: item.dataComponent || 'Menu item',
+      dataCardType: item.dataCardType,
+    })
+  }).join('')
+  return `
+    <div class="vc-list-menu" ${attrs({
+      'data-vc-component': dataComponent,
+      'data-menu': menuId,
+      role: 'menu',
+      'aria-label': label,
+    })}>
+      ${body}
     </div>
   `
 }
 
 export function renderTypeMenuItem({ option = 'Comment', selected = false } = {}) {
-  return `
-    <button type="button" role="menuitemradio" class="vc-type-menu-item" ${attrs({
-      'data-vc-component': 'Card / Type Menu Item',
-      'data-action': 'set-card-type',
-      'data-card-type': option,
-      'aria-checked': String(selected),
-    })}>
-      <span>${escapeHtml(option)}</span>${selected ? cardIcon('check', 20) : ''}
-    </button>
-  `
+  return renderListMenuItem({
+    label: option,
+    action: 'set-card-type',
+    selected,
+    role: 'menuitemradio',
+    dataComponent: 'Card / Type Menu Item',
+    dataCardType: option,
+  })
 }
 
-export function renderOverflowItem({ action, label } = {}) {
-  return `<button type="button" role="menuitem" data-vc-component="Card / Overflow Item" data-action="${escapeHtml(action)}">${escapeHtml(label)}</button>`
+export function renderTypeMenu({ type = 'Comment' } = {}) {
+  const options = ['Comment', 'Annotation', 'Wording']
+  return renderListMenu({
+    label: 'Card type',
+    dataComponent: 'Card / Type Menu',
+    menuId: 'type',
+    items: options.map(option => ({
+      type: 'item',
+      label: option,
+      action: 'set-card-type',
+      selected: option === type,
+      role: 'menuitemradio',
+      dataCardType: option,
+      dataComponent: 'Card / Type Menu Item',
+    })),
+  })
+}
+
+export function renderOverflowItem({ action, label, tone = 'default' } = {}) {
+  return renderListMenuItem({
+    label,
+    action,
+    role: 'menuitem',
+    tone,
+    dataComponent: 'Card / Overflow Item',
+  })
 }
 
 export function renderOverflowMenu() {
-  return `
-    <div class="vc-overflow-menu" data-vc-component="Card / Overflow Menu" role="menu" aria-label="Thread actions">
-      ${renderOverflowItem({ action: 'mark-unread', label: 'Mark as unread' })}
-      ${renderOverflowItem({ action: 'copy-link', label: 'Copy link' })}
-      ${renderOverflowItem({ action: 'delete', label: 'Delete thread…' })}
-    </div>
-  `
+  return renderListMenu({
+    label: 'Thread actions',
+    dataComponent: 'Card / Overflow Menu',
+    menuId: 'overflow',
+    items: [
+      { type: 'item', label: 'Mark as unread', action: 'mark-unread', role: 'menuitem' },
+      { type: 'item', label: 'Delete thread…', action: 'delete', role: 'menuitem', tone: 'critical' },
+    ],
+  })
+}
+
+export function renderFilterMenu({
+  sortBy = 'date',
+  showResolvedComments = false,
+} = {}) {
+  return renderListMenu({
+    label: 'Filter and sort notes',
+    dataComponent: 'List Menu',
+    menuId: 'filter',
+    items: [
+      { type: 'item', label: 'Sort by date', action: 'set-sort-date', selected: sortBy === 'date' },
+      { type: 'item', label: 'Sort by unread', action: 'set-sort-unread', selected: sortBy === 'unread' },
+      { type: 'divider' },
+      {
+        type: 'item',
+        label: 'Show resolved comments',
+        action: 'toggle-show-resolved',
+        selected: showResolvedComments,
+        role: 'menuitemcheckbox',
+      },
+    ],
+  })
+}
+
+export function renderPanelMoreMenu({
+  hideComments = false,
+  mentionsOnly = false,
+} = {}) {
+  return renderListMenu({
+    label: 'More panel actions',
+    dataComponent: 'List Menu',
+    menuId: 'panel-more',
+    items: [
+      {
+        type: 'item',
+        label: 'Hide comments',
+        action: 'toggle-hide-comments',
+        selected: hideComments,
+        role: 'menuitemcheckbox',
+      },
+      { type: 'divider' },
+      {
+        type: 'item',
+        label: 'Just mentions and replies',
+        action: 'toggle-mentions-only',
+        selected: mentionsOnly,
+        role: 'menuitemcheckbox',
+      },
+      { type: 'divider' },
+      { type: 'item', label: 'Mark all as read', action: 'mark-all-read', role: 'menuitem' },
+    ],
+  })
 }
 
 export function renderReply({
@@ -269,6 +424,7 @@ export function renderPin({
   const visualType = pinVisualType(recordKind, type, kind)
   const visualState = pinVisualState({ open, resolved })
   const numericLabel = String(number ?? '').replace(/\D/g, '') || '1'
+  const label = visualState === 'Open' ? '' : numericLabel
   return `<button type="button" class="vc-pin" ${attrs({
     'data-vc-component': 'Feedback Pin',
     'data-vc-type': visualType,
@@ -280,7 +436,7 @@ export function renderPin({
     'data-kind': kind || '',
     'data-resolved': Boolean(resolved),
     'data-open': Boolean(open),
-  })}>${numericLabel}</button>`
+  })}>${label}</button>`
 }
 
 export function renderKindSwitch(kind = 'implement') {
@@ -709,13 +865,19 @@ export function renderNotesPanel({
   hideResolved = true,
   filter = 'all',
   search = '',
+  filterMenuOpen = false,
+  panelMoreOpen = false,
+  sortBy = 'date',
+  showResolvedComments = false,
+  hideComments = false,
+  mentionsOnly = false,
   itemsHtml = '',
 } = {}) {
   const filters = [
     ['all', 'All'],
-    ['notes', 'Notes'],
+    ['notes', 'Comments'],
     ['annotations', 'Annotations'],
-    ['content', 'Wording'],
+    ['content', 'Writing'],
   ]
   return `
     <aside class="vc-panel" ${attrs({
@@ -726,12 +888,11 @@ export function renderNotesPanel({
       <div class="vc-panel-head" data-drag-handle="panel" title="Drag to move">
         <span>Notes</span>
         <div class="vc-panel-controls">
-          ${renderButton({
-            style: 'Secondary',
-            extraClass: 'vc-collapse',
+          ${renderIconButton({
+            icon: collapsed ? 'arrowDiagonalOut' : 'arrowDiagonalIn',
             action: 'toggle-panel',
-            label: collapsed ? '▣' : '−',
             ariaLabel: collapsed ? 'Expand notes panel' : 'Collapse notes panel',
+            extraClass: 'vc-panel-collapse-btn',
           })}
         </div>
       </div>
@@ -740,27 +901,33 @@ export function renderNotesPanel({
       })}>
         <div class="vc-panel-body">
           <div class="vc-panel-tools">
-            <label class="vc-panel-search">
-              <span aria-hidden="true">
-                <svg viewBox="0 0 14 14" width="14" height="14"><path d="M6 10C8.20914 10 10 8.20914 10 6C10 3.79086 8.20914 2 6 2C3.79086 2 2 3.79086 2 6C2 8.20914 3.79086 10 6 10Z"></path><path d="M9 9L12.5 12.5"></path></svg>
-              </span>
+            <label class="vc-panel-search" data-vc-component="Search Field" data-state="${search.trim() ? 'Filled' : 'Default'}">
+              <span class="vc-panel-search-leading" aria-hidden="true">${cardIcon('search', 16)}</span>
               <input type="search" data-field="panel-search" value="${escapeHtml(search)}" placeholder="Search" aria-label="Search notes" ${collapsed ? 'tabindex="-1"' : ''}>
+              ${search.trim() ? `<button type="button" class="vc-panel-search-clear" data-action="clear-search" aria-label="Clear search">${cardIcon('xCircle', 16)}</button>` : ''}
             </label>
-            ${renderButton({
-              style: 'Secondary',
-              extraClass: 'vc-panel-tool',
-              action: 'cycle-filter',
-              label: '≡',
-              ariaLabel: `Change filter, currently ${filters.find(([value]) => value === filter)?.[1] || 'All'}`,
-            })}
-            ${renderButton({
-              style: 'Secondary',
-              extraClass: 'vc-panel-tool vc-panel-more',
-              action: 'toggle-resolved',
-              label: '•••',
-              ariaLabel: hideResolved ? 'Show resolved notes' : 'Hide resolved notes',
-              ariaPressed: hideResolved ? 'false' : 'true',
-            })}
+            <div class="vc-panel-header-actions">
+              ${renderHeaderIcon({
+                action: 'toggle-filter-menu',
+                label: 'Filter and sort notes',
+                expanded: filterMenuOpen,
+                extraClass: 'vc-panel-header-icon',
+              })}
+              ${renderHeaderIcon({
+                action: 'resolve-notes',
+                label: 'Resolve notes',
+                disabled: true,
+                extraClass: 'vc-panel-header-icon',
+              })}
+              ${renderHeaderIcon({
+                action: 'panel-more',
+                label: 'More panel actions',
+                expanded: panelMoreOpen,
+                extraClass: 'vc-panel-header-icon vc-panel-more',
+              })}
+            </div>
+            ${filterMenuOpen ? renderFilterMenu({ sortBy, showResolvedComments }) : ''}
+            ${panelMoreOpen ? renderPanelMoreMenu({ hideComments, mentionsOnly }) : ''}
           </div>
           <div class="vc-filters">
             ${filters.map(([value, label]) => renderChip({

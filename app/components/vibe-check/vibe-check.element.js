@@ -14,6 +14,7 @@ import {
 } from '../../features/'
 import { startChangeTracker } from '../../vibecheck/tracker'
 import { startFeedbackLayer, setFeedbackScheme } from '../../vibecheck/feedback-ui'
+import { figtreeFontFaceCss } from '../../../design-system/generated/tokens.js'
 
 import {
   VibeCheckStyles,
@@ -21,7 +22,12 @@ import {
   VibeCheckDarkStyles
 } from '../styles.store'
 
-import { VibeCheckModel, VibeCheckPromptTool }  from './model'
+import {
+  VibeCheckModel,
+  VibeCheckPromptTool,
+  TOOLBAR_ROLE_STORAGE_KEY,
+  toolbarModelForRole,
+} from './model'
 import * as Icons                 from './vibe-check.icons'
 import { provideSelectorEngine }  from '../../features/search'
 import { PluginRegistry }         from '../../plugins/_registry'
@@ -38,7 +44,9 @@ export default class VibeCheck extends HTMLElement {
   constructor() {
     super()
 
+    this.toolbar_role   = 'Full'
     this.toolbar_model  = VibeCheckModel
+    this.default_tool_key = 'g'
     this.prompt_tool    = VibeCheckPromptTool
     this.$shadow        = this.attachShadow({mode: 'closed'})
     this.applyScheme    = schemeRule(
@@ -51,10 +59,12 @@ export default class VibeCheck extends HTMLElement {
     return ['color-scheme']
   }
 
-  connectedCallback() {
+  async connectedCallback() {
     this._tutsBaseURL = this.getAttribute('tutsBaseURL') || 'tuts'
 
+    await this.loadToolbarRole()
     this.setup()
+    this.watchToolbarRole()
 
     this.selectorEngine = Selectable(this)
     this.colorPicker    = ColorPicker(this.$shadow, this.selectorEngine)
@@ -64,7 +74,7 @@ export default class VibeCheck extends HTMLElement {
     setFeedbackScheme(this.getAttribute('color-scheme'))
     this.stopFeedbackLayer = startFeedbackLayer()
 
-    this.toolSelected($('[data-tool="guides"]', this.$shadow)[0])
+    this.toolSelected(this.defaultTool())
   }
 
   disconnectedCallback() {
@@ -72,12 +82,71 @@ export default class VibeCheck extends HTMLElement {
     this.stopChangeTracker?.()
     this.stopFeedbackLayer?.()
     this.teardownToolbarTips()
+    this.unbindToolbarHotkeys()
+    this.unwatchToolbarRole()
     this.cleanup()
-    this.selectorEngine.disconnect()
+    this.selectorEngine?.disconnect()
+  }
+
+  loadToolbarRole() {
+    return new Promise(resolve => {
+      if (typeof chrome !== 'undefined' && chrome.storage?.local) {
+        chrome.storage.local.get(TOOLBAR_ROLE_STORAGE_KEY, data => {
+          this.applyToolbarRole(data[TOOLBAR_ROLE_STORAGE_KEY] || 'Full')
+          resolve(this.toolbar_role)
+        })
+        return
+      }
+      this.applyToolbarRole('Full')
+      resolve(this.toolbar_role)
+    })
+  }
+
+  applyToolbarRole(role = 'Full') {
+    this.toolbar_role = role === 'PM Only' ? 'PM Only' : 'Full'
+    this.toolbar_model = toolbarModelForRole(this.toolbar_role)
+    this.default_tool_key = this.toolbar_role === 'PM Only' ? 'i' : 'g'
+  }
+
+  defaultTool() {
+    return this.toolbar_model[this.default_tool_key]?.tool || 'guides'
+  }
+
+  watchToolbarRole() {
+    if (typeof chrome === 'undefined' || !chrome.storage?.onChanged) return
+    this._onToolbarRoleChange = (changes, area) => {
+      if (area !== 'local') return
+      const change = changes[TOOLBAR_ROLE_STORAGE_KEY]
+      if (!change || change.newValue === this.toolbar_role) return
+      this.setToolbarRole(change.newValue || 'Full')
+    }
+    chrome.storage.onChanged.addListener(this._onToolbarRoleChange)
+  }
+
+  unwatchToolbarRole() {
+    if (this._onToolbarRoleChange && chrome.storage?.onChanged)
+      chrome.storage.onChanged.removeListener(this._onToolbarRoleChange)
+    this._onToolbarRoleChange = null
+  }
+
+  setToolbarRole(role = 'Full') {
+    const previousTool = this.active_tool?.dataset?.tool
+    this.deactivate_feature()
+    this.unbindToolbarHotkeys()
+    this.teardownToolbarTips()
+    this.applyToolbarRole(role)
+    this.setup()
+    const stillVisible = Object.values(this.toolbar_model)
+      .some(tool => tool.tool === previousTool)
+    const nextTool = stillVisible ? previousTool : this.defaultTool()
+    this.toolSelected(nextTool)
+  }
+
+  unbindToolbarHotkeys() {
     hotkeys.unbind(
       Object.keys(this.toolbar_model).reduce((events, key) =>
         events += ',' + key, '') + ',q')
-    hotkeys.unbind(`${metaKey}+/`)
+    hotkeys.unbind(`${metaKey}+/,${metaKey}+.`)
   }
 
   attributeChangedCallback(name, oldValue, newValue) {
@@ -233,9 +302,19 @@ export default class VibeCheck extends HTMLElement {
     if (this._tipHost) return
 
     if (!document.getElementById('vibecheck-tip-styles')) {
+      const fontBase = (() => {
+        try {
+          if (typeof chrome !== 'undefined' && chrome.runtime?.getURL)
+            return chrome.runtime.getURL('fonts/figtree/')
+        }
+        catch (_) { /* ignore */ }
+        return '/fonts/figtree/'
+      })()
+      const fonts = figtreeFontFaceCss((file) => `${fontBase}${file}`)
       const style = document.createElement('style')
       style.id = 'vibecheck-tip-styles'
       style.textContent = `
+        ${fonts}
         #vibecheck-toolbar-tip {
           position: fixed;
           z-index: 2147483647;
@@ -248,28 +327,49 @@ export default class VibeCheck extends HTMLElement {
           overflow: hidden;
           border-radius: 1em;
           max-width: min(360px, calc(100vw - 24px));
-          font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+          font-family: var(--vc-font-family, Figtree, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif);
+          font-feature-settings: var(--vc-font-feature-settings, "ss01" 1);
+          font-size: 16px;
+          line-height: 1.4;
+          color: var(--vc-text, #f4f4f6);
+        }
+        #vibecheck-toolbar-tip,
+        #vibecheck-toolbar-tip * {
+          font-family: inherit;
+          font-feature-settings: inherit;
         }
         #vibecheck-toolbar-tip figure { margin: 0; display: grid; }
         #vibecheck-toolbar-tip img { width: 100%; display: block; }
         #vibecheck-toolbar-tip figcaption { padding: 1em; display: grid; gap: 1em; }
         #vibecheck-toolbar-tip h2 {
           margin: 0;
-          font-size: 1.5em;
-          line-height: 1.1;
+          font: var(--vc-text-heading-xl, 700 24px/32px Figtree, system-ui, sans-serif);
+          letter-spacing: var(--vc-text-heading-xl-letter-spacing, 0);
+          color: inherit;
           display: grid;
           grid-auto-flow: column;
           justify-content: space-between;
           align-items: center;
         }
-        #vibecheck-toolbar-tip h2 u { text-decoration-color: var(--vc-text, #111827); }
-        #vibecheck-toolbar-tip p { margin: 0; font-size: 1em; line-height: 1.5; }
-        #vibecheck-toolbar-tip [table] { display: grid; gap: 0.5em; }
+        #vibecheck-toolbar-tip h2 u { text-decoration-color: currentColor; }
+        #vibecheck-toolbar-tip p {
+          margin: 0;
+          font: var(--vc-text-body-md, 400 16px/24px Figtree, system-ui, sans-serif);
+          letter-spacing: var(--vc-text-body-md-letter-spacing, 0);
+          color: var(--vc-icon-subtle, inherit);
+        }
+        #vibecheck-toolbar-tip [table] {
+          display: grid;
+          gap: 0.5em;
+          color: inherit;
+          font: var(--vc-text-body-sm, 400 14px/20px Figtree, system-ui, sans-serif);
+        }
         #vibecheck-toolbar-tip [table] > div {
           display: grid;
           grid-auto-flow: column;
           grid-template-columns: 1fr auto;
           justify-content: space-between;
+          color: inherit;
         }
         #vibecheck-toolbar-tip [hotkey] {
           border-radius: var(--vc-radius-6, 6px);
@@ -278,11 +378,10 @@ export default class VibeCheck extends HTMLElement {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          background: var(--vc-surface, #eeeff1);
-          border: 1px solid var(--vc-border-gray-medium, #8f96a3);
-          color: var(--vc-text, #111827);
-          font-weight: 300;
-          font-size: 0.5em;
+          background: var(--vc-surface, #2e3138);
+          border: 1px solid var(--vc-border-gray-medium, #5c6370);
+          color: inherit;
+          font: var(--vc-text-body-xxs, 400 10px/14px Figtree, system-ui, sans-serif);
           text-transform: uppercase;
           box-shadow: 0 2px 2px hsla(0 0% 0% / .25);
         }
@@ -308,11 +407,29 @@ export default class VibeCheck extends HTMLElement {
     this._tipHost.style.color = asideStyle.color
     this._tipHost.style.boxShadow = asideStyle.boxShadow
     const hostStyles = getComputedStyle(this)
-    for (const name of ['--vc-text', '--vc-surface', '--vc-border-gray-medium', '--vc-text-gray-medium']) {
+    for (const name of [
+      '--vc-text',
+      '--vc-surface',
+      '--vc-border-gray-medium',
+      '--vc-text-gray-medium',
+      '--vc-icon-subtle',
+      '--vc-font-family',
+      '--vc-font-feature-settings',
+      '--vc-text-heading-xl',
+      '--vc-text-heading-xl-letter-spacing',
+      '--vc-text-body-md',
+      '--vc-text-body-md-letter-spacing',
+      '--vc-text-body-sm',
+      '--vc-text-body-xxs',
+      '--vc-radius-6',
+    ]) {
       const value = hostStyles.getPropertyValue(name).trim()
       if (value) this._tipHost.style.setProperty(name, value)
     }
 
+    // Force readable title/body: host-page `h2` rules often paint black in light DOM.
+    const title = this._tipHost.querySelector('h2')
+    if (title) title.style.color = asideStyle.color
     const caption = this._tipHost.querySelector('p')
     const sourceCaption = aside.querySelector('p')
     if (caption && sourceCaption)
@@ -361,10 +478,10 @@ export default class VibeCheck extends HTMLElement {
   render() {
     return `
       <vibecheck-hotkeys></vibecheck-hotkeys>
-      <ol data-vc-component="Main Toolbar" constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
+      <ol data-vc-component="Main Toolbar" data-role="${this.toolbar_role}" constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
         ${Object.entries(this.toolbar_model).reduce((list, [key, tool]) => `
           ${list}
-          <li data-vc-component="Toolbar Tool Button" data-state="${key == 'g' ? 'Active' : 'Default'}" aria-label="${tool.label} Tool" aria-description="${tool.description}" aria-hotkey="${key}" data-tool="${tool.tool}" data-active="${key == 'g'}">
+          <li data-vc-component="Toolbar Tool Button" data-state="${key == this.default_tool_key ? 'Active' : 'Default'}" aria-label="${tool.label} Tool" aria-description="${tool.description}" aria-hotkey="${key}" data-tool="${tool.tool}" data-active="${key == this.default_tool_key}">
             ${tool.icon}
             ${this.demoTip({key, ...tool})}
           </li>

@@ -63,7 +63,7 @@
     },
     {
       "name": "Chip",
-      "figmaName": "Chip",
+      "figmaName": "Notes Panel Chip",
       "nodeId": "4:31",
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-31",
@@ -74,8 +74,7 @@
         "dataComponent": "Chip"
       },
       "variants": {
-        "Kind": ["Segment", "Filter", "Annotation"],
-        "State": ["Default", "Selected"]
+        "State": ["Default", "Hover", "Selected"]
       },
       "attributes": {
         "data-kind": "Kind",
@@ -83,8 +82,46 @@
       }
     },
     {
+      "name": "Field",
+      "figmaName": "Field",
+      "nodeId": "348:8892",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=348-8892",
+      "code": {
+        "source": "extension/popup/popup.css",
+        "renderer": "popup markup",
+        "selector": "[data-vc-component=\"Field\"]",
+        "dataComponent": "Field"
+      },
+      "variants": {
+        "State": ["Default", "Hover", "Focus", "Filled", "Disabled", "Error"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
+      "name": "Search Field",
+      "figmaName": "Search Field",
+      "nodeId": "348:9564",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=348-9564",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderNotesPanel",
+        "selector": "[data-vc-component=\"Search Field\"]",
+        "dataComponent": "Search Field"
+      },
+      "variants": {
+        "State": ["Default", "Hover", "Focus", "Filled", "Disabled", "Error"]
+      },
+      "attributes": {
+        "data-state": "State"
+      }
+    },
+    {
       "name": "Card / Field",
-      "figmaName": "Card / Field",
+      "figmaName": "Card / Input Field",
       "nodeId": "180:1977",
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=180-1977",
@@ -95,8 +132,7 @@
         "dataComponent": "Card / Field"
       },
       "variants": {
-        "Type": ["Input", "Textarea"],
-        "State": ["Default", "Focus", "Filled"]
+        "State": ["Default", "Hover", "Focus", "Active", "Filled", "Disabled", "Error"]
       },
       "attributes": {
         "data-type": "Type",
@@ -122,18 +158,18 @@
     },
     {
       "name": "Card / Type Menu Item",
-      "figmaName": "Card / Type Menu Item",
-      "nodeId": "177:1911",
+      "figmaName": "Menu item",
+      "nodeId": "368:11517",
       "type": "COMPONENT_SET",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=177-1911",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=368-11517",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderTypeMenuItem",
         "selector": "[data-vc-component=\"Card / Type Menu Item\"]",
         "dataComponent": "Card / Type Menu Item"
       },
-      "variants": { "State": ["Default", "Selected"] },
-      "attributes": { "aria-checked": "State" }
+      "variants": { "State": ["Default", "Hover", "Pressed", "Selected"] },
+      "attributes": { "aria-checked": "Selected" }
     },
     {
       "name": "Card / Type Selector",
@@ -261,8 +297,8 @@
         "dataComponent": "Card / Header Icon"
       },
       "variants": {
-        "Action": ["More", "Resolve", "Close"],
-        "State": ["Default", "Active"]
+        "Action": ["More", "Resolve", "Close", "Filter"],
+        "State": ["Default", "Hover", "Active"]
       },
       "attributes": { "data-state": "State" }
     },
@@ -283,10 +319,10 @@
     },
     {
       "name": "Card / Overflow Menu",
-      "figmaName": "Card / Overflow Menu",
-      "nodeId": "204:1213",
+      "figmaName": "Menu List",
+      "nodeId": "368:11646",
       "type": "COMPONENT",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=204-1213",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=368-11646",
       "code": {
         "source": "app/vibecheck/components.js",
         "renderer": "renderOverflowMenu",
@@ -294,7 +330,9 @@
         "dataComponent": "Card / Overflow Menu"
       },
       "variants": {},
-      "attributes": {}
+      "attributes": {
+        "data-menu": "overflow"
+      }
     },
     {
       "name": "Badge",
@@ -369,7 +407,8 @@
           "AI Prompt",
           "Border color",
           "Palette",
-          "Text color"
+          "Text color",
+          "Logo zendesk"
         ]
       },
       "attributes": {}
@@ -476,17 +515,25 @@
     {
       "name": "Main Toolbar",
       "figmaName": "Main Toolbar",
-      "nodeId": "5:98",
-      "type": "COMPONENT",
-      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-98",
+      "nodeId": "352:9729",
+      "variantNodes": {
+        "Role=Full": "5:98",
+        "Role=PM Only": "352:9730"
+      },
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=352-9729",
       "code": {
         "source": "app/components/vibe-check/vibe-check.element.js",
         "renderer": "VibeCheck.render",
         "selector": "[data-vc-component=\"Main Toolbar\"]",
         "dataComponent": "Main Toolbar"
       },
-      "variants": {},
-      "attributes": {}
+      "variants": {
+        "Role": ["Full", "PM Only"]
+      },
+      "attributes": {
+        "data-role": "Role"
+      }
     },
     {
       "name": "Color & AI Toolbar",
@@ -649,6 +696,58 @@
       }
     },
     {
+      "name": "Menu List",
+      "figmaName": "Menu List",
+      "nodeId": "368:11646",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=368-11646",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderListMenu",
+        "selector": "[data-vc-component=\"Menu List\"], [data-vc-component=\"List Menu\"]",
+        "dataComponent": "Menu List"
+      },
+      "variants": {},
+      "attributes": {
+        "data-menu": "menuId"
+      }
+    },
+    {
+      "name": "Menu item",
+      "figmaName": "Menu item",
+      "nodeId": "368:11517",
+      "type": "COMPONENT_SET",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=368-11517",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderListMenuItem",
+        "selector": "[data-vc-component=\"Menu item\"]",
+        "dataComponent": "Menu item"
+      },
+      "variants": {
+        "State": ["Default", "Hover", "Pressed", "Selected"]
+      },
+      "attributes": {
+        "data-state": "State",
+        "aria-checked": "Selected"
+      }
+    },
+    {
+      "name": "Menu Divider",
+      "figmaName": "Divider",
+      "nodeId": "5:97",
+      "type": "COMPONENT",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=5-97",
+      "code": {
+        "source": "app/vibecheck/components.js",
+        "renderer": "renderListMenuDivider",
+        "selector": "[data-vc-component=\"Menu Divider\"]",
+        "dataComponent": "Menu Divider"
+      },
+      "variants": {},
+      "attributes": {}
+    },
+    {
       "name": "Notes Panel",
       "figmaName": "Notes Panel",
       "nodeId": "6:151",
@@ -696,6 +795,15 @@
       },
       "variants": {},
       "attributes": {}
+    }
+  ],
+  "deprecated": [
+    {
+      "name": "Field (legacy)",
+      "figmaName": "Field",
+      "nodeId": "4:40",
+      "reason": "Replaced by Field 348:8892 for form surfaces. Card compose uses Card / Input Field 180:1977.",
+      "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=4-40"
     }
   ]
 }

@@ -2,6 +2,46 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-09-21 — Unified Menu List / Menu item
+
+- **Menu List** (`368:11646`) and **Menu item** (`368:11517`) are now the shared dropdown primitives for card overflow, card type, panel filter, and panel more menus.
+- Checkmark moves to the right on selected rows; menu chrome uses `--vc-bg`, selected/hover rows use `--vc-surface`.
+- Card overflow drops Copy link (Mark as unread, Delete thread… only).
+- Notes Panel `…` menu enabled: Hide comments, Just mentions and replies, Mark all as read; prefs persist in `vibecheck:panelPrefs`.
+
+## 2026-09-21 — Feedback Pin Open state
+
+- **Feedback Pin** (`4:76`) State=Open: surface fill, 2px type-colored border, no number label, pin-open elevation.
+
+## 2026-09-21 — Notes Panel List Menu
+
+- Added **List Menu** component for Notes Panel filter icon: Sort by date, Sort by unread, Show resolved comments.
+- Filter icon opens anchored dropdown; sort/filter prefs persist in `vibecheck:panelPrefs`.
+- Resolve header icon remains a disabled placeholder; resolved visibility moved into List Menu.
+
+## 2026-09-21 — Search Field and Notes Panel autolayout sync
+
+- **Search Field** (`348:9564`): gap 4, padding 6/8/4 (filled: 8 horizontal), content-hug height, 1.5px focus/error border.
+- **Notes Panel** (`6:151`): 43px drag header, 40px search/actions row, filters py 8, panel min-width 280.
+
+## 2026-09-21 — Field, Search Field, Notes Panel, and toolbar role
+
+- Added **Field** (`348:8892`) — 32px single-line input for Account popup and other form surfaces. States Default/Hover/Focus/Filled/Disabled/Error; Focus and Error use 1.5px strokes; Body/SM typography.
+- Added **Search Field** (`348:9564`) — 32px panel search with 16px Search icon, optional X circle clear, Body/XS typography. Distinct from Toolbar Search Popout.
+- **Notes Panel** (`6:151`): Search Field instance, Card / Header Icon Button trio (Filter · Resolve · More), Card / Icon Button collapse/close, filter labels Comments/Writing.
+- **Card / Input Field** (`180:1977`) renamed in Figma (was Card / Field); compose/reply field stays 36px with Send — not replaced by Field.
+- **Notes Panel Chip** gained Hover variant; **Card / Header Icon Button** gained Filter action.
+- **Main Toolbar** is now a component set (`352:9729`) with Role=Full | PM Only. PM Only = Inspect, Comment, Wording, Search.
+- Deprecated legacy **Field** (`4:40`) in manifest; Account popup uses new Field for all inputs.
+- New icon components catalogued (Sun, Moon, Gear, etc.) in `card-icons.js` for future instances.
+
+## 2026-09-21 — Typography tokens + Figtree
+
+- Added **VibeCheck Typography** primitives and semantic text styles to `tokens.json` (Heading / Body / Comp scale).
+- Self-hosted Figtree (OFL) under `design-system/fonts/figtree/`; `design:sync` copies into the extension and emits `@font-face` for the popup + `figtreeFontFaceCss()` for the overlay.
+- Migrated `feedback-styles.js` and `extension/popup/popup.css` from hardcoded sizes to `--vc-text-*` tokens.
+- Documented the full Figma ↔ code map in `docs/typography-figma-code-map.md`.
+
 ## 2026-09-18 — 18thSepWeekend follow-up (toolbar + docs)
 
 - Pointed Main Toolbar and toolbar-tip hotkeys at `--vc-surface` (Figma `surface/surface`). Dark `surface-subtle` is now gray-700, so the old binding made the toolbar look washed out.

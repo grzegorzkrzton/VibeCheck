@@ -3,19 +3,23 @@ import { createAnchor, describeAnchor } from './anchor'
 import { resolveAnchor } from './resolve'
 import { floatingPosition } from '../utilities'
 import { convertDraftType as convertDraftTypeState, relativeTime } from './card-state'
+import { figtreeFontFaceCss } from '../../design-system/generated/tokens.js'
 import { feedbackStyles } from './feedback-styles'
 import {
   KIND_LABEL,
   renderAnnotationCard,
   renderNoteCard,
+  renderFilterMenu,
   renderNotesPanel,
   renderNotesPanelItem,
   renderOverflowMenu,
+  renderPanelMoreMenu,
   renderPin,
   renderReply,
-  renderTypeMenuItem,
+  renderTypeMenu,
   renderWordingCard,
 } from './components'
+import { cardIcon } from './card-icons.js'
 import {
   addNotification,
   getAuthorName,
@@ -32,6 +36,7 @@ import {
 const LAYER_ID = 'vibecheck-layer'
 const STYLE_ID = 'vibecheck-feedback-styles'
 const PANEL_LAYOUT_KEY = 'vibecheck:panelLayout'
+const PANEL_PREFS_KEY = 'vibecheck:panelPrefs'
 const PANEL_EDGE_INSET = 40
 
 const state = {
@@ -41,11 +46,16 @@ const state = {
   draft: null,
   filter: 'all',
   search: '',
+  sortBy: 'date',
   hideResolved: true,
+  hideComments: false,
+  mentionsOnly: false,
   mode: 'browse',
   previewId: null,
   typeMenuOpen: false,
   overflowOpen: false,
+  filterMenuOpen: false,
+  panelMoreOpen: false,
   submissionState: null,
   submitError: '',
   replyDraft: '',
@@ -61,11 +71,21 @@ const state = {
   motionCardId: null,
 }
 
+function extensionFontBaseUrl() {
+  try {
+    if (typeof chrome !== 'undefined' && chrome.runtime?.getURL)
+      return chrome.runtime.getURL('fonts/figtree/')
+  }
+  catch (_) { /* ignore */ }
+  return '/fonts/figtree/'
+}
+
 function ensureStyles() {
   if (document.getElementById(STYLE_ID)) return
   const style = document.createElement('style')
   style.id = STYLE_ID
-  style.textContent = feedbackStyles
+  const fonts = figtreeFontFaceCss((file) => `${extensionFontBaseUrl()}${file}`)
+  style.textContent = `${fonts}\n${feedbackStyles}`
   document.documentElement.appendChild(style)
 }
 
@@ -113,6 +133,34 @@ export function promoteFeedbackLayer(layer = document.getElementById(LAYER_ID)) 
   catch { /* unsupported / already transitioning */ }
 }
 
+function loadPanelPrefs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PANEL_PREFS_KEY))
+    if (!saved || typeof saved !== 'object') return
+    if (saved.sortBy === 'date' || saved.sortBy === 'unread')
+      state.sortBy = saved.sortBy
+    if (typeof saved.hideResolved === 'boolean')
+      state.hideResolved = saved.hideResolved
+    if (typeof saved.hideComments === 'boolean')
+      state.hideComments = saved.hideComments
+    if (typeof saved.mentionsOnly === 'boolean')
+      state.mentionsOnly = saved.mentionsOnly
+  }
+  catch (_) { /* ignore */ }
+}
+
+function savePanelPrefs() {
+  try {
+    localStorage.setItem(PANEL_PREFS_KEY, JSON.stringify({
+      sortBy: state.sortBy,
+      hideResolved: state.hideResolved,
+      hideComments: state.hideComments,
+      mentionsOnly: state.mentionsOnly,
+    }))
+  }
+  catch (_) { /* ignore */ }
+}
+
 function loadPanelLayout() {
   try {
     const saved = JSON.parse(localStorage.getItem(PANEL_LAYOUT_KEY))
@@ -130,6 +178,11 @@ function dockPanelTopRight(panel) {
   const width = panel?.offsetWidth || (state.panelLayout.collapsed ? 150 : 280)
   state.panelLayout.left = window.innerWidth - width - PANEL_EDGE_INSET
   state.panelLayout.top = PANEL_EDGE_INSET
+}
+
+function anchorPanelTopRight(panel, { right, top }) {
+  state.panelLayout.left = right - panel.offsetWidth
+  state.panelLayout.top = top
 }
 
 function savePanelLayout() {
@@ -176,7 +229,7 @@ function applyPanelCollapsedState(panel, collapsed) {
   }
   const btn = panel.querySelector('[data-action="toggle-panel"]')
   if (btn) {
-    btn.textContent = collapsed ? '▣' : '−'
+    btn.innerHTML = cardIcon(collapsed ? 'arrowDiagonalOut' : 'arrowDiagonalIn', 16)
     btn.setAttribute('aria-label', collapsed ? 'Expand notes panel' : 'Collapse notes panel')
   }
   const search = panel.querySelector('[data-field="panel-search"]')
@@ -209,6 +262,21 @@ function threadNumber(record) {
   return index >= 0 ? index + 1 : '•'
 }
 
+function itemMatchesMentionsFilter({ kind, item }) {
+  if (!state.mentionsOnly) return true
+  const author = getAuthorName().toLowerCase()
+  const bodies = [
+    item.body,
+    item.suggestedText,
+    item.rationale,
+    ...repliesFor(item.id, kind).map(reply => reply.body),
+  ]
+  const mentioned = bodies.some(body =>
+    parseMentions(body || '').some(name => name.toLowerCase() === author),
+  )
+  return mentioned || repliesFor(item.id, kind).length > 0
+}
+
 function visibleItems() {
   const comments = state.comments.filter(item => !item.parentId && !item.parentSuggestionId)
   const suggestions = state.suggestions
@@ -218,8 +286,12 @@ function visibleItems() {
   ]
 
   const search = state.search.trim().toLocaleLowerCase()
-  return all.filter(({ kind, item }) => {
+  const filtered = all.filter(({ kind, item }) => {
     if (state.hideResolved && item.resolved)
+      return false
+    if (state.hideComments && kind === 'comment' && item.type !== 'annotation')
+      return false
+    if (!itemMatchesMentionsFilter({ kind, item }))
       return false
     if (state.filter === 'notes') return kind === 'comment' && item.type !== 'annotation'
     if (state.filter === 'annotations') return kind === 'comment' && item.type === 'annotation'
@@ -238,6 +310,18 @@ function visibleItems() {
       ...replies.flatMap(reply => [reply.authorName, reply.body]),
     ].some(value => String(value || '').toLocaleLowerCase().includes(search))
   })
+
+  const byDate = (a, b) => String(a.item.createdAt || a.item.updatedAt)
+    .localeCompare(String(b.item.createdAt || b.item.updatedAt))
+  if (state.sortBy === 'unread') {
+    return filtered.sort((a, b) => {
+      const aUnread = a.item.readAt ? 1 : 0
+      const bUnread = b.item.readAt ? 1 : 0
+      if (aUnread !== bUnread) return aUnread - bUnread
+      return byDate(a, b)
+    })
+  }
+  return filtered.sort(byDate)
 }
 
 function repliesFor(id, kind = 'comment') {
@@ -343,27 +427,19 @@ function placeAnchoredMenu(menu, anchor, {
 function placeOpenMenus(layer) {
   // Menus use position:fixed + viewport coords. Keep them as direct layer
   // children so card transforms never become a fixed containing block.
-  const typeMenu = layer.querySelector('.vc-type-menu')
-  if (typeMenu) {
-    if (typeMenu.parentElement !== layer)
-      layer.appendChild(typeMenu)
-    placeAnchoredMenu(
-      typeMenu,
-      layer.querySelector('.vc-type-trigger'),
-      { align: 'start' },
-    )
+  const mountMenu = (menuId, anchorSelector, align = 'end') => {
+    const menu = layer.querySelector(`.vc-list-menu[data-menu="${menuId}"]`)
+    const anchor = layer.querySelector(anchorSelector)
+    if (!menu || !anchor) return
+    if (menu.parentElement !== layer)
+      layer.appendChild(menu)
+    placeAnchoredMenu(menu, anchor, { align })
   }
 
-  const overflowMenu = layer.querySelector('.vc-overflow-menu')
-  if (overflowMenu) {
-    if (overflowMenu.parentElement !== layer)
-      layer.appendChild(overflowMenu)
-    placeAnchoredMenu(
-      overflowMenu,
-      layer.querySelector('[data-action="toggle-overflow"]'),
-      { align: 'end' },
-    )
-  }
+  mountMenu('type', '.vc-type-trigger', 'start')
+  mountMenu('overflow', '[data-action="toggle-overflow"]', 'end')
+  mountMenu('filter', '[data-action="toggle-filter-menu"]', 'end')
+  mountMenu('panel-more', '[data-action="panel-more"]', 'end')
 }
 
 function syncMenuTriggers(layer = document.getElementById(LAYER_ID)) {
@@ -374,6 +450,12 @@ function syncMenuTriggers(layer = document.getElementById(LAYER_ID)) {
   const type = layer.querySelector('.vc-type-trigger')
   if (type && type.getAttribute('aria-expanded') != null)
     type.setAttribute('aria-expanded', String(state.typeMenuOpen))
+  const filter = layer.querySelector('[data-action="toggle-filter-menu"]')
+  if (filter)
+    filter.setAttribute('aria-expanded', String(state.filterMenuOpen))
+  const panelMore = layer.querySelector('[data-action="panel-more"]')
+  if (panelMore)
+    panelMore.setAttribute('aria-expanded', String(state.panelMoreOpen))
 }
 
 function mountLayerMenu(html) {
@@ -389,21 +471,32 @@ function mountLayerMenu(html) {
 async function dismissLayerMenus({ focus } = {}) {
   const layer = document.getElementById(LAYER_ID)
   if (!layer) return
-  const hadMenu = Boolean(layer.querySelector('.vc-type-menu, .vc-overflow-menu'))
+  const hadMenu = Boolean(layer.querySelector('.vc-list-menu'))
   if (hadMenu)
-    await leaveElements('.vc-type-menu, .vc-overflow-menu')
-  layer.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+    await leaveElements('.vc-list-menu')
+  layer.querySelectorAll('.vc-list-menu').forEach(el => el.remove())
   state.typeMenuOpen = false
   state.overflowOpen = false
+  state.filterMenuOpen = false
+  state.panelMoreOpen = false
   syncMenuTriggers(layer)
   if (focus)
     requestAnimationFrame(() => layer.querySelector(focus)?.focus())
 }
 
+function openFilterMenu() {
+  state.typeMenuOpen = false
+  state.overflowOpen = false
+  state.panelMoreOpen = false
+  state.filterMenuOpen = true
+}
+
 function openOverflowMenu() {
   const layer = ensureLayer()
-  layer.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+  layer.querySelectorAll('.vc-list-menu').forEach(el => el.remove())
   state.typeMenuOpen = false
+  state.filterMenuOpen = false
+  state.panelMoreOpen = false
   state.overflowOpen = true
   syncMenuTriggers(layer)
   const menu = mountLayerMenu(renderOverflowMenu())
@@ -418,23 +511,27 @@ function openOverflowMenu() {
 
 function openTypeMenu() {
   const layer = ensureLayer()
-  layer.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+  layer.querySelectorAll('.vc-list-menu').forEach(el => el.remove())
   state.overflowOpen = false
+  state.filterMenuOpen = false
+  state.panelMoreOpen = false
   state.typeMenuOpen = true
   syncMenuTriggers(layer)
   const trigger = layer.querySelector('.vc-type-trigger')
   const current = trigger?.querySelector('span')?.textContent?.trim() || 'Comment'
-  const options = ['Comment', 'Annotation', 'Wording']
-  const menu = mountLayerMenu(`
-    <div class="vc-type-menu" role="menu" aria-label="Card type">
-      ${options.map(option => renderTypeMenuItem({ option, selected: option === current })).join('')}
-    </div>
-  `)
+  const menu = mountLayerMenu(renderTypeMenu({ type: current }))
   placeAnchoredMenu(menu, trigger, { align: 'start' })
   requestAnimationFrame(() => {
     placeAnchoredMenu(menu, trigger, { align: 'start' })
     menu?.querySelector('[role^="menuitem"]')?.focus()
   })
+}
+
+function openPanelMoreMenu() {
+  state.typeMenuOpen = false
+  state.overflowOpen = false
+  state.filterMenuOpen = false
+  state.panelMoreOpen = true
 }
 
 function placePanel(panel) {
@@ -581,6 +678,12 @@ function renderPanel() {
     hideResolved: state.hideResolved,
     filter: state.filter,
     search: state.search,
+    filterMenuOpen: state.filterMenuOpen,
+    panelMoreOpen: state.panelMoreOpen,
+    sortBy: state.sortBy,
+    showResolvedComments: !state.hideResolved,
+    hideComments: state.hideComments,
+    mentionsOnly: state.mentionsOnly,
     itemsHtml,
   })
 }
@@ -769,7 +872,7 @@ function onDragStart(event) {
     state.typeMenuOpen = false
     state.overflowOpen = false
     const layer = document.getElementById(LAYER_ID)
-    layer?.querySelectorAll('.vc-type-menu, .vc-overflow-menu').forEach(el => el.remove())
+    layer?.querySelectorAll('.vc-list-menu').forEach(el => el.remove())
     syncMenuTriggers(layer)
   }
 
@@ -899,7 +1002,7 @@ async function submitDraft() {
 async function onLayerClick(event) {
   const actionEl = event.target.closest('[data-action]')
   if (!actionEl) {
-    if (state.typeMenuOpen || state.overflowOpen) {
+    if (state.typeMenuOpen || state.overflowOpen || state.filterMenuOpen) {
       await dismissLayerMenus()
     }
     return
@@ -909,22 +1012,79 @@ async function onLayerClick(event) {
   const action = actionEl.dataset.action
 
   if (action === 'filter') state.filter = actionEl.dataset.filter
-  else if (action === 'cycle-filter') {
-    const filters = ['all', 'notes', 'annotations', 'content']
-    state.filter = filters[(filters.indexOf(state.filter) + 1) % filters.length]
+  else if (action === 'clear-search') {
+    state.search = ''
+    renderFeedback()
+    document.querySelector('#vibecheck-layer [data-field="panel-search"]')?.focus()
   }
-  else if (action === 'toggle-resolved') state.hideResolved = !state.hideResolved
+  else if (action === 'toggle-filter-menu') {
+    if (state.filterMenuOpen) {
+      await dismissLayerMenus({ focus: '[data-action="toggle-filter-menu"]' })
+      return
+    }
+    openFilterMenu()
+    renderFeedback()
+    return
+  }
+  else if (action === 'panel-more') {
+    if (state.panelMoreOpen) {
+      await dismissLayerMenus({ focus: '[data-action="panel-more"]' })
+      return
+    }
+    openPanelMoreMenu()
+    renderFeedback()
+    return
+  }
+  else if (action === 'toggle-hide-comments') {
+    state.hideComments = !state.hideComments
+    savePanelPrefs()
+    state.panelMoreOpen = true
+    renderFeedback()
+    return
+  }
+  else if (action === 'toggle-mentions-only') {
+    state.mentionsOnly = !state.mentionsOnly
+    savePanelPrefs()
+    state.panelMoreOpen = true
+    renderFeedback()
+    return
+  }
+  else if (action === 'mark-all-read') {
+    const openedAt = new Date().toISOString()
+    for (const comment of state.comments.filter(item => !item.parentId && !item.parentSuggestionId && !item.readAt))
+      await upsertComment({ ...comment, readAt: openedAt })
+    for (const suggestion of state.suggestions.filter(item => !item.readAt))
+      await upsertSuggestion({ ...suggestion, readAt: openedAt })
+    await dismissLayerMenus({ focus: '[data-action="panel-more"]' })
+    await refreshFeedback()
+    return
+  }
+  else if (action === 'set-sort-date') {
+    state.sortBy = 'date'
+    savePanelPrefs()
+    await dismissLayerMenus()
+  }
+  else if (action === 'set-sort-unread') {
+    state.sortBy = 'unread'
+    savePanelPrefs()
+    await dismissLayerMenus()
+  }
+  else if (action === 'toggle-show-resolved') {
+    state.hideResolved = !state.hideResolved
+    savePanelPrefs()
+    state.filterMenuOpen = true
+    renderFeedback()
+    return
+  }
   else if (action === 'toggle-panel') {
-    state.panelLayout.collapsed = !state.panelLayout.collapsed
-    // Re-dock so collapsed and expanded widths both sit top-right at 40px.
-    state.panelLayout.left = null
-    state.panelLayout.top = PANEL_EDGE_INSET
-    savePanelLayout()
     const panel = document.querySelector('#vibecheck-layer .vc-panel')
     if (panel) {
+      const { right, top } = panel.getBoundingClientRect()
+      state.panelLayout.collapsed = !state.panelLayout.collapsed
       applyPanelCollapsedState(panel, state.panelLayout.collapsed)
-      dockPanelTopRight(panel)
+      anchorPanelTopRight(panel, { right, top })
       placePanel(panel)
+      savePanelLayout()
       return
     }
   }
@@ -1041,13 +1201,6 @@ async function onLayerClick(event) {
       else await upsertComment(update)
       await dismissLayerMenus()
       await refreshFeedback()
-      return
-    }
-    if (action === 'copy-link') {
-      const url = new URL(location.href)
-      url.hash = `vibecheck-thread=${encodeURIComponent(open.item.id)}`
-      await navigator.clipboard?.writeText?.(url.href)
-      await dismissLayerMenus({ focus: '[data-action="toggle-overflow"]' })
       return
     }
   }
@@ -1188,8 +1341,12 @@ function onLayerKeyDown(event) {
   event.stopPropagation()
   const menu = event.target.closest('[role="menu"]')
   if (event.key === 'Escape') {
-    if (state.typeMenuOpen || state.overflowOpen) {
-      const selector = state.typeMenuOpen ? '.vc-type-trigger' : '[data-action="toggle-overflow"]'
+    if (state.typeMenuOpen || state.overflowOpen || state.filterMenuOpen) {
+      const selector = state.typeMenuOpen
+        ? '.vc-type-trigger'
+        : state.filterMenuOpen
+          ? '[data-action="toggle-filter-menu"]'
+          : '[data-action="toggle-overflow"]'
       dismissLayerMenus({ focus: selector })
     }
     return
@@ -1224,8 +1381,8 @@ function onLayerKeyDown(event) {
 }
 
 function closeMenusOutside(event) {
-  if (!state.typeMenuOpen && !state.overflowOpen) return
-  if (event.target.closest?.('.vc-type-selector, .vc-type-menu, .vc-overflow-menu, [data-action="toggle-overflow"]')) return
+  if (!state.typeMenuOpen && !state.overflowOpen && !state.filterMenuOpen && !state.panelMoreOpen) return
+  if (event.target.closest?.('.vc-type-selector, .vc-list-menu, [data-action="toggle-overflow"], [data-action="toggle-filter-menu"], [data-action="panel-more"]')) return
   dismissLayerMenus()
 }
 
@@ -1246,6 +1403,7 @@ function installHotkeyFilter() {
 export function startFeedbackLayer() {
   installHotkeyFilter()
   loadPanelLayout()
+  loadPanelPrefs()
   if (typeof chrome !== 'undefined' && chrome.storage?.local) {
     chrome.storage.local.get('vibecheck:authorName', data => {
       if (data['vibecheck:authorName']) setAuthorName(data['vibecheck:authorName'])
