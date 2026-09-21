@@ -212,6 +212,7 @@ check('toolbar icons carry the synced Figma geometry', () => {
   const signatures = {
     inspector: 'M11.9996 2C17.5225 2 21.9992 6.47794',
     comments: 'M19.0004 2C20.6572 2 22.0004 3.34312',
+    annotation: 'M9.46293 6.65721C9.75579 6.36435',
     content: 'M10.4147 3.58566C10.9666 3.58586',
     hueshift: 'M12.333 2.91699C17.528 2.91702',
     font: 'M20.0004 3C20.5524 3.00021',
@@ -258,8 +259,8 @@ check('Notes panel uses Search Field, header actions, and Writing filter', () =>
   assert.match(html, /M10\.9992 3\.28571/)
   assert.match(html, /data-field="panel-search"/)
   assert.match(html, /data-action="toggle-filter-menu"/)
-  assert.match(html, /data-action="resolve-notes"/)
   assert.match(html, /data-action="panel-more"/)
+  assert.equal(html.includes('data-action="resolve-notes"'), false)
   assert.match(html, /Comments/)
   assert.match(html, /Writing/)
   assert.match(html, /data-filter="content"/)
@@ -307,7 +308,7 @@ check('Panel more menu renders toggles and mark-all-read', () => {
   assert.match(html, /data-action="mark-all-read"/)
 })
 
-check('Main toolbar PM Only model exposes inspect, comment, wording, and search', () => {
+check('Main toolbar PM Only model exposes inspect, comment, annotation, wording, and search', () => {
   const model = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/model.js'), 'utf8')
   const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
   assert.match(model, /export const VibeCheckModelPMOnly/)
@@ -315,6 +316,8 @@ check('Main toolbar PM Only model exposes inspect, comment, wording, and search'
   assert.match(element, /data-role="\$\{this\.toolbar_role\}"/)
   assert.match(element, /default_tool_key = this\.toolbar_role === 'PM Only' \? 'i' : 'g'/)
   assert.match(element, /TOOLBAR_ROLE_STORAGE_KEY/)
+  assert.match(model, /n: VibeCheckModel\.n/)
+  assert.match(element, /annotations\(\)/)
 })
 
 check('generated token files match tokens.json', () => {

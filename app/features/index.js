@@ -16,5 +16,6 @@ export { Position, draggable } from './position'
 export { Accessibility } from './accessibility'
 export { PromptExport } from './prompt-export'
 export { Comments } from './comments'
+export { Annotations } from './annotations'
 export { ContentSuggest } from './content'
 

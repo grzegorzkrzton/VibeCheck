@@ -2,6 +2,21 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-09-21 — Notes Panel Resolve header icon removed
+
+- Removed **Card / Header Icon Button** Resolve instance from Notes Panel header (`302:14767`); resolved visibility stays in filter List Menu (**Show resolved comments**).
+- Notes Panel header actions are now Filter and More only; card detail headers still use Resolve/Reopen thread.
+
+## 2026-09-21 — Main Toolbar tool order
+
+- **Main Toolbar** (`352:9729`) tool order now matches Figma: Inspect → Comment → Annotation → Wording → Guides → layout tools → accessibility/visual tools → Search.
+- Added divider after Inspect (before feedback tools); existing dividers after Wording, Move, and Accessibility unchanged.
+
+## 2026-09-21 — Annotation toolbar tool
+
+- Added **Annotation** toolbar icon (`368:12163`) and dedicated **Annotation** tool (`N`) — pins an Annotation card directly on click, separate from Comment.
+- PM Only toolbar includes Inspect, Comment, Annotation, Wording, and Search.
+
 ## 2026-09-21 — Unified Menu List / Menu item
 
 - **Menu List** (`368:11646`) and **Menu item** (`368:11517`) are now the shared dropdown primitives for card overflow, card type, panel filter, and panel more menus.

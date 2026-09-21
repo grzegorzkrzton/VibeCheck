@@ -10,7 +10,7 @@ import {
   Selectable, Moveable, Padding, Margin, EditText, Font,
   Flex, Search, ColorPicker, BoxShadow, HueShift, MetaTip,
   Guides, Screenshot, Accessibility, draggable,
-  PromptExport, Comments, ContentSuggest,
+  PromptExport, Comments, Annotations, ContentSuggest,
 } from '../../features/'
 import { startChangeTracker } from '../../vibecheck/tracker'
 import { startFeedbackLayer, setFeedbackScheme } from '../../vibecheck/feedback-ui'
@@ -590,6 +590,10 @@ export default class VibeCheck extends HTMLElement {
 
   comments() {
     this.deactivate_feature = Comments(this.selectorEngine)
+  }
+
+  annotations() {
+    this.deactivate_feature = Annotations(this.selectorEngine)
   }
 
   content() {

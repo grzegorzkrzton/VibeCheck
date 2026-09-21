@@ -2,35 +2,12 @@ import * as Icons from './vibe-check.icons'
 import { metaKey, altKey } from '../../utilities/'
 
 export const VibeCheckModel = {
-  g: {
-    tool:        'guides',
-    icon:        Icons.guides,
-    label:       '<span><u>G</u>uides</span>',
-    description: 'Verify alignment & measure distances',
-    instruction: `<div table>
-                    <div>
-                      <b>Element Guides:</b>
-                      <span>hover</span>
-                    </div>
-                    <div>
-                      <b>Measure:</b>
-                      <span>click+hover</span>
-                    </div>
-                    <div>
-                      <b>Measure many:</b>
-                      <span>shift+click</span>
-                    </div>
-                    <div>
-                      <b>Clear:</b>
-                      <span>esc</span>
-                    </div>
-                  </div>`,
-  },
   i: {
     tool:        'inspector',
     icon:        Icons.inspector,
     label:       '<span><u>I</u>nspect</span>',
     description: 'Inspect the common styles of an element',
+    dividerAfter: true,
     instruction: `<div table>
                     <div>
                       <b>Pin it:</b>
@@ -54,7 +31,7 @@ export const VibeCheckModel = {
     tool:         'comments',
     icon:         Icons.comments,
     label:        '<span><u>C</u>omment</span>',
-    description:  'Pin a Figma-like note or a developer annotation on a selected element',
+    description:  'Pin a note on a selected element',
     hasTutorial:  false,
     instruction:  `<div table>
                     <div>
@@ -62,8 +39,25 @@ export const VibeCheckModel = {
                       <span>click an element</span>
                     </div>
                     <div>
-                      <b>Type:</b>
-                      <span>Note or Annotation in the box</span>
+                      <b>List:</b>
+                      <span>right-side panel</span>
+                    </div>
+                  </div>`,
+  },
+  n: {
+    tool:         'annotations',
+    icon:         Icons.annotation,
+    label:        '<span>A<u>n</u>notation</span>',
+    description:  'Pin a developer annotation on a selected element',
+    hasTutorial:  false,
+    instruction:  `<div table>
+                    <div>
+                      <b>Pin:</b>
+                      <span>click an element</span>
+                    </div>
+                    <div>
+                      <b>Kind:</b>
+                      <span>Implement, Warning, or Question</span>
                     </div>
                     <div>
                       <b>List:</b>
@@ -90,6 +84,30 @@ export const VibeCheckModel = {
                     <div>
                       <b>Decide:</b>
                       <span>approve or reject</span>
+                    </div>
+                  </div>`,
+  },
+  g: {
+    tool:        'guides',
+    icon:        Icons.guides,
+    label:       '<span><u>G</u>uides</span>',
+    description: 'Verify alignment & measure distances',
+    instruction: `<div table>
+                    <div>
+                      <b>Element Guides:</b>
+                      <span>hover</span>
+                    </div>
+                    <div>
+                      <b>Measure:</b>
+                      <span>click+hover</span>
+                    </div>
+                    <div>
+                      <b>Measure many:</b>
+                      <span>shift+click</span>
+                    </div>
+                    <div>
+                      <b>Clear:</b>
+                      <span>esc</span>
                     </div>
                   </div>`,
   },
@@ -342,10 +360,8 @@ export const VibeCheckModel = {
 export const VibeCheckModelPMOnly = {
   i: VibeCheckModel.i,
   c: VibeCheckModel.c,
-  w: {
-    ...VibeCheckModel.w,
-    dividerAfter: true,
-  },
+  n: VibeCheckModel.n,
+  w: VibeCheckModel.w,
   s: VibeCheckModel.s,
 }
 

@@ -133,7 +133,7 @@ export function renderSend({
 
 function headerIconName(action) {
   if (action === 'toggle-overflow' || action === 'panel-more') return 'more'
-  if (action === 'resolve' || action === 'resolve-notes') return 'checkCircle'
+  if (action === 'resolve') return 'checkCircle'
   if (action === 'toggle-filter-menu' || action === 'cycle-filter') return 'funnel'
   if (action === 'close' || action === 'toggle-panel') return 'close'
   return 'close'
@@ -911,12 +911,6 @@ export function renderNotesPanel({
                 action: 'toggle-filter-menu',
                 label: 'Filter and sort notes',
                 expanded: filterMenuOpen,
-                extraClass: 'vc-panel-header-icon',
-              })}
-              ${renderHeaderIcon({
-                action: 'resolve-notes',
-                label: 'Resolve notes',
-                disabled: true,
                 extraClass: 'vc-panel-header-icon',
               })}
               ${renderHeaderIcon({
