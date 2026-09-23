@@ -2,58 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>VibeCheck account</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body data-vc-component="Account & Inbox Popup">
   <main>
-    <h1>VibeCheck</h1>
-    <p class="lede" id="status">Local mode — comments stay in this browser until you connect Supabase.</p>
+    <section id="auth-flow" class="flow-card" aria-live="polite"></section>
 
-    <section>
-      <h2>Display name</h2>
-      <label>
-        Used on local pins
-        <input id="author" data-vc-component="Field" data-state="Default" type="text" placeholder="Your name">
-      </label>
-      <button id="save-author" data-vc-component="Button" data-style="Primary" data-state="Default" type="button">Save name</button>
-    </section>
+    <section id="account-content" hidden>
+      <h1>VibeCheck</h1>
+      <p class="lede" id="status"></p>
 
-    <section>
-      <h2>Supabase (Phase 6)</h2>
-      <label>
-        Project URL
-        <input id="url" data-vc-component="Field" data-state="Default" type="url" placeholder="https://project.supabase.co">
-      </label>
-      <label>
-        Anon key
-        <input id="anon" data-vc-component="Field" data-state="Default" type="password" placeholder="Paste anon key">
-      </label>
-      <label>
-        Allowed email domain
-        <input id="domain" data-vc-component="Field" data-state="Default" type="text" placeholder="yourcompany.com">
-      </label>
-      <div class="row">
-        <button id="save-config" data-vc-component="Button" data-style="Primary" data-state="Default" type="button">Save config</button>
-        <button id="signin" data-vc-component="Button" data-style="Secondary" data-state="Default" type="button">Sign in with Google</button>
-        <button id="signout" data-vc-component="Button" data-style="Secondary" data-state="Default" type="button" hidden>Sign out</button>
-      </div>
-    </section>
+      <section id="profile-summary" aria-labelledby="profile-heading">
+        <h2 id="profile-heading">Account</h2>
+        <p id="account-profile"></p>
+      </section>
 
-    <section>
-      <h2>Toolbar role</h2>
-      <label>
-        Main toolbar variant
-        <select id="toolbar-role" data-vc-component="Field" data-state="Default" aria-label="Toolbar role">
-          <option value="Full">Full</option>
-          <option value="PM Only">PM Only</option>
-        </select>
-      </label>
-    </section>
+      <section aria-labelledby="display-name-heading">
+        <h2 id="display-name-heading">Display name</h2>
+        <label>
+          Used on local pins
+          <input id="author" data-vc-component="Field" data-state="Default" type="text" placeholder="Your name">
+        </label>
+        <button id="save-author" data-vc-component="Button" data-style="Primary" data-state="Default" type="button">Save name</button>
+      </section>
 
-    <section>
-      <h2>Inbox</h2>
-      <ul id="inbox"></ul>
+      <section aria-labelledby="toolbar-role-heading">
+        <h2 id="toolbar-role-heading">Toolbar role</h2>
+        <label>
+          Main toolbar variant
+          <select id="toolbar-role" data-vc-component="Field" data-state="Default" aria-label="Toolbar role">
+            <option value="Full">Full</option>
+            <option value="PM Only">PM Only</option>
+          </select>
+        </label>
+      </section>
+
+      <section aria-labelledby="inbox-heading">
+        <h2 id="inbox-heading">Inbox</h2>
+        <ul id="inbox"></ul>
+      </section>
     </section>
   </main>
   <script src="popup.js" type="module"></script>

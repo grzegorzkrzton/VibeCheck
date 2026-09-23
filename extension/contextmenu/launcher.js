@@ -17,7 +17,7 @@ function createMenus() {
   })
   platform.contextMenus.create({
     id:     'account',
-    title:  'VibeCheck account & inbox',
+    title:  'VibeCheck account settings',
     contexts: ['all'],
   })
 }
@@ -33,11 +33,15 @@ platform.contextMenus.onClicked.addListener(({menuItemId}, tab) => {
   if (menuItemId === 'launcher')
     toggleIt(tab)
   if (menuItemId === 'account') {
-    platform.windows.create({
-      url: platform.runtime.getURL('popup/index.html'),
-      type: 'popup',
-      width: 420,
-      height: 640,
+    openAccountTab().catch(error => {
+      console.error('[VibeCheck] Could not open account settings tab', error)
     })
   }
 })
+
+async function openAccountTab() {
+  await platform.tabs.create({
+    url: platform.runtime.getURL('popup/index.html'),
+    active: true,
+  })
+}

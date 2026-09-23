@@ -4,6 +4,12 @@ export const STORE_VERSION = 2
 const STORE_PREFIX = 'vibecheck:store:'
 const AUTHOR_KEY = 'vibecheck:authorName'
 const CHANNEL = 'vibecheck-store'
+const BRIDGE_MARKER = 'data-vibecheck-extension'
+const BRIDGE_REQUEST_SOURCE = 'vibecheck-page'
+const BRIDGE_RESPONSE_SOURCE = 'vibecheck-extension'
+const BRIDGE_REQUEST_TYPE = 'vibecheck-store-request'
+const BRIDGE_RESPONSE_TYPE = 'vibecheck-store-response'
+let bridgeRequestNumber = 0
 
 export function createEmptyState() {
   return {
@@ -115,37 +121,108 @@ function mirrorToExtension(state, url) {
   })
 }
 
+function extensionRuntimeAvailable() {
+  return typeof chrome !== 'undefined' && Boolean(chrome.runtime?.sendMessage)
+}
+
+function extensionBridgeAvailable() {
+  return typeof window !== 'undefined'
+    && typeof window.postMessage === 'function'
+    && document?.documentElement?.hasAttribute(BRIDGE_MARKER)
+}
+
+function requestError(response) {
+  const error = new Error(
+    response?.error || 'The AppFoundry store request could not be completed.',
+  )
+  error.code = response?.code || 'APP_FOUNDRY_REQUEST_FAILED'
+  return error
+}
+
+function bridgeCall(method, payload) {
+  const id = `vibecheck-${Date.now()}-${bridgeRequestNumber++}`
+
+  return new Promise((resolve, reject) => {
+    let timeout
+    const onMessage = event => {
+      const response = event.data
+      if (event.source !== window
+        || response?.source !== BRIDGE_RESPONSE_SOURCE
+        || response.type !== BRIDGE_RESPONSE_TYPE
+        || response.id !== id) return
+
+      window.removeEventListener('message', onMessage)
+      clearTimeout(timeout)
+      if (response.ok) resolve(response.data)
+      else reject(requestError(response))
+    }
+
+    window.addEventListener('message', onMessage)
+    timeout = setTimeout(() => {
+      window.removeEventListener('message', onMessage)
+      const error = new Error('The extension storage bridge timed out.')
+      error.code = 'EXTENSION_BRIDGE_TIMEOUT'
+      reject(error)
+    }, 10000)
+
+    window.postMessage({
+      source: BRIDGE_REQUEST_SOURCE,
+      type: BRIDGE_REQUEST_TYPE,
+      id,
+      method,
+      payload,
+    }, '*')
+  })
+}
+
 async function remoteCall(method, payload = {}) {
-  if (typeof chrome === 'undefined' || !chrome.runtime?.sendMessage)
-    return null
-  try {
-    const res = await chrome.runtime.sendMessage({
+  const request = {
+    ...payload,
+    url: payload.url || normalizePrototypeUrl(),
+  }
+
+  if (extensionRuntimeAvailable()) {
+    const response = await chrome.runtime.sendMessage({
       channel: CHANNEL,
       method,
-      payload: {
-        ...payload,
-        url: payload.url || normalizePrototypeUrl(),
-      },
+      payload: request,
     })
-    if (res?.ok) return res.data
+    if (response?.ok) return response.data
+    throw requestError(response)
   }
-  catch {
-    return null
-  }
+
+  if (extensionBridgeAvailable())
+    return bridgeCall(method, request)
+
   return null
 }
 
 export async function loadStore(url = location.href) {
+  const local = readLocal(url)
   const remote = await remoteCall('load', { url })
-  if (remote) return { ...migrateStore(remote), source: 'remote' }
-  return { ...readLocal(url), source: 'local' }
+  if (!remote) return { ...local, source: 'local' }
+
+  const remoteState = { ...migrateStore(remote), source: 'remote' }
+  if (remoteState.prototypeId === null && remoteState.revision === 0 && hasFeedback(local)) {
+    const migrated = await remoteCall('save', {
+      url,
+      state: { ...local, revision: remoteState.revision },
+    })
+    return { ...migrateStore(migrated), source: 'remote' }
+  }
+
+  return remoteState
 }
 
 export async function saveStore(state, url = location.href) {
   const local = writeLocal(state, url)
   const remote = await remoteCall('save', { url, state })
-  if (remote) return { ok: true, source: 'remote' }
-  return { ok: local, source: 'local' }
+  if (!remote) return { ok: local, source: 'local' }
+  return { ok: true, source: 'remote', revision: remote.revision }
+}
+
+function hasFeedback(state) {
+  return Boolean(state?.comments?.length || state?.suggestions?.length)
 }
 
 export async function upsertComment(comment, url) {

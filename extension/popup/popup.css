@@ -1,5 +1,33 @@
 @import "./tokens.css";
 
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vc-border-gray-medium) var(--vc-surface-subtle);
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: var(--vc-surface-subtle);
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: var(--vc-border-gray-medium);
+  border: 2px solid var(--vc-surface-subtle);
+  border-radius: var(--vc-radius-full);
+  min-height: 40px;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: var(--vc-border-gray-strong);
+}
+
 body {
   margin: 0;
   font: var(--vc-text-body-sm);
@@ -14,7 +42,125 @@ body[data-vc-component="Account & Inbox Popup"] {
   background: var(--vc-bg);
 }
 
-main { padding: var(--vc-spacing-16); }
+main {
+  box-sizing: border-box;
+  width: min(640px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: var(--vc-spacing-16) 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.flow-card {
+  box-sizing: border-box;
+  width: min(320px, 100%);
+  margin: 0 auto;
+  padding: var(--vc-spacing-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vc-spacing-24);
+  background: var(--vc-surface);
+  border-radius: var(--vc-radius-12);
+  box-shadow: var(--vc-shadow-card);
+}
+
+.flow-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vc-spacing-8);
+}
+
+.flow-header h1 {
+  margin: 0;
+  font: var(--vc-text-heading-xl);
+  letter-spacing: var(--vc-text-heading-xl-letter-spacing);
+}
+
+.flow-header p {
+  margin: 0;
+  color: var(--vc-text-gray-medium);
+  font: var(--vc-text-body-sm);
+  letter-spacing: var(--vc-text-body-sm-letter-spacing);
+}
+
+.flow-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vc-spacing-16);
+}
+
+.flow-required {
+  margin: 0;
+  color: var(--vc-text-gray-medium);
+  font: var(--vc-text-body-xs);
+}
+
+.flow-field {
+  display: grid;
+  gap: var(--vc-spacing-4);
+}
+
+.flow-field label {
+  margin: 0;
+  color: var(--vc-text-body);
+  font: var(--vc-text-body-sm);
+}
+
+.flow-field .field-error {
+  color: var(--vc-text-critical);
+  font: var(--vc-text-body-xs);
+}
+
+.flow-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vc-spacing-8);
+}
+
+.flow-card button {
+  width: 100%;
+}
+
+.flow-card button:disabled {
+  opacity: var(--vc-opacity-resolved);
+  cursor: progress;
+}
+
+.flow-message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--vc-spacing-8);
+  margin: 0;
+  color: var(--vc-text-critical);
+  font: var(--vc-text-body-sm);
+}
+
+.flow-message img {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+
+.flow-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--vc-spacing-24);
+  text-align: center;
+}
+
+.flow-success > img {
+  width: 32px;
+  height: 32px;
+}
+
+.flow-success .flow-header {
+  align-items: center;
+}
+
 h1 {
   font: var(--vc-text-heading-lg);
   letter-spacing: var(--vc-text-heading-lg-letter-spacing);
@@ -111,7 +257,6 @@ button[data-style="Secondary"] {
 }
 
 .row { display: flex; flex-wrap: wrap; gap: var(--vc-spacing-8); }
-#signout { background: var(--vc-text-gray-light); }
 
 #inbox { list-style: none; margin: 0; padding: 0; }
 #inbox li,

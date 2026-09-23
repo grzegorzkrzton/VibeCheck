@@ -1,0 +1,6 @@
+# App Foundry default policy: allow authenticated Zendesk employees.
+"ingress.pomerium.io/policy": |
+  allow:
+    and:
+      - domain:
+          is: zendesk.com
