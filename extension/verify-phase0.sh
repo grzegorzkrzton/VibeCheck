@@ -19,3 +19,7 @@ if [ "$missing" -eq 1 ]; then
 fi
 
 echo "OK — load this VibeCheck extension folder in Chrome: $(pwd)"
+echo ""
+echo "After repo changes: from repo root run  npm run extension:build"
+echo "Then Reload the extension in chrome://extensions"
+echo "Full checklist: docs/extension-dev.md"

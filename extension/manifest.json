@@ -1,9 +1,11 @@
 {
   "name": "VibeCheck",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Drop feedback pins on vibe-coded prototypes — internal design handoff tool",
   "manifest_version": 3,
-  "icons": { "128": "icons/vibecheck.png" },
+  "icons": {
+    "128": "icons/vibecheck.png"
+  },
   "permissions": [
     "activeTab",
     "contextMenus",
@@ -24,15 +26,19 @@
       "128": "icons/vibecheck.png"
     }
   },
-  "web_accessible_resources": [{
-    "resources": [
-      "tuts/*.gif",
-      "toolbar/*",
-      "popup/*",
-      "fonts/figtree/*"
-    ],
-    "matches": ["<all_urls>"]
-  }],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "tuts/*.gif",
+        "toolbar/*",
+        "popup/*",
+        "fonts/figtree/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
   "commands": {
     "_execute_action": {
       "suggested_key": {

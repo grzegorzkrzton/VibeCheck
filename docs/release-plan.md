@@ -4,6 +4,8 @@ This document is the **publish scope** for VibeCheck. It matches the Figma [Rele
 
 The code switch is [`app/vibecheck/release-plan.js`](../app/vibecheck/release-plan.js) (copied to `extension/release-plan.js` on build). Set `CURRENT_RELEASE_PHASE` or lower a feature’s `phase` to ship it.
 
+After changing release gates or extension code, follow [`docs/extension-dev.md`](extension-dev.md) (`npm run extension:build`, then Reload in Chrome).
+
 [`PLAN.md`](../PLAN.md) is the **historical build log** (clone, rebrand, Supabase phases). Do not confuse those phase numbers with this board.
 
 ## Rules

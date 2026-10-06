@@ -31,14 +31,15 @@ cd extension
 4. Click the **VibeCheck** icon or press **Alt+Shift+D**
 5. Phase 0 tools (top to bottom): inspect (**I**), guides (**G**), accessibility, edit text (**E**), comments (**C**), wording (**W**), AI prompt (**Q**). See [`docs/release-plan.md`](docs/release-plan.md).
 
-### After changing code in `app/`
+### After changing code in `app/` or `extension/`
+
+**Checklist:** [`docs/extension-dev.md`](docs/extension-dev.md) (build → reload in Chrome; version sync).
 
 ```sh
-npm install
 npm run extension:build
 ```
 
-Then **Reload** the extension in `chrome://extensions`.
+Then **Reload** the extension in `chrome://extensions`. The version label is updated from `package.json` on every build; use `npm run bump` when you want a new semver for testers.
 
 ### After `git pull` on a test machine
 
