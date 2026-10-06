@@ -1,5 +1,7 @@
 # Internal design-handoff Chrome extension
 
+Publish scope for what ships to testers lives in [`docs/release-plan.md`](docs/release-plan.md) and [`app/vibecheck/release-plan.js`](app/vibecheck/release-plan.js). This file remains the historical build log for how the product was assembled.
+
 > Clone the upstream project locally as the foundation, then add a collaboration layer in small testable phases — frontend first (localStorage), backend later (Supabase + Google Workspace SSO).
 
 ## What you are actually building

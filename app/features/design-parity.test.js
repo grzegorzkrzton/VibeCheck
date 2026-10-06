@@ -22,7 +22,7 @@ test('toolbar exposes Figma mapped component names', async t => {
   t.true(mapped.main)
   t.true(mapped.color)
   t.is(mapped.tools, 15)
-  t.is(mapped.dividers, 3)
+  t.is(mapped.dividers, 1)
   t.is(mapped.colors, 3)
   t.is(mapped.ai, 1)
 })

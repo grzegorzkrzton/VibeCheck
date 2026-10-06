@@ -17,6 +17,9 @@ import { SearchHotkeys }        from './search.element'
 import { CommentsHotkeys }      from './comments.element'
 import { ContentHotkeys }       from './content.element'
 
+import { TOOL_FEATURE_IDS } from '../vibe-check/model'
+import { isFeatureEnabled } from '../../vibecheck/release-plan'
+
 export class Hotkeys extends HTMLElement {
 
   constructor() {
@@ -40,8 +43,18 @@ export class Hotkeys extends HTMLElement {
       content:        document.createElement('hotkeys-content'),
     }
 
-    Object.values(this.tool_map).forEach(tool =>
-      this.appendChild(tool))
+    const releaseAll = globalThis.__VIBECHECK_FEATURES__ === 'all'
+
+    Object.entries(this.tool_map).forEach(([toolName, tool]) => {
+      if (releaseAll) {
+        this.appendChild(tool)
+        return
+      }
+      if (toolName === 'position') return
+      const featureId = TOOL_FEATURE_IDS[toolName]
+      if (featureId && isFeatureEnabled(featureId))
+        this.appendChild(tool)
+    })
   }
 
   connectedCallback() {

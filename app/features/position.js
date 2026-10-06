@@ -78,7 +78,7 @@ export function draggable({el, surface = el, cursor = 'move', clickEvent}) {
   }
 
   const onMouseDown = e => {
-    if(e.target !== state.surface) return
+    if (e.target !== state.surface) return
     e.preventDefault()
 
     if(getComputedStyle(el).position == 'static')
@@ -107,7 +107,7 @@ export function draggable({el, surface = el, cursor = 'move', clickEvent}) {
   }
 
   const onMouseUp = e => {
-    if(e.target !== state.surface) return
+    if (!state.mouse.down) return
 
     e.preventDefault()
     e.stopPropagation()

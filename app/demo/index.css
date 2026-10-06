@@ -211,3 +211,11 @@ kbd {
   background-color: var(--theme-color);
   box-shadow: 0 2px 5px hsla(0,0%,0%,15%);
 }
+
+.vibecheck-logo-mark {
+  width: var(--vibecheck-logo-size, 4rem);
+  height: auto;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+}

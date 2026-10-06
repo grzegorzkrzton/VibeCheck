@@ -1,7 +1,9 @@
 import { APP_FOUNDRY_API_BASE_URL } from '../backend/app-foundry.js'
+import { isFeatureEnabled } from '../release-plan.js'
 
 const CHANNEL = 'vibecheck-store'
 const platform = typeof browser === 'undefined' ? chrome : browser
+const gate = new URLSearchParams(location.search).get('gate')
 const state = {
   login: 'initial',
   onboarding: 'empty',
@@ -121,9 +123,19 @@ async function submitOnboarding() {
   }
 }
 
+function applyReleaseGatesToPopup() {
+  const inboxSection = document.querySelector('[aria-labelledby="inbox-heading"]')
+  if (inboxSection)
+    inboxSection.hidden = !isFeatureEnabled('inbox')
+  const roleSection = document.querySelector('[aria-labelledby="toolbar-role-heading"]')
+  if (roleSection)
+    roleSection.hidden = !isFeatureEnabled('toolbar-role')
+}
+
 async function renderAccount(profile) {
   $('auth-flow').hidden = true
   $('account-content').hidden = false
+  applyReleaseGatesToPopup()
 
   const accountName = profile.displayName || profile.email || 'your account'
   $('status').textContent = `Connected to AppFoundry as ${accountName}`
@@ -152,9 +164,12 @@ function renderLogin(message = '') {
 
   const redirecting = state.login === 'redirecting'
   const failed = state.login === 'error'
+  const required = gate === 'login'
   const body = redirecting
     ? 'Redirecting to your company sign-in…'
-    : 'Sign in with your company account to continue.'
+    : required
+      ? 'Sign in is required before you can use VibeCheck on web pages.'
+      : 'Sign in with your company account to continue.'
   const actionLabel = redirecting
     ? 'Redirecting…'
     : failed
@@ -328,5 +343,22 @@ document.addEventListener('visibilitychange', () => {
   if (!document.hidden && state.login === 'redirecting') refresh()
 })
 
-renderLogin()
-refresh()
+async function initPopup() {
+  applyReleaseGatesToPopup()
+  renderLogin()
+  await refresh()
+
+  if (gate !== 'login') return
+
+  try {
+    const status = await call('status')
+    if (!status?.appFoundry?.authenticated && state.login !== 'redirecting')
+      await startSignIn()
+  }
+  catch {
+    if (state.login !== 'redirecting')
+      await startSignIn()
+  }
+}
+
+initPopup()

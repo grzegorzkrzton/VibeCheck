@@ -1,13 +1,14 @@
 import * as Icons from './vibe-check.icons'
 import { metaKey, altKey } from '../../utilities/'
 
-export const VibeCheckModel = {
+export { TOOL_FEATURE_IDS, releasedToolbarModel } from '../../vibecheck/release-toolbar.js'
+
+const VibeCheckModelEntries = {
   i: {
     tool:        'inspector',
     icon:        Icons.inspector,
     label:       '<span><u>I</u>nspect</span>',
     description: 'Inspect the common styles of an element',
-    dividerAfter: true,
     instruction: `<div table>
                     <div>
                       <b>Pin it:</b>
@@ -71,7 +72,6 @@ export const VibeCheckModel = {
     label:        '<span><u>W</u>ording</span>',
     description:  'Suggest replacement copy, preview it on the page, then approve or reject locally',
     hasTutorial:  false,
-    dividerAfter: true,
     instruction:  `<div table>
                     <div>
                       <b>Select:</b>
@@ -228,14 +228,12 @@ export const VibeCheckModel = {
                       <span>shift + /</span>
                     </div>
                   </div>`,
-    dividerAfter: true,
   },
   x: {
     tool:        'accessibility',
     icon:        Icons.accessibility,
     label:       'Accessibility',
     description: 'Inspect attributes & contrast compliance',
-    dividerAfter: true,
     instruction: `<div table>
                     <div>
                       <b>Pin it:</b>
@@ -346,6 +344,7 @@ export const VibeCheckModel = {
     icon:        Icons.text,
     label:       '<span><u>E</u>dit Text</span>',
     description: 'Just <b>Double click</b> any text on the page',
+    dividerAfter: true,
     instruction: '',
   },
   s: {
@@ -356,6 +355,15 @@ export const VibeCheckModel = {
     instruction: '',
   },
 }
+
+/** Matches Figma Phase 1 main toolbar (top → bottom). */
+const TOOLBAR_KEY_ORDER = [
+  'i', 'g', 'x', 'e', 'c', 'w', 'n', 'm', 'p', 'a', 'v', 'h', 'd', 'f', 's',
+]
+
+export const VibeCheckModel = Object.fromEntries(
+  TOOLBAR_KEY_ORDER.map(key => [key, VibeCheckModelEntries[key]]),
+)
 
 export const VibeCheckModelPMOnly = {
   i: VibeCheckModel.i,

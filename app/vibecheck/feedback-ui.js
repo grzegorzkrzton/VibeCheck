@@ -4,6 +4,7 @@ import { resolveAnchor } from './resolve'
 import { floatingPosition } from '../utilities'
 import { convertDraftType as convertDraftTypeState, relativeTime } from './card-state'
 import { figtreeFontFaceCss } from '../../design-system/generated/tokens.js'
+import { isFeatureEnabled } from './release-plan'
 import { feedbackStyles } from './feedback-styles'
 import {
   KIND_LABEL,
@@ -278,6 +279,12 @@ function itemMatchesMentionsFilter({ kind, item }) {
   return mentioned || repliesFor(item.id, kind).length > 0
 }
 
+function panelFilter() {
+  if (!isFeatureEnabled('annotation') && state.filter === 'annotations')
+    return 'all'
+  return state.filter
+}
+
 function visibleItems() {
   const comments = state.comments.filter(item => !item.parentId && !item.parentSuggestionId)
   const suggestions = state.suggestions
@@ -287,16 +294,19 @@ function visibleItems() {
   ]
 
   const search = state.search.trim().toLocaleLowerCase()
+  const activeFilter = panelFilter()
   const filtered = all.filter(({ kind, item }) => {
+    if (!isFeatureEnabled('annotation') && kind === 'comment' && item.type === 'annotation')
+      return false
     if (state.hideResolved && item.resolved)
       return false
     if (state.hideComments && kind === 'comment' && item.type !== 'annotation')
       return false
     if (!itemMatchesMentionsFilter({ kind, item }))
       return false
-    if (state.filter === 'notes') return kind === 'comment' && item.type !== 'annotation'
-    if (state.filter === 'annotations') return kind === 'comment' && item.type === 'annotation'
-    if (state.filter === 'content') return kind === 'suggestion'
+    if (activeFilter === 'notes') return kind === 'comment' && item.type !== 'annotation'
+    if (activeFilter === 'annotations') return kind === 'comment' && item.type === 'annotation'
+    if (activeFilter === 'content') return kind === 'suggestion'
     return true
   }).filter(({ kind, item }) => {
     if (!search) return true
@@ -534,7 +544,10 @@ function openTypeMenu() {
   syncMenuTriggers(layer)
   const trigger = layer.querySelector('.vc-type-trigger')
   const current = trigger?.querySelector('span')?.textContent?.trim() || 'Comment'
-  const menu = mountLayerMenu(renderTypeMenu({ type: current }))
+  const typeOptions = isFeatureEnabled('annotation')
+    ? ['Comment', 'Annotation', 'Wording']
+    : ['Comment', 'Wording']
+  const menu = mountLayerMenu(renderTypeMenu({ type: current, options: typeOptions }))
   placeAnchoredMenu(menu, trigger, { align: 'start' })
   requestAnimationFrame(() => {
     placeAnchoredMenu(menu, trigger, { align: 'start' })
@@ -699,6 +712,7 @@ function renderPanel() {
     showResolvedComments: !state.hideResolved,
     hideComments: state.hideComments,
     mentionsOnly: state.mentionsOnly,
+    showAnnotationFilter: isFeatureEnabled('annotation'),
     itemsHtml,
   })
 }
@@ -1140,12 +1154,15 @@ async function onLayerClick(event) {
     return
   }
   else if (action === 'set-card-type' && state.draft) {
+    if (!isFeatureEnabled('annotation') && actionEl.dataset.cardType === 'Annotation')
+      return
     state.draft = convertDraftType(state.draft, actionEl.dataset.cardType)
     await dismissLayerMenus()
     renderAndFocus('.vc-type-trigger')
     return
   }
   else if (action === 'set-kind' && state.draft) {
+    if (!isFeatureEnabled('annotation')) return
     state.draft.type = 'annotation'
     state.draft.kind = actionEl.dataset.annotationKind || actionEl.dataset.kind
   }

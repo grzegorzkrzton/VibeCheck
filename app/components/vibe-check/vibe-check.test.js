@@ -11,14 +11,14 @@ test('Should have guides as default tool', async t => {
   t.pass()
 })
 
-test('Should have 15 tools and 3 dividers', async t => {
+test('Should have 15 tools and 1 divider', async t => {
   const { page } = t.context
   const tools = await page.evaluate(`document.querySelector('vibe-check').$shadow.querySelectorAll('ol:first-of-type > li[data-tool]').length`)
   const dividers = await page.evaluate(`document.querySelector('vibe-check').$shadow.querySelectorAll('ol:first-of-type > li.vc-divider').length`)
   const mapped = await page.evaluate(`document.querySelector('vibe-check').$shadow.querySelector('[data-vc-component="Main Toolbar"]') !== null`)
 
   t.is(tools, 15)
-  t.is(dividers, 3)
+  t.is(dividers, 1)
   t.true(mapped)
   t.pass()
 })

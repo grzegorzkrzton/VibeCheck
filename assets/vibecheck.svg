@@ -1,24 +1,31 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 52.2 (67145) - http://www.bohemiancoding.com/sketch -->
-    <title>VibeCheck Copy 2</title>
-    <desc>Created with Sketch.</desc>
-    <defs>
-        <filter x="0.0%" y="0.0%" width="100.0%" height="100.0%" filterUnits="objectBoundingBox" id="filter-1">
-            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
-            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.3 0" type="matrix" in="shadowOffsetOuter1" result="shadowMatrixOuter1"></feColorMatrix>
-            <feMerge>
-                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
-                <feMergeNode in="SourceGraphic"></feMergeNode>
-            </feMerge>
-        </filter>
-    </defs>
-    <g id="VibeCheck-Copy-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path d="M434,144 C469.898509,144 499,114.898509 499,79 C499,43.1014913 469.898509,14 434,14 C398.101491,14 369,43.1014913 369,79 C369,114.898509 398.101491,144 434,144 Z" id="k" fill="#000000" fill-rule="nonzero"></path>
-        <g id="multiply-group" filter="url(#filter-1)" transform="translate(-26.000000, -26.000000)" fill-rule="nonzero">
-            <path d="M252.849285,316.021385 C384.402163,316.021385 491.046841,224.539715 491.046841,224.539715 C491.046841,224.539715 384.402163,133.058045 252.849285,133.058045 C121.296407,133.058045 14.6517289,224.539715 14.6517289,224.539715 C14.6517289,224.539715 121.296407,316.021385 252.849285,316.021385 Z" id="c" fill="#00FFFF" style="mix-blend-mode: multiply;" transform="translate(252.849285, 224.539715) rotate(-30.000000) translate(-252.849285, -224.539715) "></path>
-            <path d="M290.319377,422.716494 C421.708249,422.716494 528.219975,273.680623 528.219975,273.680623 C528.219975,273.680623 421.708249,124.644751 290.319377,124.644751 C158.930505,124.644751 52.4187794,273.680623 52.4187794,273.680623 C52.4187794,273.680623 158.930505,422.716494 290.319377,422.716494 Z" id="m" fill="#FFFF00" style="mix-blend-mode: multiply;" transform="translate(290.319377, 273.680623) rotate(-45.000000) translate(-290.319377, -273.680623) "></path>
-            <path d="M340.035642,403.207742 C471.588519,403.207742 578.233198,311.726071 578.233198,311.726071 C578.233198,311.726071 471.588519,220.244401 340.035642,220.244401 C208.482764,220.244401 101.838086,311.726071 101.838086,311.726071 C101.838086,311.726071 208.482764,403.207742 340.035642,403.207742 Z" id="y" fill="#FF00FF" style="mix-blend-mode: multiply;" transform="translate(340.035642, 311.726071) rotate(-60.000000) translate(-340.035642, -311.726071) "></path>
-        </g>
-    </g>
+<!-- Figma VibeCheck Logo (461:10247) -->
+<svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="vibecheck-logo-title">
+  <title id="vibecheck-logo-title">VibeCheck</title>
+  <rect width="48" height="48" rx="8" fill="url(#vibecheck-logo-bg)"/>
+  <g filter="url(#vibecheck-logo-icon-filter)">
+    <path d="M16.4493 29.5453L20.4445 40.522C20.9203 41.8294 22.7037 41.9915 23.4075 40.7914L33.6807 23.2736L16.4493 29.5453Z" fill="#1E2E05"/>
+    <path d="M20.1186 17.444C18.6913 13.5225 14.3151 11.4806 10.3937 12.9076L15.5841 27.1682C19.5053 25.7407 21.5456 21.3653 20.1186 17.444Z" fill="#BFF075"/>
+    <path d="M21.763 24.9193L34.3598 20.3344C36.9195 19.4028 38.2392 16.5725 37.3076 14.0129L33.804 4.38695L21.763 24.9193Z" fill="#EAFAD1"/>
+  </g>
+  <defs>
+    <filter id="vibecheck-logo-icon-filter" x="10.3937" y="4.38695" width="27.2127" height="37.217" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dx="0.5" dy="-0.5"/>
+      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.906825 0 0 0 0 1 0 0 0 0 0.763616 0 0 0 1 0"/>
+      <feBlend mode="normal" in2="shape" result="effect1_innerShadow"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dx="-0.5" dy="0.5"/>
+      <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+      <feBlend mode="normal" in2="effect1_innerShadow" result="effect2_innerShadow"/>
+    </filter>
+    <linearGradient id="vibecheck-logo-bg" x1="48" y1="0" x2="0" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BFF075"/>
+      <stop offset="0.304969" stop-color="#8FDD18"/>
+      <stop offset="1" stop-color="#5C8F0F"/>
+    </linearGradient>
+  </defs>
 </svg>

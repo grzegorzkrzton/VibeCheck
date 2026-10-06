@@ -1,3 +1,5 @@
+import { isFeatureEnabled } from '../release-plan.js'
+
 const storagekey = 'vibecheck-color-mode'
 const defaultcolormode = 'hex'
 
@@ -5,13 +7,6 @@ const color_options = [
   'hsl',
   'hex',
   'rgb',
-  // 'hsv',
-  // 'lch',
-  // 'lab',
-  // 'hcl',
-  // 'cmyk',
-  // 'gl',
-  // 'as authored',
 ]
 
 const colormodestate = {
@@ -35,6 +30,12 @@ const sendColorMode = () => {
 }
 
 export const getColorMode = () => {
+  if (!isFeatureEnabled('color-format')) {
+    colormodestate.mode = defaultcolormode
+    sendColorMode()
+    return defaultcolormode
+  }
+
   platform.storage.sync.get([storagekey], value => {
     let found_value = value[storagekey]
 
@@ -42,13 +43,11 @@ export const getColorMode = () => {
       ? value[storagekey] === defaultcolormode
       : false
 
-    // first run
     if (!found_value && !is_default) {
       found_value = defaultcolormode
       platform.storage.sync.set({[storagekey]: defaultcolormode})
     }
 
-    // migrate old choices
     if (found_value === 'hsla') {
       found_value = 'hsl'
       platform.storage.sync.set({[storagekey]: found_value})
@@ -58,14 +57,12 @@ export const getColorMode = () => {
       platform.storage.sync.set({[storagekey]: found_value})
     }
 
-    // update checked state of color contextmenu radio list
     color_options.forEach(option => {
       platform.contextMenus.update(option, {
         checked: option === found_value
       })
     })
 
-    // send vibecheck user preference
     colormodestate.mode = found_value
     sendColorMode()
 
@@ -73,31 +70,32 @@ export const getColorMode = () => {
   })
 }
 
-// load synced color choice on load
 getColorMode()
 
-platform.contextMenus.create({
-  id:     'color-mode',
-  title:  'Colors',
-  contexts: ['all'],
-})
-
-color_options.forEach(option => {
+if (isFeatureEnabled('color-format')) {
   platform.contextMenus.create({
-    id:       option,
-    parentId: 'color-mode',
-    title:    ' '+option,
-    checked:  false,
-    type:     'radio',
+    id:     'color-mode',
+    title:  'Colors',
     contexts: ['all'],
   })
-})
 
-platform.contextMenus.onClicked.addListener(({parentMenuItemId, menuItemId}, tab) => {
-  if (parentMenuItemId !== 'color-mode') return
+  color_options.forEach(option => {
+    platform.contextMenus.create({
+      id:       option,
+      parentId: 'color-mode',
+      title:    ' '+option,
+      checked:  false,
+      type:     'radio',
+      contexts: ['all'],
+    })
+  })
 
-  platform.storage.sync.set({[storagekey]: menuItemId})
-  colormodestate.mode = menuItemId
+  platform.contextMenus.onClicked.addListener(({parentMenuItemId, menuItemId}, tab) => {
+    if (parentMenuItemId !== 'color-mode') return
 
-  sendColorMode()
-})
+    platform.storage.sync.set({[storagekey]: menuItemId})
+    colormodestate.mode = menuItemId
+
+    sendColorMode()
+  })
+}

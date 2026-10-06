@@ -1,19 +1,29 @@
 import puppeteer from 'puppeteer'
+import { puppeteerLaunchOptions } from './puppeteer-launch.cjs'
 
-export const setupPptrTab = async t => {
-  t.context.browser  = await puppeteer.launch({
-    // headless: false,
-    args: ['--no-sandbox']
-  })
-  t.context.page     = await t.context.browser.newPage()
+export const TEST_APP_URL = process.env.VIBECHECK_TEST_URL || 'http://localhost:3000'
 
-  await t.context.page.goto('http://localhost:3000')
-  await t.context.page.evaluateHandle(`document.body.setAttribute('testing', true)`)
-  await t.context.page.waitForSelector('vibe-check')
+export async function gotoTestApp(page) {
+  page.setDefaultNavigationTimeout(60_000)
+  page.setDefaultTimeout(60_000)
+  await page.goto(TEST_APP_URL, { waitUntil: 'domcontentloaded' })
+  await page.evaluateHandle(`document.body.setAttribute('testing', true)`)
+  await page.waitForSelector('vibe-check')
 }
 
-export const teardownPptrTab = async ({context:{ page, browser }}) => {
-  await page.close()
+export const setupPptrTab = async t => {
+  t.context.browser  = await puppeteer.launch(puppeteerLaunchOptions())
+  t.context.page     = await t.context.browser.newPage()
+  await t.context.page.evaluateOnNewDocument(() => {
+    window.__VIBECHECK_FEATURES__ = 'all'
+  })
+
+  await gotoTestApp(t.context.page)
+}
+
+export const teardownPptrTab = async ({ context: { page, browser } }) => {
+  await page?.close()
+  await browser?.close()
 }
 
 export const changeMode = async ({page, tool}) =>

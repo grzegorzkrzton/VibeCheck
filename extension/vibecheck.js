@@ -1,6 +1,7 @@
 import {gimmeToggle} from "./contextmenu/launcher.js"
 import {getColorMode} from "./contextmenu/colormode.js"
 import {getColorScheme} from "./contextmenu/colorscheme.js"
+import { ensureAuthenticatedBeforeToolbar } from "./backend/auth-gate.js"
 import "./backend/messages.js"
 
 const state = {
@@ -44,6 +45,8 @@ const toggleIn = async ({id: tab_id}) => {
 
     // toggle in: it's loaded and needs injected
     else if (state.loaded[tab_id] && !state.injected[tab_id]) {
+      if (!await ensureAuthenticatedBeforeToolbar()) return
+
       await platform.scripting.executeScript({
         target: {tabId: tab_id},
         files: ['toolbar/restore.js'],
@@ -55,6 +58,8 @@ const toggleIn = async ({id: tab_id}) => {
 
     // fresh start in tab
     else {
+      if (!await ensureAuthenticatedBeforeToolbar()) return
+
       await injectToolbarCss(tab_id)
       await platform.scripting.executeScript({
         target: {tabId: tab_id},

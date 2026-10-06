@@ -176,11 +176,9 @@ export const prompt = `
   </svg>
 `
 
-export const logo_zendesk = `
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M11.3309 19.4379H2.1L11.3309 8.28398V19.4379Z"/>
-    <path d="M17.4844 14.823C20.0227 14.823 22.1002 16.8996 22.1004 19.4379H12.8695C12.8697 16.8997 14.9461 14.8232 17.4844 14.823Z"/>
-    <path d="M12.8695 15.4383V4.28438H22.1004L12.8695 15.4383Z"/>
-    <path d="M11.3309 4.28438C11.3309 6.82284 9.2533 8.89922 6.71484 8.89922C4.17663 8.89892 2.1 6.82266 2.1 4.28438H11.3309Z"/>
-  </svg>
+export const vibecheck_logo = `
+  <img class="vibecheck-logo" src="assets/vibecheck.png" alt="" width="48" height="48" decoding="async">
 `
+
+/** @deprecated use vibecheck_logo */
+export const logo_zendesk = vibecheck_logo

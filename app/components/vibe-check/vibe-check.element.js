@@ -27,7 +27,9 @@ import {
   VibeCheckPromptTool,
   TOOLBAR_ROLE_STORAGE_KEY,
   toolbarModelForRole,
+  releasedToolbarModel,
 } from './model'
+import { isFeatureEnabled } from '../../vibecheck/release-plan'
 import * as Icons                 from './vibe-check.icons'
 import { provideSelectorEngine }  from '../../features/search'
 import { PluginRegistry }         from '../../plugins/_registry'
@@ -47,14 +49,13 @@ export default class VibeCheck extends HTMLElement {
     super()
 
     this.toolbar_role   = 'Full'
-    this.toolbar_model  = VibeCheckModel
-    this.default_tool_key = 'g'
     this.prompt_tool    = VibeCheckPromptTool
     this.$shadow        = this.attachShadow({mode: 'closed'})
     this.applyScheme    = schemeRule(
       this.$shadow,
       VibeCheckStyles, VibeCheckLightStyles, VibeCheckDarkStyles
     )
+    this.applyToolbarRole('Full')
   }
 
   static get observedAttributes() {
@@ -64,12 +65,22 @@ export default class VibeCheck extends HTMLElement {
   async connectedCallback() {
     this._tutsBaseURL = this.getAttribute('tutsBaseURL') || 'tuts'
 
+    if (isFeatureEnabled('color-format'))
+      document.documentElement.dataset.vibecheckColorFormat = 'on'
+    else {
+      document.documentElement.dataset.vibecheckColorFormat = 'off'
+      this.setAttribute('color-mode', 'hex')
+    }
+
     await this.loadToolbarRole()
     this.setup()
     this.watchToolbarRole()
 
     this.selectorEngine = Selectable(this)
-    this.colorPicker    = ColorPicker(this.$shadow, this.selectorEngine)
+    if (isFeatureEnabled('color-actions'))
+      this.colorPicker = ColorPicker(this.$shadow, this.selectorEngine)
+    else
+      this.colorPicker = null
 
     provideSelectorEngine(this.selectorEngine)
     this.stopChangeTracker = startChangeTracker(this.selectorEngine)
@@ -93,6 +104,11 @@ export default class VibeCheck extends HTMLElement {
 
   loadToolbarRole() {
     return new Promise(resolve => {
+      if (!isFeatureEnabled('toolbar-role')) {
+        this.applyToolbarRole('Full')
+        resolve(this.toolbar_role)
+        return
+      }
       if (typeof chrome !== 'undefined' && chrome.storage?.local) {
         chrome.storage.local.get(TOOLBAR_ROLE_STORAGE_KEY, data => {
           this.applyToolbarRole(data[TOOLBAR_ROLE_STORAGE_KEY] || 'Full')
@@ -106,8 +122,14 @@ export default class VibeCheck extends HTMLElement {
   }
 
   applyToolbarRole(role = 'Full') {
+    if (!isFeatureEnabled('toolbar-role')) {
+      this.toolbar_role = 'Full'
+      this.toolbar_model = releasedToolbarModel(VibeCheckModel)
+      this.default_tool_key = 'g'
+      return
+    }
     this.toolbar_role = role === 'PM Only' ? 'PM Only' : 'Full'
-    this.toolbar_model = toolbarModelForRole(this.toolbar_role)
+    this.toolbar_model = releasedToolbarModel(toolbarModelForRole(this.toolbar_role))
     this.default_tool_key = this.toolbar_role === 'PM Only' ? 'i' : 'g'
   }
 
@@ -194,7 +216,7 @@ export default class VibeCheck extends HTMLElement {
     })
 
     draggable({
-      el:this,
+      el: this,
       surface: main_ol,
       cursor: 'grab',
     })
@@ -223,10 +245,11 @@ export default class VibeCheck extends HTMLElement {
       })
     )
 
-    hotkeys('q', e => {
-      e.preventDefault()
-      this.prompt()
-    })
+    if (isFeatureEnabled('ai-prompt'))
+      hotkeys('q', e => {
+        e.preventDefault()
+        this.prompt()
+      })
 
     hotkeys(`${metaKey}+/,${metaKey}+.`, e =>
       this.$shadow.host.style.display =
@@ -491,19 +514,9 @@ export default class VibeCheck extends HTMLElement {
   }
 
   render() {
-    return `
-      <vibecheck-hotkeys></vibecheck-hotkeys>
-      <ol data-vc-component="Main Toolbar" data-role="${this.toolbar_role}" constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
-        ${Object.entries(this.toolbar_model).reduce((list, [key, tool]) => `
-          ${list}
-          <li data-vc-component="Toolbar Tool Button" data-state="${key == this.default_tool_key ? 'Active' : 'Default'}" aria-label="${tool.label} Tool" aria-description="${tool.description}" aria-hotkey="${key}" data-tool="${tool.tool}" data-active="${key == this.default_tool_key}">
-            ${tool.icon}
-            ${this.demoTip({key, ...tool})}
-          </li>
-          ${tool.dividerAfter ? `<li class="vc-divider" data-vc-component="Toolbar Divider" aria-hidden="true"></li>` : ''}
-        `,'')}
-      </ol>
-      <ol colors data-vc-component="Color & AI Toolbar">
+    const showColorActions = isFeatureEnabled('color-actions')
+    const showAiPrompt = isFeatureEnabled('ai-prompt')
+    const colorPickers = showColorActions ? `
         <li class="color" data-vc-component="Toolbar Color Action" data-type="Text" data-state="Default" id="foreground" aria-label="Text" aria-description="Change the text color">
           <input type="color">
           ${Icons.color_text}
@@ -515,12 +528,29 @@ export default class VibeCheck extends HTMLElement {
         <li class="color" data-vc-component="Toolbar Color Action" data-type="Border" data-state="Default" id="border" aria-label="Border or Stroke" aria-description="Change the border color or stroke of svg">
           <input type="color">
           ${Icons.color_border}
-        </li>
+        </li>` : ''
+    const promptButton = showAiPrompt ? `
         <li class="color prompt-action" data-vc-component="Toolbar AI Prompt" data-state="Default" aria-label="${this.prompt_tool.label} Tool" aria-description="${this.prompt_tool.description}" aria-hotkey="q" data-tool="${this.prompt_tool.tool}" title="Copy AI prompt (Q)">
           ${this.prompt_tool.icon}
           ${this.demoTip({ key: 'q', ...this.prompt_tool })}
-        </li>
-      </ol>
+        </li>` : ''
+    const colorBar = (showColorActions || showAiPrompt) ? `
+      <ol colors data-vc-component="Color & AI Toolbar">
+        ${colorPickers}${promptButton}
+      </ol>` : ''
+
+    return `
+      <vibecheck-hotkeys></vibecheck-hotkeys>
+      <ol data-vc-component="Main Toolbar" data-role="${this.toolbar_role}" constructible-support="${constructibleStylesheetSupport ? 'false':'true'}">
+        ${Object.entries(this.toolbar_model).reduce((list, [key, tool]) => `
+          ${list}
+          <li data-vc-component="Toolbar Tool Button" data-state="${key == this.default_tool_key ? 'Active' : 'Default'}" aria-label="${tool.label} Tool" aria-description="${tool.description}" aria-hotkey="${key}" data-tool="${tool.tool}" data-active="${key == this.default_tool_key}">
+            ${tool.icon}
+            ${this.demoTip({key, ...tool})}
+          </li>
+          ${tool.dividerAfter ? `<li class="vc-divider" data-vc-component="Toolbar Divider" aria-hidden="true"></li>` : ''}
+        `,'')}
+      </ol>${colorBar}
     `
   }
 

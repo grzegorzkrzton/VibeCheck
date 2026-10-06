@@ -376,7 +376,7 @@
             <button class="mdc-button mdc-button--raised" type="submit">Submit</button>
           </div>
         </form>
-        <img src="assets/vibecheck.png" alt="Sweet VibeCheck logo" style="width: 4rem;">
+        <img class="vibecheck-logo-mark" src="assets/vibecheck.png" alt="VibeCheck logo">
       </article>
 
       <article span1x1 padded class="artboard" grid="rows" vertically-distributed="between">
@@ -753,6 +753,10 @@
 
     </main>
 
+    <script>
+      if (new URLSearchParams(location.search).get('features') === 'all')
+        window.__VIBECHECK_FEATURES__ = 'all'
+    </script>
     <script src="bundle.js" type="module" defer></script>
   </body>
 </html>

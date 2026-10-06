@@ -80,8 +80,12 @@ vibecheck.setAttribute('tutsBaseURL', src_path.slice(0, src_path.lastIndexOf('/'
 document.body.prepend(vibecheck)
 
 platform.runtime.onMessage.addListener(request => {
-  if (request.action === 'COLOR_MODE')
-    vibecheck.setAttribute('color-mode', request.params.mode)
+  if (request.action === 'COLOR_MODE') {
+    let mode = request.params.mode
+    if (document.documentElement.dataset.vibecheckColorFormat === 'off' && mode !== 'hex')
+      mode = 'hex'
+    vibecheck.setAttribute('color-mode', mode)
+  }
   else if (request.action === 'COLOR_SCHEME')
     vibecheck.setAttribute("color-scheme", request.params.mode)
 })

@@ -39,6 +39,32 @@ import {
   pinRowOrigin,
   pinRowPositions,
 } from '../app/vibecheck/pin-layout.js'
+import {
+  CURRENT_RELEASE_PHASE,
+  RELEASE_FEATURES,
+  isFeatureEnabled,
+} from '../app/vibecheck/release-plan.js'
+import {
+  releasedToolbarModel,
+} from '../app/vibecheck/release-toolbar.js'
+
+const FULL_TOOLBAR_TOOLS = {
+  i: { tool: 'inspector' },
+  g: { tool: 'guides' },
+  x: { tool: 'accessibility' },
+  e: { tool: 'text' },
+  c: { tool: 'comments' },
+  w: { tool: 'content' },
+  n: { tool: 'annotations' },
+  m: { tool: 'margin' },
+  p: { tool: 'padding' },
+  a: { tool: 'align' },
+  v: { tool: 'move' },
+  h: { tool: 'hueshift' },
+  d: { tool: 'boxshadow' },
+  f: { tool: 'font' },
+  s: { tool: 'search' },
+}
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -330,23 +356,22 @@ check('Main toolbar PM Only model exposes inspect, comment, annotation, wording,
 check('Main Toolbar tool order matches Figma Role=Full and Role=PM Only', () => {
   const modelPath = path.join(ROOT, 'app/components/vibe-check/model.js')
   const modelSrc = fs.readFileSync(modelPath, 'utf8')
-  const fullOrder = ['i', 'c', 'n', 'w', 'g', 'm', 'p', 'a', 'v', 'x', 'h', 'd', 'f', 'e', 's']
+  const fullOrder = ['i', 'g', 'x', 'e', 'c', 'w', 'n', 'm', 'p', 'a', 'v', 'h', 'd', 'f', 's']
   const pmOrder = ['i', 'c', 'n', 'w', 's']
-  const fullDividers = ['i', 'w', 'v', 'x']
-  const pmDividers = ['i', 'w']
+  const fullDividers = ['e']
 
-  const fullKeys = [...modelSrc.matchAll(/^\s{2}([a-z]):\s*\{/gm)].map(m => m[1])
+  const orderBlock = modelSrc.match(/const TOOLBAR_KEY_ORDER = \[([\s\S]*?)\]/)
+  assert.ok(orderBlock, 'TOOLBAR_KEY_ORDER missing from model.js')
+  const fullKeys = [...orderBlock[1].matchAll(/'([a-z])'/g)].map(m => m[1])
   const pmBlock = modelSrc.match(/export const VibeCheckModelPMOnly = \{([\s\S]*?)\n\}/)
   assert.ok(pmBlock, 'VibeCheckModelPMOnly block missing')
   const pmKeys = [...pmBlock[1].matchAll(/^\s{2}([a-z]):\s/gm)].map(m => m[1])
 
-  assert.deepEqual(fullKeys, fullOrder, 'Full toolbar key order drifted from Figma 352:9729')
+  assert.deepEqual(fullKeys, fullOrder, 'Full toolbar key order drifted from Figma Phase 1 layout')
   assert.deepEqual(pmKeys, pmOrder, 'PM Only toolbar key order drifted from Figma 352:9729')
 
   for (const key of fullDividers)
     assert.match(modelSrc, new RegExp(`^\\s{2}${key}:\\s*\\{[\\s\\S]*?dividerAfter: true`, 'm'), `missing dividerAfter on ${key}`)
-  for (const key of pmDividers)
-    assert.match(modelSrc, new RegExp(`^\\s{2}${key}:\\s*\\{[\\s\\S]*?dividerAfter: true`, 'm'), `PM Only inherits dividerAfter on ${key}`)
 })
 
 check('page cursor uses a follower for Comment, Annotation, and Wording', () => {
@@ -594,6 +619,7 @@ check('toolbar CSS matches Figma semantic treatments', () => {
   assert.match(vars, /--theme-icon_active-bg: var\(--vc-button-primary\)/)
   assert.match(css, /&:first-of-type \{[\s\S]*background-color: var\(--vc-surface\)/)
   assert.match(css, /&:first-of-type \{[\s\S]*box-shadow: var\(--vc-shadow-panel\)/)
+  assert.match(css, /&:first-of-type \{[\s\S]*padding: var\(--vc-spacing-24\) var\(--vc-spacing-4\)/)
   assert.match(css, /&\[data-active=true\][\s\S]*background-color: var\(--theme-icon_active-bg\)/)
   assert.doesNotMatch(css, /&\[data-active=true\][\s\S]*box-shadow: var\(--shadow-2\)/)
   assert.match(css, /\.prompt-action \{[\s\S]*border: 2px solid var\(--vc-button-primary\)/)
@@ -702,6 +728,55 @@ check('consumers no longer reference legacy foundation CSS names', () => {
     }
   }
   assert.deepEqual(hits, [])
+})
+
+check('Release plan registry matches docs fence', () => {
+  const doc = fs.readFileSync(path.join(ROOT, 'docs/release-plan.md'), 'utf8')
+  const match = doc.match(/```release-plan\n([\s\S]*?)```/)
+  assert.ok(match, 'docs/release-plan.md must contain a release-plan fence')
+  const fence = match[1]
+    .trim()
+    .split('\n')
+    .filter(Boolean)
+    .map(line => {
+      const [id, phase] = line.trim().split(/\s+/)
+      return { id, phase: Number(phase) }
+    })
+  const fromCode = RELEASE_FEATURES.map(({ id, phase }) => ({ id, phase }))
+  assert.deepEqual(fromCode, fence)
+  assert.equal(CURRENT_RELEASE_PHASE, 0)
+  const ids = RELEASE_FEATURES.map(item => item.id)
+  assert.equal(ids.length, new Set(ids).size)
+})
+
+check('Extension release-plan copy matches app source', () => {
+  const app = fs.readFileSync(path.join(ROOT, 'app/vibecheck/release-plan.js'), 'utf8')
+  const ext = fs.readFileSync(path.join(ROOT, 'extension/release-plan.js'), 'utf8')
+  assert.equal(ext, app)
+})
+
+check('Phase 0 feature gates default to shipping scope only', () => {
+  assert.throws(() => isFeatureEnabled('not-a-real-feature'))
+  assert.equal(isFeatureEnabled('guides'), true)
+  assert.equal(isFeatureEnabled('ai-prompt'), true)
+  assert.equal(isFeatureEnabled('margin'), false)
+  assert.equal(isFeatureEnabled('annotation'), false)
+  assert.equal(isFeatureEnabled('inbox'), false)
+  assert.equal(isFeatureEnabled('color-actions'), false)
+  assert.equal(isFeatureEnabled('toolbar-role'), false)
+})
+
+check('Released toolbar model matches Phase 0 tools', () => {
+  const model = releasedToolbarModel(FULL_TOOLBAR_TOOLS)
+  const tools = Object.values(model).map(tool => tool.tool)
+  assert.deepEqual(tools, [
+    'inspector',
+    'guides',
+    'accessibility',
+    'text',
+    'comments',
+    'content',
+  ])
 })
 
 console.log('parity checks passed')

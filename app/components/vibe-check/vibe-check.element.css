@@ -38,7 +38,7 @@
 
   &:first-of-type {
     gap: 1px;
-    padding: var(--vc-spacing-4);
+    padding: var(--vc-spacing-24) var(--vc-spacing-4);
     box-shadow: var(--vc-shadow-panel);
     background-color: var(--vc-surface);
     height: fit-content;
@@ -214,6 +214,21 @@
   fill: white;
   stroke: var(--theme-icon_color);
   stroke-width: 2px;
+}
+
+:host svg.vibecheck-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 100%;
+}
+
+:host img.vibecheck-logo {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 100%;
+  object-fit: contain;
 }
 
 :host [colors] > li.prompt-action {

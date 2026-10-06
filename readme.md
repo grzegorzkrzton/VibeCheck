@@ -29,7 +29,7 @@ cd extension
 2. Select the **`extension/`** folder (path must end with `/design-feedback-tool/extension`)
 3. Open any normal webpage (not `chrome://` pages)
 4. Click the **VibeCheck** icon or press **Alt+Shift+D**
-5. Tools: guides (**G**), inspect (**I**), comments (**C**), padding (**P**), edit text (**E**), content (**W**), AI prompt (**Q**)
+5. Phase 0 tools (top to bottom): inspect (**I**), guides (**G**), accessibility, edit text (**E**), comments (**C**), wording (**W**), AI prompt (**Q**). See [`docs/release-plan.md`](docs/release-plan.md).
 
 ### After changing code in `app/`
 

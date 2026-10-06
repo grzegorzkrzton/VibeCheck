@@ -275,8 +275,7 @@ export function renderTypeMenuItem({ option = 'Comment', selected = false } = {}
   })
 }
 
-export function renderTypeMenu({ type = 'Comment' } = {}) {
-  const options = ['Comment', 'Annotation', 'Wording']
+export function renderTypeMenu({ type = 'Comment', options = ['Comment', 'Annotation', 'Wording'] } = {}) {
   return renderListMenu({
     label: 'Card type',
     dataComponent: 'Card / Type Menu',
@@ -871,12 +870,13 @@ export function renderNotesPanel({
   showResolvedComments = false,
   hideComments = false,
   mentionsOnly = false,
+  showAnnotationFilter = true,
   itemsHtml = '',
 } = {}) {
   const filters = [
     ['all', 'All'],
     ['notes', 'Comments'],
-    ['annotations', 'Annotations'],
+    ...(showAnnotationFilter ? [['annotations', 'Annotations']] : []),
     ['content', 'Writing'],
   ]
   return `
