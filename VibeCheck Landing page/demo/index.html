@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>VibeCheck live component preview</title>
+  <link rel="stylesheet" href="./vendor/vibecheck.css">
+  <link rel="stylesheet" href="./demo.css">
+  <script type="module" src="./preview.js"></script>
+</head>
+<body>
+  <div id="mobile-info" hidden></div>
+  <div class="prototype-browser" aria-label="Sample prototype"><span class="prototype-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>your-prototype.local / a-work-in-progress</span><span class="prototype-label">SAMPLE PROTOTYPE</span></div>
+  <main class="prototype-shell">
+    <div class="prototype-sidebar" aria-label="Sample workspace"><span class="prototype-brand">form & field</span><span class="prototype-menu selected">Overview</span><span class="prototype-menu">Projects <small>08</small></span><span class="prototype-menu">Your team</span><span class="prototype-sidebar-note">A little space for your next idea.</span></div>
+    <section class="prototype-canvas" aria-labelledby="sample-heading"><p class="prototype-breadcrumb">Workspace <span aria-hidden="true">/</span> Project overview</p><span class="prototype-kicker">YOUR NEXT GOOD IDEA</span><h1 id="sample-heading" class="prototype-title">Make room for<br>what’s next.</h1><p class="prototype-description">Bring your team, your plans, and all the little details into one shared space.</p><button id="sample-target" class="prototype-button" type="button">Create your project</button><div class="prototype-stats"><div><span>In progress</span><strong>04</strong></div><div><span>In the details</span><strong>12</strong></div><div><span>Ready to share</span><strong>02</strong></div></div></section>
+  </main>
+  <p class="prototype-help">Real VibeCheck tools. Sample content. Feedback stays in this preview.</p>
+  <p id="preview-error" role="alert" hidden>The component preview could not start. Reload the page to try again.</p>
+</body>
+</html>
