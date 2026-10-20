@@ -18,7 +18,7 @@ import {
   renderPin,
   renderReply,
   renderTypeMenu,
-  renderWordingCard,
+  renderContentCard,
 } from './components'
 import { cardIcon } from './card-icons.js'
 import { groupPinsByElement, pinRowOrigin, pinRowPositions } from './pin-layout'
@@ -545,8 +545,8 @@ function openTypeMenu() {
   const trigger = layer.querySelector('.vc-type-trigger')
   const current = trigger?.querySelector('span')?.textContent?.trim() || 'Comment'
   const typeOptions = isFeatureEnabled('annotation')
-    ? ['Comment', 'Annotation', 'Wording']
-    : ['Comment', 'Wording']
+    ? ['Comment', 'Annotation', 'Content']
+    : ['Comment', 'Content']
   const menu = mountLayerMenu(renderTypeMenu({ type: current, options: typeOptions }))
   placeAnchoredMenu(menu, trigger, { align: 'start' })
   requestAnimationFrame(() => {
@@ -584,7 +584,7 @@ function placePanel(panel) {
 function typeLabel(item) {
   if (item.type === 'annotation')
     return `Annotation · ${KIND_LABEL[item.kind] || 'Implement'}`
-  if (item.status) return `Wording · ${item.status === 'applied' ? 'Applied' : 'Pending'}`
+  if (item.status) return `Content · ${item.status === 'applied' ? 'Applied' : 'Pending'}`
   return 'Comment'
 }
 
@@ -603,7 +603,7 @@ function renderCard(open) {
   const composing = kind === 'draft' || (kind === 'comment' && item._editing)
 
   if (composing && item.recordType === 'suggestion') {
-    return renderWordingCard({
+    return renderContentCard({
       id: item.id,
       state: 'Compose',
       suggestedText: item.suggestedText || '',
@@ -641,7 +641,7 @@ function renderCard(open) {
   }
 
   if (kind === 'suggestion') {
-    return renderWordingCard({
+    return renderContentCard({
       id: item.id,
       state: 'Detail',
       suggestedText: item.suggestedText || '(empty)',

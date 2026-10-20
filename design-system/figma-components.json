@@ -152,7 +152,7 @@
         "dataComponent": "Card / Selected Item"
       },
       "variants": {
-        "Type": ["Comment", "Implement", "Warning", "Question", "Wording"]
+        "Type": ["Comment", "Implement", "Warning", "Question", "Content"]
       },
       "attributes": { "data-vc-type": "Type" }
     },
@@ -184,7 +184,7 @@
         "dataComponent": "Card / Type Selector"
       },
       "variants": {
-        "Type": ["Comment", "Annotation", "Wording"],
+        "Type": ["Comment", "Annotation", "Content"],
         "State": ["Default", "Open", "Disabled"]
       },
       "attributes": { "data-state": "State" }
@@ -393,7 +393,7 @@
           "Inspect",
           "Comment",
           "Annotation",
-          "Wording",
+          "Content",
           "Position",
           "Margin",
           "Padding",
@@ -636,16 +636,16 @@
       "attributes": { "data-card-type": "Kind", "data-mode": "Mode", "data-state": "State" }
     },
     {
-      "name": "Card / Wording",
-      "figmaName": "Card / Wording",
+      "name": "Card / Content",
+      "figmaName": "Card / Content",
       "nodeId": "196:1146",
       "type": "COMPONENT_SET",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=196-1146",
       "code": {
         "source": "app/vibecheck/components.js",
-        "renderer": "renderWordingCard",
-        "selector": "[data-vc-component=\"Card / Wording\"]",
-        "dataComponent": "Card / Wording"
+        "renderer": "renderContentCard",
+        "selector": "[data-vc-component=\"Card / Content\"]",
+        "dataComponent": "Card / Content"
       },
       "variants": {
         "Mode": ["Compose", "Detail"],

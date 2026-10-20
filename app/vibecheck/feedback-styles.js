@@ -789,7 +789,7 @@ ${layerTokenCss}
   color: var(--vc-badge-success-text);
 }
 
-#vibecheck-layer .vc-wording-content {
+#vibecheck-layer .vc-content-body {
   display: flex;
   flex-direction: column;
   max-height: min(360px, calc(100vh - 180px));

@@ -4,7 +4,7 @@ export const RELEASE_FEATURES = [
   { id: 'toggle', phase: 0, label: 'Toggle VibeCheck' },
   { id: 'theme', phase: 0, label: 'Theme' },
   { id: 'comment', phase: 0, label: 'Comment' },
-  { id: 'wording', phase: 0, label: 'Wording' },
+  { id: 'content', phase: 0, label: 'Content' },
   { id: 'notes-panel', phase: 0, label: 'Notes panel' },
   { id: 'resolve-reopen', phase: 0, label: 'Resolve and reopen' },
   { id: 'reply-threads', phase: 0, label: 'Reply threads' },

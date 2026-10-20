@@ -4,7 +4,7 @@ export const TOOL_FEATURE_IDS = {
   inspector: 'inspect',
   comments: 'comment',
   annotations: 'annotation',
-  content: 'wording',
+  content: 'content',
   guides: 'guides',
   margin: 'margin',
   padding: 'padding',

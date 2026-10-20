@@ -19,7 +19,7 @@ export class ContentHotkeys extends HotkeyMap {
         <div tool-icon>
           <span>
             ${icon}
-            Wording Tool
+            Content Tool
           </span>
         </div>
         <div command>
