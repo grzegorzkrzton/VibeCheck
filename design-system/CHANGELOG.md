@@ -5,6 +5,7 @@ Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; thi
 ## 2026-10-20 — Wording renamed to Content
 
 - Product feature **Wording** is now **Content** in Figma, toolbar labels, `Card / Content`, release feature id `content`, and landing copy. Runtime tool id remains `content`; stored suggestions remain `kind: suggestion`. The toolbar hotkey remains **W**.
+- Notes panel filter chip label is **Content** (filter value `content` unchanged).
 
 ## 2026-09-21 — Tool page cursors
 

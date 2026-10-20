@@ -877,7 +877,7 @@ export function renderNotesPanel({
     ['all', 'All'],
     ['notes', 'Comments'],
     ...(showAnnotationFilter ? [['annotations', 'Annotations']] : []),
-    ['content', 'Writing'],
+    ['content', 'Content'],
   ]
   return `
     <aside class="vc-panel" ${attrs({

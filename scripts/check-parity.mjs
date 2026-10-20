@@ -281,7 +281,7 @@ check('Position stays dormant and is excluded from the production toolbar', () =
   assert.match(dormant, /export function activateDormantPosition/)
 })
 
-check('Notes panel uses Search Field, header actions, and Writing filter', () => {
+check('Notes panel uses Search Field, header actions, and Content filter', () => {
   const html = renderNotesPanel({ collapsed: false, hideResolved: true, filter: 'content', itemsHtml: '<div></div>' })
   assert.match(html, /data-vc-component="Notes Panel"/)
   assert.match(html, /data-state="Expanded"/)
@@ -295,7 +295,7 @@ check('Notes panel uses Search Field, header actions, and Writing filter', () =>
   assert.match(html, /data-action="panel-more"/)
   assert.equal(html.includes('data-action="resolve-notes"'), false)
   assert.match(html, /Comments/)
-  assert.match(html, /Writing/)
+  assert.match(html, />Content</)
   assert.match(html, /data-filter="content"/)
   assert.match(html, /data-vc-component="Card \/ Icon Button"/)
   assert.match(html, /data-action="toggle-panel"/)
