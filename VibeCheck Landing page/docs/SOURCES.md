@@ -37,11 +37,9 @@ The final 31-check browser regression runs passed against both the development s
 
 The iframe adapter now supplies a `chrome.runtime.getURL()` asset resolver only within that child document. It resolves font paths relative to the site's root using the adapter module URL, supporting both `/` and `/VibeCheck/` without transforming the released runtime. No runtime messaging or extension storage API is supplied. The preview server's `--base /VibeCheck/` mode denies root-level assets to expose missing prefix handling during tests. A fresh production build and all 31 browser regressions passed at that project prefix, including loaded runtime fonts and no 404 requests; this remains local evidence, separate from remote deployment.
 
-## GitHub Pages setup evidence
+## Hosting
 
-Publication target: a public Pages website built from the existing private `grzegorzkrzton/VibeCheck` repository. The user authorized public website publication while retaining repository privacy. On 16 October 2026, GitHub's authenticated Pages enablement API rejected the request with HTTP 422, stating that the current plan does not support GitHub Pages for this repository. No successful enablement or live deployment is established by that response.
-
-The workflow follows [GitHub's custom Pages workflow guidance](https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages). Official release pages checked on 16 October 2026 establish the exact versions selected: [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1), [setup-node v7.1.0](https://github.com/actions/setup-node/releases/tag/v7.1.0), [configure-pages v6.0.0](https://github.com/actions/configure-pages/releases/tag/v6.0.0), [upload-pages-artifact v5.0.0](https://github.com/actions/upload-pages-artifact/releases/tag/v5.0.0), and [deploy-pages v5.0.1](https://github.com/actions/deploy-pages/releases/tag/v5.0.1). Documentation examples still reference some earlier versions; the official releases were checked directly. No package installation or deployment secret is required by this dependency-free landing build. The build output includes the public extension UI runtime that is already used by the local demo; repository documentation and source metadata are omitted.
+The VibeCheck repository keeps the landing page source for local build and verification only. It does not ship a GitHub Actions workflow that publishes to GitHub Pages. Shared workshop hosting is maintained in the Zendesk `ocr-platform-design` playground copy when that site is deployed through its own process.
 
 ## Other projects
 

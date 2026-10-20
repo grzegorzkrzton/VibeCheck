@@ -36,15 +36,9 @@ npm run preview -- --host 127.0.0.1 --port 4175 --strictPort --base /VibeCheck/
 
 Open [http://127.0.0.1:4175/VibeCheck/](http://127.0.0.1:4175/VibeCheck/). This server deliberately denies root-level asset routes while using a project prefix, so missing prefix handling is visible during verification.
 
-## Public GitHub Pages publishing
+## Hosting
 
-The prepared workflow is [`.github/workflows/landing-pages.yml`](../.github/workflows/landing-pages.yml). It tests and builds this folder with Node.js 24, then uploads **only `VibeCheck Landing page/dist`** using GitHub's official Pages actions. Repository documentation, facilitator notes, tests, source captures, provenance, and Git metadata are excluded from that artifact. The private repository remains private; the site is intended to be publicly accessible without sign-in.
-
-**Current status, 16 October 2026:** GitHub rejected the Pages enablement request with HTTP 422: “Your current plan does not support GitHub Pages for this repository.” Pages is not configured, nothing has been published, and the expected [https://grzegorzkrzton.github.io/VibeCheck/](https://grzegorzkrzton.github.io/VibeCheck/) address is not a verified live site. Publishing from this private personal repository requires a supported account plan. Repository visibility must stay private.
-
-Once plan eligibility is resolved, enable Pages with **GitHub Actions** as its source, allow `main` and `codex/vibecheck-landing-exercise` in the `github-pages` deployment environment, and push the reviewed changes. The workflow runs on either permitted branch when landing files, the released toolbar bundle/CSS, tutorials, canonical fonts, or the workflow change. It also supports manual dispatch from those branches after the workflow is available on the default branch. The workflow serializes deployments and never changes repository visibility.
-
-For later updates, push to one of those publishing branches or merge the landing changes into `main`. A rebuild copies the released extension bundle from the same commit; if extension source changes, regenerate and commit that canonical bundle through the existing extension workflow first. Confirm a successful Pages deployment and verify its returned URL before sharing it. No backend credentials, account requests, or extension installation are part of this static deployment.
+This repository does **not** deploy the landing page to GitHub Pages. Use `npm run dev`, `npm run build`, and `npm run preview` locally, or publish the static `dist/` output through your own hosting process. The Zendesk playground copy under `ocr-platform-design/playground/vibecheck-landing` is the team's shared workshop URL when that site is published separately.
 
 ## Workshop controls
 
