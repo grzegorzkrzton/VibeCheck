@@ -70,7 +70,7 @@ const info = {
   release: {
     kicker: 'MEET THE CURRENT TOOLKIT',
     title: 'A little inspiration first.',
-    content: '<p>Good feedback starts with noticing the details. This build brings seven tools together on the page:</p><ul><li>Inspect, Guides, and Accessibility for a closer look.</li><li>Comment and Wording for feedback in context.</li><li>Edit Text and AI Prompt to explore a clearer next step.</li></ul><p>For installation, follow your internal pilot’s approved access process.</p>',
+    content: '<p>Good feedback starts with noticing the details. This build brings seven tools together on the page:</p><ul><li>Inspect, Guides, and Accessibility for a closer look.</li><li>Comment and Content for feedback in context.</li><li>Edit Text and AI Prompt to explore a clearer next step.</li></ul><p>For installation, follow your internal pilot’s approved access process.</p>',
     action: '<button class="button button-lime" data-action="access-from-info">Continue to setup <span aria-hidden="true">↗</span></button>',
   },
   install: {

@@ -3,7 +3,7 @@ import { changeMode, pptrMetaKey, setupPptrTab, teardownPptrTab } from '../../te
 
 test.beforeEach(setupPptrTab)
 
-test('Wording supports keyboard compose, apply, reply, menus, and resolve', async t => {
+test('Content supports keyboard compose, apply, reply, menus, and resolve', async t => {
   const { page } = t.context
   await changeMode({ page, tool: 'content' })
   await page.click('h1')
@@ -27,7 +27,7 @@ test('Wording supports keyboard compose, apply, reply, menus, and resolve', asyn
   await page.keyboard.type('A clearer title')
   await page.keyboard.press('Enter')
 
-  await page.waitForSelector('[data-vc-component="Card / Wording"][data-mode="Detail"]')
+  await page.waitForSelector('[data-vc-component="Card / Content"][data-mode="Detail"]')
   t.is(await page.$('[data-action="approve"], [data-action="reject"], [data-action="preview"]'), null)
   t.is(await page.$eval('.vc-type-trigger', element => element.querySelector('svg')), null)
   t.is(await page.$eval('.vc-type-trigger', element => getComputedStyle(element).opacity), '1')
@@ -49,7 +49,7 @@ test('Wording supports keyboard compose, apply, reply, menus, and resolve', asyn
   t.is(await page.$('.vc-list-menu[data-menu="overflow"]'), null)
 
   await page.click('[data-action="resolve"]')
-  await page.waitForSelector('[data-vc-component="Card / Wording"][data-resolution="Resolved"]')
+  await page.waitForSelector('[data-vc-component="Card / Content"][data-resolution="Resolved"]')
   t.truthy(await page.$('[aria-label="Reopen thread"]'))
 })
 

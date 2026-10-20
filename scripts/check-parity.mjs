@@ -30,7 +30,7 @@ import {
   renderReply,
   renderSend,
   renderTypeSelector,
-  renderWordingCard,
+  renderContentCard,
 } from '../app/vibecheck/components.js'
 import {
   PIN_ORIGIN_INSET,
@@ -85,7 +85,7 @@ check('Chip selected state matches Figma Selected', () => {
   const html = renderChip({
     kind: 'Filter',
     selected: true,
-    label: 'Wording',
+    label: 'Content',
     action: 'filter',
     dataAttrs: { 'data-filter': 'content' },
   })
@@ -173,7 +173,7 @@ check('Figma pin and card variant translation', () => {
   assert.equal(pinVisualState({}), 'Default')
   assert.equal(cardFamily({ kind: 'draft', item: { type: 'note' } }), 'Card / Comment')
   assert.equal(cardFamily({ kind: 'comment', item: { type: 'annotation' } }), 'Card / Annotation')
-  assert.equal(cardFamily({ kind: 'suggestion', item: {} }), 'Card / Wording')
+  assert.equal(cardFamily({ kind: 'suggestion', item: {} }), 'Card / Content')
   assert.equal(cardState('draft', {}), 'Compose')
   assert.equal(cardState('comment', {}), 'Detail')
 })
@@ -191,22 +191,22 @@ check('Comment compose and detail cards expose Cards v2 axes', () => {
   assert.match(detail, /data-action="reply"/)
 })
 
-check('Annotation and Wording cards expose final variants and actions', () => {
+check('Annotation and Content cards expose final variants and actions', () => {
   const annotation = renderAnnotationCard({ id: 'a1', state: 'Compose', kind: 'question' })
   assert.match(annotation, /data-vc-component="Card \/ Annotation"/)
   assert.match(annotation, /data-annotation-kind="question"/)
   assert.match(annotation, /data-vc-component="Card \/ Kind Chip"/)
-  const wording = renderWordingCard({
+  const contentCard = renderContentCard({
     id: 'w1',
     state: 'Detail',
     originalText: 'From',
     suggestedText: 'To',
     status: 'pending',
   })
-  assert.match(wording, /data-vc-component="Card \/ Wording"/)
-  assert.match(wording, /data-action="apply-suggestion"/)
-  assert.match(wording, /data-role="Original"/)
-  assert.doesNotMatch(wording, /Approve|Reject|Preview/)
+  assert.match(contentCard, /data-vc-component="Card \/ Content"/)
+  assert.match(contentCard, /data-action="apply-suggestion"/)
+  assert.match(contentCard, /data-role="Original"/)
+  assert.doesNotMatch(contentCard, /Approve|Reject|Preview/)
 })
 
 check('Cards v2 header and input actions follow Figma order', () => {
@@ -215,7 +215,7 @@ check('Cards v2 header and input actions follow Figma order', () => {
     detail,
     /data-action="toggle-overflow"[\s\S]*data-action="resolve"[\s\S]*data-action="close"[\s\S]*data-action="reply"/,
   )
-  const compose = renderWordingCard({ id: 'w1', state: 'Compose' })
+  const compose = renderContentCard({ id: 'w1', state: 'Compose' })
   assert.match(
     compose,
     /data-field="suggestedText"[\s\S]*data-field="rationale"[\s\S]*data-action="send"/,
@@ -237,7 +237,7 @@ check('Cards v2 shared atoms expose exact contracts', () => {
   assert.match(renderQuote({ role: 'Suggestion', apply: true }), /data-role="Suggestion"/)
   const combo = renderComboField({ firstValue: 'Ready', secondValue: 'Reason' })
   assert.match(combo, /data-state="Filled - Both"/)
-  assert.match(combo, /data-state="Active" data-card-type="Wording"/)
+  assert.match(combo, /data-state="Active" data-card-type="Content"/)
 })
 
 check('toolbar icons carry the synced Figma geometry', () => {
@@ -341,7 +341,7 @@ check('Panel more menu renders toggles and mark-all-read', () => {
   assert.match(html, /data-action="mark-all-read"/)
 })
 
-check('Main toolbar PM Only model exposes inspect, comment, annotation, wording, and search', () => {
+check('Main toolbar PM Only model exposes inspect, comment, annotation, content, and search', () => {
   const model = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/model.js'), 'utf8')
   const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
   assert.match(model, /export const VibeCheckModelPMOnly/)
@@ -374,7 +374,7 @@ check('Main Toolbar tool order matches Figma Role=Full and Role=PM Only', () => 
     assert.match(modelSrc, new RegExp(`^\\s{2}${key}:\\s*\\{[\\s\\S]*?dividerAfter: true`, 'm'), `missing dividerAfter on ${key}`)
 })
 
-check('page cursor uses a follower for Comment, Annotation, and Wording', () => {
+check('page cursor uses a follower for Comment, Annotation, and Content', () => {
   const cursor = fs.readFileSync(path.join(ROOT, 'app/utilities/page-cursor.js'), 'utf8')
   const element = fs.readFileSync(path.join(ROOT, 'app/components/vibe-check/vibe-check.element.js'), 'utf8')
   assert.match(cursor, /FOLLOWER_TOOLS = new Set\(\['comments', 'annotations', 'content'\]\)/)
@@ -486,7 +486,7 @@ check('mapping manifest references existing sources and renderers', () => {
     'Toolbar Tip',
     'Card / Comment',
     'Card / Annotation',
-    'Card / Wording',
+    'Card / Content',
     'Avatar',
     'Notes Panel',
     'Account & Inbox Popup',
@@ -518,7 +518,7 @@ check('mapping manifest references existing sources and renderers', () => {
     'renderPin',
     'renderNoteCard',
     'renderAnnotationCard',
-    'renderWordingCard',
+    'renderContentCard',
     'renderAvatar',
     'renderNotesPanelItem',
     'renderNotesPanel',
@@ -644,6 +644,8 @@ check('active product code and paths use the VibeCheck name', () => {
     'PLAN.md',
     'package.json',
     'readme.md',
+    'LICENSE',
+    'VibeCheck Landing page/assets/ASSET-LICENSES.txt',
   ])
 
   tracked.forEach(file => {

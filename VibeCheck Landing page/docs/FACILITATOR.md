@@ -4,7 +4,7 @@ This is a deliberately imperfect product website for a UI/UX critique workshop. 
 
 This document is the answer key and implementation contract. Keep it out of participant-facing navigation. The separate verification report records what has actually been tested.
 
-The embedded product preview runs the actual released VibeCheck UI bundle on a sample prototype, including the genuine vertical toolbar, comment card, pins, replies, and wording controls. Its feedback stays in memory inside the iframe. Use the installed extension for critique of the full landing page and its planted defects.
+The embedded product preview runs the actual released VibeCheck UI bundle on a sample prototype, including the genuine vertical toolbar, comment card, pins, replies, and Content controls. Its feedback stays in memory inside the iframe. Use the installed extension for critique of the full landing page and its planted defects.
 
 ## Before a session
 
@@ -14,7 +14,7 @@ The embedded product preview runs the actual released VibeCheck UI bundle on a s
 4. Confirm the normal page exposes no answer key, defect list, facilitator panel, or score.
 5. Ask participants to use invented details in the access form. The final receipt must identify the local simulation clearly.
 
-To demonstrate the embedded components, reply to the seeded comment, use **Try a comment** to create another thread, or select **Wording** to save and apply a suggestion to the sample button. **Comment**, **Wording**, and **Inspect** activate actual runtime tools. These are sample interactions, not feedback saved against the outer landing page. Do not place teaching defects inside the genuine components.
+To demonstrate the embedded components, reply to the seeded comment, use **Try a comment** to create another thread, or select **Content** to save and apply a suggestion to the sample button. **Comment**, **Content**, and **Inspect** activate actual runtime tools. These are sample interactions, not feedback saved against the outer landing page. Do not place teaching defects inside the genuine components.
 
 ## Suggested participant tasks
 
@@ -23,13 +23,13 @@ These tasks do not name the planted issues.
 1. Explain what VibeCheck does and identify two ways to use it when reviewing a live prototype.
 2. Find out how to get started, begin the local access walkthrough, then change your mind partway through and leave it.
 3. Start again and complete the local access walkthrough using invented details.
-4. Find help for setup, check the FAQ, and use VibeCheck to leave a comment and a wording suggestion on something you would improve.
+4. Find help for setup, check the FAQ, and use VibeCheck to leave a comment and a content suggestion on something you would improve.
 
 Invite participants to describe what happened, what they expected, and why the difference matters. Distinguish a capability question from a landing-page usability finding. Reveal the registry after the critique.
 
 ## Reset and recovery
 
-The parent page owns one native localStorage key: `vibecheck-landing-exercise-v1`. It stores only three boolean flags: interruption shown, local setup completed, and simulated updates preference. These persist across reloads and browser sessions until reset; form text stays in memory. The support interruption fires once per reset, not once per browser session. The embedded runtime uses a separate memory-only storage adapter in its child window; its comments, replies, wording, author, and panel preferences are lost on iframe reload and never overwrite native extension data.
+The parent page owns one native localStorage key: `vibecheck-landing-exercise-v1`. It stores only three boolean flags: interruption shown, local setup completed, and simulated updates preference. These persist across reloads and browser sessions until reset; form text stays in memory. The support interruption fires once per reset, not once per browser session. The embedded runtime uses a separate memory-only storage adapter in its child window; its comments, replies, content suggestions, author, and panel preferences are lost on iframe reload and never overwrite native extension data.
 
 - **Full reset:** open the same landing URL with `?reset=1`. It clears only the native exercise key, resets the access form, FAQ, navigation, and overlays, reloads the embedded preview to its seeded comment and original button, and removes only the `reset` query parameter. It preserves `facilitator=1` and other query parameters. It must not clear native localStorage or sessionStorage wholesale.
 - **Reset preview:** reloads only the iframe, discarding its memory-only feedback and restoring the seeded comment, original button, and Comment tool. Workshop flags and the access form remain unchanged.
@@ -186,4 +186,4 @@ Preserve these faults during maintenance. Code identifies each planted behavior 
 
 These twelve defects are expected findings. Unexpected console errors, missing assets, accidental overflow, inaccessible facilitator controls, broken recovery, unlisted contrast failures, or interference with real VibeCheck overlays are regressions. A successful build does not establish visual quality or extension compatibility.
 
-The current 31-check browser suite covers the deliberate faults alongside genuine comment creation, replies, resolve/reopen, pin reopening, menu Escape recovery, wording save/apply, memory/native-storage isolation, both reset paths, and mobile containment. It recorded no external requests, POST submissions, or runtime errors. See `VERIFICATION.md` for the remaining installed-extension and accessibility limits.
+The current 31-check browser suite covers the deliberate faults alongside genuine comment creation, replies, resolve/reopen, pin reopening, menu Escape recovery, content save/apply, memory/native-storage isolation, both reset paths, and mobile containment. It recorded no external requests, POST submissions, or runtime errors. See `VERIFICATION.md` for the remaining installed-extension and accessibility limits.

@@ -359,8 +359,8 @@ try {
     assert.equal(await page.$$('.illustrated-toolbar').then(elements => elements.length), 0);
   });
 
-  await check('Comment, Wording, and Inspect controls select the real extension tools', async () => {
-    for (const [mode, tool] of [['wording', 'content'], ['inspect', 'inspector'], ['comment', 'comments']]) {
+  await check('Comment, Content, and Inspect controls select the real extension tools', async () => {
+    for (const [mode, tool] of [['content', 'content'], ['inspect', 'inspector'], ['comment', 'comments']]) {
       await page.click(`.demo-mode-switch [data-mode="${mode}"]`);
       await frame.waitForFunction(expected => document.querySelector('vibe-check').activeTool === expected, {}, tool);
       assert.equal(await page.$eval(`.demo-mode-switch [data-mode="${mode}"]`, element => element.getAttribute('aria-pressed')), 'true');
@@ -420,10 +420,10 @@ try {
     assert.match(await frame.$eval('.vc-card .vc-thread', element => element.textContent), /A reply from the live preview\./);
   });
 
-  await check('real Wording component saves and applies a suggestion to the sample button', async () => {
-    await page.click('.demo-mode-switch [data-mode="wording"]');
+  await check('real Content component saves and applies a suggestion to the sample button', async () => {
+    await page.click('.demo-mode-switch [data-mode="content"]');
     await frame.waitForFunction(() => document.querySelector('vibe-check').activeTool === 'content');
-    await frame.waitForSelector('[data-vc-component="Card / Wording"][data-mode="Compose"]');
+    await frame.waitForSelector('[data-vc-component="Card / Content"][data-mode="Compose"]');
     await revealDemo();
     await frame.focus('[data-field="suggestedText"]');
     await page.keyboard.type('Start a new project');
@@ -431,7 +431,7 @@ try {
     assert.equal(await frame.evaluate(() => document.activeElement.dataset.field), 'rationale');
     await page.keyboard.type('Explain the action before the click.');
     await frame.click('[data-action="send"]');
-    await frame.waitForSelector('[data-vc-component="Card / Wording"][data-mode="Detail"]');
+    await frame.waitForSelector('[data-vc-component="Card / Content"][data-mode="Detail"]');
     await frame.click('[data-action="apply-suggestion"]');
     await frame.waitForFunction(() => document.querySelector('#sample-target').textContent.trim() === 'Start a new project');
     assert.equal(await frame.$eval('.vc-badge', element => element.dataset.type), 'Applied');

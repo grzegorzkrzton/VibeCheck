@@ -4,7 +4,7 @@ Verified 16 October 2026. Branch: `codex/vibecheck-landing-exercise`. Local prev
 
 ## Result
 
-The landing page runs locally with a genuine embedded component preview. Its iframe executes a byte-identical copy of the released extension bundle; the vertical toolbar, cards, pins, replies, and wording interactions come from that runtime. All 12 registered exercise defects remain active and recoverable. VC-02's inert **View all feedback** text now sits in the demo figure's caption, outside the real components. The original extension, sandbox, release registry, authentication, backend, and shared design-system sources are unchanged. The initial implementation was local. Public GitHub Pages setup is now prepared, but GitHub rejected enablement because the current account plan does not support Pages for this private repository; no public deployment has been verified.
+The landing page runs locally with a genuine embedded component preview. Its iframe executes a byte-identical copy of the released extension bundle; the vertical toolbar, cards, pins, replies, and Content interactions come from that runtime. All 12 registered exercise defects remain active and recoverable. VC-02's inert **View all feedback** text now sits in the demo figure's caption, outside the real components. The original extension, sandbox, release registry, authentication, backend, and shared design-system sources are unchanged. The initial implementation was local. Public GitHub Pages setup is now prepared, but GitHub rejected enablement because the current account plan does not support Pages for this private repository; no public deployment has been verified.
 
 ## Passed checks
 
@@ -27,9 +27,9 @@ The landing page runs locally with a genuine embedded component preview. Its ifr
 
 The 31-check browser run verified:
 
-- The actual Full toolbar, anchored pin, seeded Comment Detail card, and real sample button render; the invented toolbar is absent. The Comment, Wording, and Inspect controls select the genuine runtime tools.
+- The actual Full toolbar, anchored pin, seeded Comment Detail card, and real sample button render; the invented toolbar is absent. The Comment, Content, and Inspect controls select the genuine runtime tools.
 - **Try a comment** opens the real composer. Shift+Enter creates a new line, Tab reaches Send, and Enter submits a new thread. Replies, overflow-menu Escape/focus return, resolve, reopen, and closing/reopening a saved thread through its pin work.
-- The real Wording composer saves a suggestion, applies it to the sample button, and displays the Applied state.
+- The real Content composer saves a suggestion, applies it to the sample button, and displays the Applied state.
 - The child window's `localStorage` is a memory adapter distinct from the parent window's native storage. Pre-existing native author, panel preferences, panel layout, and feedback records survive sample interactions and reset unchanged.
 - **Reset preview** restores the seed, original button, and Comment tool; workshop reset also reloads the preview while preserving unrelated native storage.
 - At a 390×844 parent viewport, the actual toolbar and comment card remain within the iframe, with no horizontal iframe or parent-page overflow.
@@ -68,9 +68,9 @@ Source inspection confirms normal localhost HTTP is compatible with the current 
 
 A separate earlier temporary-profile test attempted to load the repository’s real extension. The bundled Playwright Chromium executable was missing. Installed Chrome 155.0.8059.80 opened the landing page, but unpacked-extension launch flags did not load an extension service worker. Both temporary profiles were closed and removed. No user profile or authentication state was changed. The current embedded-bundle checks establish local component behavior and do not substitute for an installed-extension/authentication test.
 
-Browser-action toolbar launch, company sign-in, shared backend feedback, and tool use against the outer landing page still need a configured Chrome profile with the real extension. The auth gate is confirmed in source, not observed at runtime. Element selection, comment creation, replies, resolution, and wording apply were verified inside the embedded runtime only. Mobile checks used browser/touch emulation; physical devices and a live screen reader were not tested.
+Browser-action toolbar launch, company sign-in, shared backend feedback, and tool use against the outer landing page still need a configured Chrome profile with the real extension. The auth gate is confirmed in source, not observed at runtime. Element selection, comment creation, replies, resolution, and content apply were verified inside the embedded runtime only. Mobile checks used browser/touch emulation; physical devices and a live screen reader were not tested.
 
-The iframe adapter now supplies an iframe-local `chrome.runtime.getURL()` resolver, without messaging or storage APIs, before importing the unchanged runtime. Runtime font requests resolve under the static site's own project prefix. The bundled preview server supports `--base /VibeCheck/` and denies root-level asset routes when that prefix is active. The production build and all 31 browser regressions passed at `http://127.0.0.1:4175/VibeCheck/`, using `VIBECHECK_LANDING_URL` with the prefixed preview server. Checks establish that actual fonts load under the prefix, no requests return 404, and the genuine comment/reply/resolve/Wording flows, native-storage isolation, reset, and mobile containment still work. The temporary prefixed server was stopped; the existing root development server was not changed. This local project-path result does not establish a live GitHub deployment.
+The iframe adapter now supplies an iframe-local `chrome.runtime.getURL()` resolver, without messaging or storage APIs, before importing the unchanged runtime. Runtime font requests resolve under the static site's own project prefix. The bundled preview server supports `--base /VibeCheck/` and denies root-level asset routes when that prefix is active. The production build and all 31 browser regressions passed at `http://127.0.0.1:4175/VibeCheck/`, using `VIBECHECK_LANDING_URL` with the prefixed preview server. Checks establish that actual fonts load under the prefix, no requests return 404, and the genuine comment/reply/resolve/Content flows, native-storage isolation, reset, and mobile containment still work. The temporary prefixed server was stopped; the existing root development server was not changed. This local project-path result does not establish a live GitHub deployment.
 
 ## GitHub Pages publication status
 
@@ -80,7 +80,7 @@ The prepared `.github/workflows/landing-pages.yml` tests landing state, builds t
 
 ## Evidence
 
-Current live-component captures: [desktop](screenshots/live-demo-desktop.png), [wording composer](screenshots/live-demo-wording.png), [mobile](screenshots/live-demo-mobile.png), [tablet](screenshots/live-demo-tablet.png).
+Current live-component captures: [desktop](screenshots/live-demo-desktop.png), [content composer](screenshots/live-demo-content.png), [mobile](screenshots/live-demo-mobile.png), [tablet](screenshots/live-demo-tablet.png).
 
 Initial-build screenshots, retained as historical layout evidence before the live iframe replacement: [desktop](screenshots/desktop.png), [desktop full page](screenshots/desktop-full.png), [tablet](screenshots/tablet-full.png), [mobile](screenshots/mobile.png), [mobile full page](screenshots/mobile-full.png), [mobile setup](screenshots/mobile-setup.png), [validation](screenshots/desktop-validation.png), [premature review](screenshots/desktop-review.png). These captures do not establish the current live preview's appearance.
 

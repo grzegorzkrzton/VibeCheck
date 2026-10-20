@@ -84,16 +84,16 @@ The suite launches an isolated browser profile and asserts both the deliberate f
 - [Visual QA](design-qa.md)
 - [Sources and original-artwork prompts](docs/SOURCES.md)
 - [Design direction](docs/design-direction.md)
-- Current live preview: [desktop](docs/screenshots/live-demo-desktop.png), [wording](docs/screenshots/live-demo-wording.png), [mobile](docs/screenshots/live-demo-mobile.png), [tablet](docs/screenshots/live-demo-tablet.png)
+- Current live preview: [desktop](docs/screenshots/live-demo-desktop.png), [content](docs/screenshots/live-demo-content.png), [mobile](docs/screenshots/live-demo-mobile.png), [tablet](docs/screenshots/live-demo-tablet.png)
 - Initial layout screenshots: [desktop](docs/screenshots/desktop.png), [desktop full page](docs/screenshots/desktop-full.png), [mobile](docs/screenshots/mobile.png), [mobile full page](docs/screenshots/mobile-full.png), [tablet full page](docs/screenshots/tablet-full.png)
 
 ## Live component preview
 
-The product view runs the actual released extension bundle inside its own iframe document. The vertical toolbar, comment composer/detail card, pin, replies, resolve/reopen controls, wording card, and feedback panel are genuine VibeCheck components. The surrounding prototype is sample content.
+The product view runs the actual released extension bundle inside its own iframe document. The vertical toolbar, comment composer/detail card, pin, replies, resolve/reopen controls, Content card, and feedback panel are genuine VibeCheck components. The surrounding prototype is sample content.
 
-Use **Try a comment** to open the real composer, or reply to the seeded comment. **Comment**, **Wording**, and **Inspect** select the actual runtime tools. Wording suggestions can be saved and applied to the sample button. **Reset preview** restores the original button and seeded thread.
+Use **Try a comment** to open the real composer, or reply to the seeded comment. **Comment**, **Content**, and **Inspect** select the actual runtime tools. Content suggestions can be saved and applied to the sample button. **Reset preview** restores the original button and seeded thread.
 
-The iframe adapter supplies memory-only storage in that child window before loading the unmodified runtime. Demo comments, replies, wording, and preferences disappear when the iframe reloads. The parent window and installed extension retain native storage; no backend, shared feedback, or sign-in is used by this embedded sample.
+The iframe adapter supplies memory-only storage in that child window before loading the unmodified runtime. Demo comments, replies, content suggestions, and preferences disappear when the iframe reloads. The parent window and installed extension retain native storage; no backend, shared feedback, or sign-in is used by this embedded sample.
 
 ## Extension boundary
 

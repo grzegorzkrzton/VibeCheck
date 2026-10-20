@@ -5,7 +5,7 @@ import {
   renderNoteCard,
   renderPin,
   renderTypeSelector,
-  renderWordingCard,
+  renderContentCard,
 } from './components'
 import { migrateStore } from './storage'
 import { convertDraftType, relativeTime } from './card-state'
@@ -53,8 +53,8 @@ test('ComboField sendability and failure remain first-field scoped', t => {
     state: 'Submit failed',
     error: 'Could not send',
   })
-  t.regex(empty, /data-state="Default" data-card-type="Wording"/)
-  t.regex(ready, /data-state="Active" data-card-type="Wording"/)
+  t.regex(empty, /data-state="Default" data-card-type="Content"/)
+  t.regex(ready, /data-state="Active" data-card-type="Content"/)
   t.regex(failed, /Ship this/)
   t.regex(failed, /Because it is clearer/)
   t.regex(failed, /data-field="suggestedText"[^>]*aria-invalid="true"/)
@@ -64,13 +64,13 @@ test('ComboField sendability and failure remain first-field scoped', t => {
 test('status badges, disabled selector, and pins match final Figma contracts', t => {
   t.regex(renderBadge('Pending'), /data-type="Pending"/)
   t.regex(renderBadge('Applied'), /data-type="Applied"/)
-  t.notRegex(renderTypeSelector({ type: 'Wording', disabled: true }), /vc-icon/)
+  t.notRegex(renderTypeSelector({ type: 'Content', disabled: true }), /vc-icon/)
   t.regex(renderPin({ number: 'S', recordKind: 'suggestion' }), />1<\/button>/)
   t.regex(renderPin({ number: '12 comments', type: 'note' }), />12<\/button>/)
 })
 
 test('Apply Suggestion and Resolve remain independent repeatable actions', t => {
-  const html = renderWordingCard({
+  const html = renderContentCard({
     id: 'w1',
     state: 'Detail',
     originalText: 'Before',

@@ -6,7 +6,7 @@ Discovery date: 16 October 2026. This separates current source code, historical 
 
 Verified repository: `/Users/grzegorz.krzton/Desktop/RepoDIR/VibeCheck`. The former `/Users/grzegorz.krzton/Desktop/RepoDIR/design-feedback-tool` path was absent. The landing folder initially contained only `.gitkeep`.
 
-- `docs/release-plan.md` and `app/vibecheck/release-plan.js`: current publish phase `0`. Inspect, Comment, Wording, Guides, Accessibility, Edit Text, AI Prompt; also threads, replies, mentions, resolve/reopen, filters, orphaned pins, shared feedback, sign-in, onboarding. Inbox is phase `1`; Annotation phase `2`.
+- `docs/release-plan.md` and `app/vibecheck/release-plan.js`: current publish phase `0`. Inspect, Comment, Content, Guides, Accessibility, Edit Text, AI Prompt; also threads, replies, mentions, resolve/reopen, filters, orphaned pins, shared feedback, sign-in, onboarding. Inbox is phase `1`; Annotation phase `2`.
 - `readme.md`: useful positioning, “Drop feedback pins on vibe-coded prototypes,” and internal audiences across design, product, engineering, and content design. Its local-only/Supabase claims and phase roadmap are historical and conflict with newer implementation.
 - `PLAN.md`: historical build context, not current release scope.
 - `docs/app-foundry-backend-changelog.md`, `app/vibecheck/storage.js`, `extension/backend/app-foundry.js`: AppFoundry remote feedback storage with local demo/cache fallback. Changelog records migration on 23 September 2026. Static inspection does not verify live deployment.
@@ -21,7 +21,7 @@ No applicable filesystem `AGENTS.md` was found in scanned root/subdirectories or
 
 ## Existing visual assets
 
-Visually inspected `assets/vibecheck.png` (512×512 current logo), `.runtime-card-light.png` (680×740 historical Wording composer), `.scratch/cards-light.png` (historical card/icon overview), and `.scratch/toolbar-light.png` (historical sandbox/toolbar). The last two include Annotation or unshipped tools and legacy branding; do not present them as unqualified current screenshots.
+Visually inspected `assets/vibecheck.png` (512×512 current logo), `.runtime-card-light.png` (680×740 historical Content composer), `.scratch/cards-light.png` (historical card/icon overview), and `.scratch/toolbar-light.png` (historical sandbox/toolbar). The last two include Annotation or unshipped tools and legacy branding; do not present them as unqualified current screenshots.
 
 Identified existing 361×203 tutorial files at `app/tuts/inspector.gif`, `guides.gif`, `accessibility.gif`, and `text.gif`. File existence/dimensions do not establish current visual parity. The initial landing build used a labeled product illustration. It has since been replaced by the genuine live component preview described below; historical screenshots of the illustration are not evidence of the new runtime.
 
@@ -33,7 +33,7 @@ The current demo executes a byte-identical copy of `extension/toolbar/bundle.min
 
 `demo/preview.js` supplies sample records, selects tools through the actual `toolSelected()` and selector-engine APIs, and communicates with the parent through messages checked against source window, origin, and channel. Before importing the runtime, it replaces `localStorage` only in the child window with an in-memory adapter. This prevents demo feedback and preferences from reaching native storage or existing extension data. The isolated iframe document's Content Security Policy (CSP) disallows network connections and form submission. This is a local component demonstration; it does not verify installed-extension launch, company authentication, or shared feedback transport.
 
-The final 31-check browser regression runs passed against both the development server and the 37-file production build. They verified served asset hashes, genuine components and interactions, memory/native-storage isolation, reset, mobile containment, and no external/POST requests or runtime errors. Current captures are retained as `docs/screenshots/live-demo-desktop.png`, `live-demo-wording.png`, `live-demo-mobile.png`, and `live-demo-tablet.png`. Detailed coverage and remaining limits are in `VERIFICATION.md`.
+The final 31-check browser regression runs passed against both the development server and the 37-file production build. They verified served asset hashes, genuine components and interactions, memory/native-storage isolation, reset, mobile containment, and no external/POST requests or runtime errors. Current captures are retained as `docs/screenshots/live-demo-desktop.png`, `live-demo-content.png`, `live-demo-mobile.png`, and `live-demo-tablet.png`. Detailed coverage and remaining limits are in `VERIFICATION.md`.
 
 The iframe adapter now supplies a `chrome.runtime.getURL()` asset resolver only within that child document. It resolves font paths relative to the site's root using the adapter module URL, supporting both `/` and `/VibeCheck/` without transforming the released runtime. No runtime messaging or extension storage API is supplied. The preview server's `--base /VibeCheck/` mode denies root-level assets to expose missing prefix handling during tests. A fresh production build and all 31 browser regressions passed at that project prefix, including loaded runtime fonts and no 404 requests; this remains local evidence, separate from remote deployment.
 

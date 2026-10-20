@@ -23,7 +23,7 @@ Must match `RELEASE_FEATURES` in `release-plan.js` (id and phase only):
 toggle 0
 theme 0
 comment 0
-wording 0
+content 0
 notes-panel 0
 resolve-reopen 0
 reply-threads 0
@@ -59,9 +59,9 @@ toolbar-role 4
 
 ## Phase 0 (current testers)
 
-Toolbar: Inspect, Comment, Wording, Guides, Accessibility, Edit Text, AI Prompt (Q). No margin/padding/move/color toolbar buttons, no annotation tool, no search tool, no PM-only role in popup.
+Toolbar: Inspect, Comment, Content, Guides, Accessibility, Edit Text, AI Prompt (Q). No margin/padding/move/color toolbar buttons, no annotation tool, no search tool, no PM-only role in popup.
 
-Notes panel: comments, wording, resolve/reopen, replies, mentions, delete, filter/sort, orphaned pins, local storage.
+Notes panel: comments, content suggestions, resolve/reopen, replies, mentions, delete, filter/sort, orphaned pins, local storage.
 
 Popup: sign-in, onboarding, display name. Inbox and toolbar role hidden until their phases ship.
 
@@ -69,12 +69,12 @@ Popup: sign-in, onboarding, display name. Inbox and toolbar role hidden until th
 
 After `npm run extension:build`, reload unpacked `extension/` in Chrome.
 
-- Toolbar buttons are only Inspect, Comment, Wording, Guides, Accessibility, Edit Text, and AI Prompt.
+- Toolbar buttons are only Inspect, Comment, Content, Guides, Accessibility, Edit Text, and AI Prompt.
 - No text, background, or border color buttons.
 - Context menu still has theme. It does not have hex/HSL/RGB color format.
 - Alt+Shift+D still toggles the toolbar.
 - Comment pin, notes panel, resolve, reply, delete, filter, and orphaned state still work.
-- Wording still works.
+- Content still works.
 - Annotation cannot be created from the type menu, and the Annotations filter chip is absent.
 - M, P, V, A, H, D, F, S, N do not switch tools.
 - Popup still shows sign-in / onboarding / display name.

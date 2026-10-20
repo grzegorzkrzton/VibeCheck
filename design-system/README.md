@@ -2,12 +2,12 @@
 
 Figma is the visual source of truth. The codebase is the behavioral source of truth for **shipped** UI. Shared names, variants, dimensions, and color tokens keep the two in lockstep.
 
-Cards v2 (Comment / Annotation / Wording redesign) is implemented. Keep these four layers in lockstep whenever that work moves:
+Cards v2 (Comment / Annotation / Content redesign) is implemented. Keep these four layers in lockstep whenever that work moves:
 
 | Layer | Where | Owns |
 | --- | --- | --- |
 | **1. Figma components** | Cards v2 on the Design page (`175:688`) | Visual contract: layout, tokens, variant axes |
-| **2. Behavior Contract** | Figma frame `07 · Behavior Contract` (`222:1720`) | Filtering, timestamps, submission, Wording apply/resolve/thread behavior, and overflow |
+| **2. Behavior Contract** | Figma frame `07 · Behavior Contract` (`222:1720`) | Filtering, timestamps, submission, Content apply/resolve/thread behavior, and overflow |
 | **3. Machine-readable manifest** | `figma-components.json` (shipped) + `cards-v2-contract.json` (v2 IDs, axes, behavior) | Node IDs, variant maps, token IDs for implementation |
 | **4. Changelog** | Figma `08 · Changelog` (`222:2234`) + `design-system/CHANGELOG.md` | Decisions and deltas |
 

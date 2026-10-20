@@ -1,5 +1,5 @@
 // This adapter supplies only an isolated document, sample data, and transport.
-// Toolbar rendering, Comment/Wording cards, pins, replies, and resolution are
+// Toolbar rendering, Comment/Content cards, pins, replies, and resolution are
 // executed by the byte-identical extension runtime in ./vendor/vibecheck.js.
 const CHANNEL = 'vibecheck-landing-live-demo-v1';
 const values = new Map();
@@ -42,13 +42,13 @@ function notify(type, detail = {}) {
   if (parent !== window) parent.postMessage({ channel: CHANNEL, type, ...detail }, location.origin);
 }
 function selectMode(mode, select = true) {
-  const tool = { comment: 'comments', wording: 'content', inspect: 'inspector' }[mode];
+  const tool = { comment: 'comments', content: 'content', inspect: 'inspector' }[mode];
   if (!tool || !toolbar?.selectorEngine) return;
   toolbar.selectorEngine.unselect_all({ silent: true });
   toolbar.toolSelected(tool);
   if (select) {
     toolbar.selectorEngine.select(document.querySelector(mode === 'inspect' ? '#sample-heading' : '#sample-target'));
-    if (mode !== 'inspect') requestAnimationFrame(() => document.querySelector(`#vibecheck-layer [data-field="${mode === 'wording' ? 'suggestedText' : 'body'}"]`)?.focus({ preventScroll: true }));
+    if (mode !== 'inspect') requestAnimationFrame(() => document.querySelector(`#vibecheck-layer [data-field="${mode === 'content' ? 'suggestedText' : 'body'}"]`)?.focus({ preventScroll: true }));
   }
 }
 window.addEventListener('message', event => {
@@ -75,7 +75,7 @@ try {
     ready();
   });
   selectMode('comment', false);
-  const modes = { comments: 'comment', content: 'wording', inspector: 'inspect' };
+  const modes = { comments: 'comment', content: 'content', inspector: 'inspect' };
   new MutationObserver(() => notify('mode-changed', { mode: modes[toolbar.activeTool] || null })).observe(toolbar.$shadow, { subtree: true, attributes: true, attributeFilter: ['data-active'] });
   document.documentElement.dataset.previewReady = 'true';
   notify('ready', { mode: 'comment' });

@@ -2,6 +2,10 @@
 
 Decisions and deltas for the Figma ↔ code contract. Visuals live in Figma; this file is the short written log. Pair it with `figma-components.json` and `cards-v2-contract.json`.
 
+## 2026-10-20 — Wording renamed to Content
+
+- Product feature **Wording** is now **Content** in Figma, toolbar labels, `Card / Content`, release feature id `content`, and landing copy. Runtime tool id remains `content`; stored suggestions remain `kind: suggestion`. The toolbar hotkey remains **W**.
+
 ## 2026-09-21 — Tool page cursors
 
 - Comment, Annotation, and Wording use a floating SVG follower (page cursor hidden; icon tracks the pointer).
