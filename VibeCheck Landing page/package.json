@@ -1,0 +1,19 @@
+{
+  "name": "vibecheck-landing-page",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "VibeCheck landing page and guided product exercise",
+  "scripts": {
+    "demo:sync": "node scripts/sync-demo.mjs",
+    "predev": "npm run demo:sync",
+    "dev": "node scripts/server.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/server.mjs --preview",
+    "test": "node --test tests/state.test.mjs",
+    "test:browser": "node tests/browser-check.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -52,7 +52,7 @@ export function pinVisualState({ open, resolved } = {}) {
 
 export function cardFamily({ kind, item } = {}) {
   if (kind === 'suggestion' || item?.recordType === 'suggestion')
-    return 'Card / Wording'
+    return 'Card / Content'
   if (item?.type === 'annotation')
     return 'Card / Annotation'
   return 'Card / Comment'
@@ -275,7 +275,7 @@ export function renderTypeMenuItem({ option = 'Comment', selected = false } = {}
   })
 }
 
-export function renderTypeMenu({ type = 'Comment', options = ['Comment', 'Annotation', 'Wording'] } = {}) {
+export function renderTypeMenu({ type = 'Comment', options = ['Comment', 'Annotation', 'Content'] } = {}) {
   return renderListMenu({
     label: 'Card type',
     dataComponent: 'Card / Type Menu',
@@ -543,7 +543,7 @@ export function renderComboField({
         ${showSend ? renderSend({
           state: submitting || disabled ? 'Disabled' : sendable ? 'Active' : 'Default',
           action: failed ? 'retry-send' : 'send',
-          cardType: 'Wording',
+          cardType: 'Content',
           ariaLabel: failed ? 'Try sending again' : 'Send suggestion',
         }) : ''}
       </label>
@@ -567,7 +567,7 @@ function cardShell({
   body,
 }) {
   const detail = mode === 'Detail'
-  const typeLabel = type === 'Note' ? 'Comment' : type === 'Suggestion' ? 'Wording' : 'Annotation'
+  const typeLabel = type === 'Note' ? 'Comment' : type === 'Suggestion' ? 'Content' : 'Annotation'
   return `
     <div class="vc-card" ${attrs({
       'data-vc-component': family,
@@ -718,7 +718,7 @@ export function renderAnnotationCard({
   })
 }
 
-export function renderWordingCard({
+export function renderContentCard({
   id,
   state = 'Compose',
   suggestedText = '',
@@ -737,7 +737,7 @@ export function renderWordingCard({
 } = {}) {
   if (state === 'Compose') {
     return cardShell({
-      family: 'Card / Wording',
+      family: 'Card / Content',
       mode: 'Compose',
       state: inputState || 'Default',
       id,
@@ -759,7 +759,7 @@ export function renderWordingCard({
 
   const displayStatus = status === 'applied' ? 'Applied' : 'Pending'
   return cardShell({
-    family: 'Card / Wording',
+    family: 'Card / Content',
     mode: 'Detail',
     state: 'Read only',
     id,
@@ -770,13 +770,13 @@ export function renderWordingCard({
     thread: repliesHtml ? 'Replies' : 'Empty',
     overflowOpen,
     body: `
-      <div class="vc-wording-content">
+      <div class="vc-content-body">
         ${renderQuote({ role: 'Original', body: originalText })}
         ${renderQuote({ role: 'Suggestion', body: suggestedText, user: author, apply: true })}
         ${rationale ? renderQuote({ role: 'Reasoning', body: rationale }) : ''}
       </div>
       ${repliesHtml ? `<div class="vc-thread-divider" data-vc-component="Toolbar Divider" aria-hidden="true"></div><div class="vc-thread">${repliesHtml}</div>` : ''}
-      ${renderField({ field: 'reply', value: reply, placeholder: 'Reply…', compact: true, showSend: true, sendAction: 'reply', cardType: 'Wording' })}
+      ${renderField({ field: 'reply', value: reply, placeholder: 'Reply…', compact: true, showSend: true, sendAction: 'reply', cardType: 'Content' })}
     `,
   })
 }
@@ -877,7 +877,7 @@ export function renderNotesPanel({
     ['all', 'All'],
     ['notes', 'Comments'],
     ...(showAnnotationFilter ? [['annotations', 'Annotations']] : []),
-    ['content', 'Writing'],
+    ['content', 'Content'],
   ]
   return `
     <aside class="vc-panel" ${attrs({

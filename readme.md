@@ -53,7 +53,7 @@ Click the extension icon or press **Alt+Shift+D** to show or hide the toolbar. C
 ## Review a prototype
 
 1. **Leave feedback.** Use Comment to select an element and start a discussion. Teammates can reply and add mentions.
-2. **Review content.** Use the content suggestion tool to propose replacement wording, explain why, discuss it, and apply it to the page.
+2. **Review content.** Use Content to propose replacement wording, explain why, discuss it, and apply it to the page.
 3. **Manage feedback.** Open Notes to filter and sort items, resolve or reopen discussions, and delete threads where permitted.
 4. **Inspect the interface.** Use Inspect, Guides, and Accessibility to check dimensions, spacing, alignment, and text contrast.
 5. **Prepare implementation changes.** Use Edit Text on one or more elements, then choose AI Prompt to copy the recorded text changes. Paste that prompt into your AI coding tool to update the prototype's source code.

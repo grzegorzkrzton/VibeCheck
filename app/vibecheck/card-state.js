@@ -16,7 +16,7 @@ export function relativeTime(value, now = Date.now()) {
 
 export function convertDraftType(draft, cardType, originalText = '') {
   const text = draft.recordType === 'suggestion' ? draft.suggestedText : draft.body
-  if (cardType === 'Wording') {
+  if (cardType === 'Content') {
     return {
       ...draft,
       recordType: 'suggestion',

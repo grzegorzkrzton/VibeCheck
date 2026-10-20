@@ -83,10 +83,10 @@
           "Annotation/Implement": "pin/implement",
           "Annotation/Warning": "pin/warning",
           "Annotation/Question": "pin/question",
-          "Wording": "pin/suggestion"
+          "Content": "pin/suggestion"
         },
-        "composedOverrides": "Comment, Annotation, and Wording keep the shared Active variant and override its fill/icon tokens at the composed-component level.",
-        "wordingIcon": "button/button-primary-on"
+        "composedOverrides": "Comment, Annotation, and Content keep the shared Active variant and override its fill/icon tokens at the composed-component level.",
+        "contentIcon": "button/button-primary-on"
       }
     },
     "overflow": {
@@ -130,12 +130,12 @@
         "send": "Cmd/Ctrl+Enter"
       }
     },
-    "wording": {
+    "content": {
       "applySuggestion": "Repeatable action. Every click inserts the current proposed copy into the selected element and may change Status from Pending to Applied. It does not resolve the card.",
       "resolve": "Separate, user-controlled Open/Resolved action. Resolution controls filtering only and does not change Applied status.",
       "thread": "Empty/Replies is independent from status and resolution. Badges, reasoning, and replies persist across Apply and Resolve.",
       "optionalReasoning": "Omit the Reasoning block in Detail when the optional field is empty.",
-      "resolvedVisibility": "Resolved Wording cards follow the same Show resolved comments rule as Comment and Annotation."
+      "resolvedVisibility": "Resolved Content cards follow the same Show resolved comments rule as Comment and Annotation."
     }
   },
   "tokens": {
@@ -362,7 +362,7 @@
         "Question/Detail/Resolved": "221:3119"
       }
     },
-    "Card / Wording": {
+    "Card / Content": {
       "nodeId": "196:1146",
       "url": "https://www.figma.com/design/3UduCyltV7tmRYSnDqTEfA/VibeCheck?node-id=196-1146",
       "axes": {
@@ -427,7 +427,7 @@
     "01 · Atoms": "175:691",
     "02 · Comment": "185:727",
     "03 · Annotation": "188:820",
-    "04 · Wording": "192:940",
+    "04 · Content": "354:10833",
     "05 · Dark": "196:2358",
     "Dark board": "196:2361",
     "06 · Structure notes": "197:1178",

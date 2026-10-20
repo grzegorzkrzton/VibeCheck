@@ -81,7 +81,7 @@ Each style also emits `--vc-text-{name}-letter-spacing`.
 | Card / Reply | Name | Heading/XXS | `.vc-reply-meta strong` | `--vc-text-heading-xxs` |
 | Card / Reply | Timestamp | Body/XXS | `.vc-reply-meta time` | `--vc-text-body-xxs` |
 | Card / Reply | Body | Body/XS | `.vc-reply-body` | `--vc-text-body-xs` |
-| Card / Wording (Detail body) | Body | Body/SM | field / quote body paths | `--vc-text-body-sm` |
+| Card / Content (Detail body) | Body | Body/SM | field / quote body paths | `--vc-text-body-sm` |
 | Card / Comment · Annotation | Compose/detail body | Body/SM | same field / body tokens | `--vc-text-body-sm` |
 | Button | Label | Heading/XS | `extension/popup/popup.css` buttons | `--vc-text-heading-xs` |
 | Notes Panel | Title | Heading/SM | `.vc-panel-head` | `--vc-text-heading-sm` |

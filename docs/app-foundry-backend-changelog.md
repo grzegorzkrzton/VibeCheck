@@ -16,7 +16,7 @@ Short record of repository changes for the VibeCheck App Foundry migration.
 
 - Added startup migration `schema_migrations` plus profiles, prototypes, comments, and content suggestions tables.
 - Added App Foundry-authenticated `/api/v1/me` profile/onboarding endpoints.
-- Added normalized-URL store load/save endpoints for comments, annotations, and wording suggestions.
+- Added normalized-URL store load/save endpoints for comments, annotations, and content suggestions.
 - Added parameterized SQL, transactions, payload limits, author-scoped writes, and revision conflict detection.
 - Notifications remain an empty response until their event/mention rules are defined.
 - The extension and existing Supabase integration were not changed in P2.

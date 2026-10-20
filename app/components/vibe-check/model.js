@@ -69,7 +69,7 @@ const VibeCheckModelEntries = {
   w: {
     tool:         'content',
     icon:         Icons.content,
-    label:        '<span><u>W</u>ording</span>',
+    label:        '<span>Content</span>',
     description:  'Suggest replacement copy, preview it on the page, then approve or reject locally',
     hasTutorial:  false,
     instruction:  `<div table>
